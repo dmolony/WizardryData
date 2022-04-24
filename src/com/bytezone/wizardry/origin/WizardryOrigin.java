@@ -210,6 +210,16 @@ public class WizardryOrigin
   }
 
   // ---------------------------------------------------------------------------------//
+  public Special getSpecial (Location location)
+  // ---------------------------------------------------------------------------------//
+  {
+    MazeLevel mazeLevel = mazeLevels.get (location.getLevel () - 1);
+    MazeCell mazeCell = mazeLevel.getMazeCell (location);
+
+    return mazeCell.getSpecial ();
+  }
+
+  // ---------------------------------------------------------------------------------//
   private void histogram (int level)
   // ---------------------------------------------------------------------------------//
   {
