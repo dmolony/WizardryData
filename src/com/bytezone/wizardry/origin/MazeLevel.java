@@ -252,7 +252,7 @@ public class MazeLevel
     {
       System.out.printf ("Group %d%n", group++);
       System.out.printf ("-------%n");
-      odds.showOdds ();
+      odds.getOdds ();
       System.out.println ();
     }
   }
