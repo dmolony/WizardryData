@@ -4,8 +4,6 @@ import java.util.Random;
 
 import com.bytezone.wizardry.origin.Walls.Wall;
 
-import javafx.scene.canvas.GraphicsContext;
-
 // -----------------------------------------------------------------------------------//
 public class MazeLevel
 // -----------------------------------------------------------------------------------//
@@ -59,15 +57,6 @@ public class MazeLevel
 
         mazeCells[col][row] = mazeCell;
       }
-  }
-
-  // ---------------------------------------------------------------------------------//
-  public void draw (GraphicsContext gc)
-  // ---------------------------------------------------------------------------------//
-  {
-    for (int col = 0; col < 20; col++)
-      for (int row = 0; row < 20; row++)
-        mazeCells[col][row].draw (gc);
   }
 
   // ---------------------------------------------------------------------------------//

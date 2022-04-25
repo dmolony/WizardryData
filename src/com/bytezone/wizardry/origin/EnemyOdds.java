@@ -8,11 +8,11 @@ public class EnemyOdds
 {
   private static final Random random = new Random ();
 
-  public final int minEnemy;       // first monster
-  public final int rangeSize;        // range size
-  public final int extraRangeOdds;       // extra range odds
-  public final int totExtraRanges;        // extra ranges
-  public final int extraRangeOffset;       // range offset
+  public final int minEnemy;
+  public final int rangeSize;
+  public final int extraRangeOdds;
+  public final int totExtraRanges;
+  public final int extraRangeOffset;
 
   // ---------------------------------------------------------------------------------//
   public EnemyOdds (byte[] buffer, int offset)
@@ -30,11 +30,11 @@ public class EnemyOdds
   // ---------------------------------------------------------------------------------//
   {
     // decide which range to use
-    int encounterCalc = 0;
-    while (random.nextInt (100) < extraRangeOdds && encounterCalc < totExtraRanges)
-      ++encounterCalc;
+    int rangeNo = 0;
+    while (random.nextInt (100) < extraRangeOdds && rangeNo < totExtraRanges)
+      ++rangeNo;
 
-    return minEnemy + random.nextInt (rangeSize) + extraRangeOffset * encounterCalc;
+    return minEnemy + random.nextInt (rangeSize) + extraRangeOffset * rangeNo;
   }
 
   // ---------------------------------------------------------------------------------//
@@ -52,6 +52,8 @@ public class EnemyOdds
     double oddsLeft = 1.0;
     double total = 0.0;
 
+    boolean printing = false;
+
     for (int i = 0; i <= totExtraRanges; i++)
     {
       odds = oddsLeft * (1 - worse);
@@ -61,21 +63,27 @@ public class EnemyOdds
       if (i == totExtraRanges)         // last line, so combine both fields
       {
         oddsTable[i] = odds + oddsLeft;
-        //  System.out.printf ("%2d  %2d:%2d  %12.8f%n", i + 1, min, max, (odds + oddsLeft) * 100);
         total += oddsLeft;
+
+        if (printing)
+          System.out.printf ("%2d  %2d:%2d  %12.8f%n", i + 1, min, max, (odds + oddsLeft) * 100);
       }
       else
       {
         oddsTable[i] = odds;
-        //  System.out.printf ("%2d  %2d:%2d  %12.8f%n", i + 1, min, max, odds * 100);
+        if (printing)
+          System.out.printf ("%2d  %2d:%2d  %12.8f%n", i + 1, min, max, odds * 100);
       }
 
       min += extraRangeOffset;
       max += extraRangeOffset;
     }
 
-    //    System.out.println ("           ------------");
-    //    System.out.printf ("           %12.8f%n", total * 100);
+    if (printing)
+    {
+      System.out.println ("           ------------");
+      System.out.printf ("           %12.8f%n", total * 100);
+    }
 
     return oddsTable;
   }
