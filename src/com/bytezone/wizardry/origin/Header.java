@@ -16,7 +16,7 @@ public class Header
   String scenarioName;
   int scenarioId;
 
-  List<Font> fonts = new ArrayList<> ();
+  List<WizardryFont> fonts = new ArrayList<> ();
 
   // ---------------------------------------------------------------------------------//
   public Header (byte[] buffer)
@@ -36,9 +36,9 @@ public class Header
 
     if (scenarioId < 3)
     {
-      fonts.add (new Font ("Alphabet", buffer, 512, 512));
-      fonts.add (new Font ("Graphics", buffer, 1024, 512));
-      fonts.add (new Font ("Unknown", buffer, 1536, 512));    // probably not a font
+      fonts.add (new WizardryFont ("Alphabet", buffer, 512, 512));
+      fonts.add (new WizardryFont ("Graphics", buffer, 1024, 512));
+      fonts.add (new WizardryFont ("Unknown", buffer, 1536, 512));    // probably not a font
     }
   }
 

@@ -50,7 +50,7 @@ public class WizardryOrigin
   private List<Item> items;
   private List<MazeLevel> mazeLevels;
   private List<Reward> rewards;
-  private List<Image> images;
+  private List<WizardryImage> images;
   private List<Character> characters;
 
   public enum Square
@@ -188,7 +188,7 @@ public class WizardryOrigin
 
     id = 0;
     for (DataBlock dataBlock : sd.dataBlocks)
-      images.add (new Image (id++, dataBlock, getScenarioId ()));
+      images.add (new WizardryImage (id++, dataBlock, getScenarioId ()));
 
     if (false)
     {
@@ -349,21 +349,21 @@ public class WizardryOrigin
   }
 
   // ---------------------------------------------------------------------------------//
-  public List<Font> getFonts ()
+  public List<WizardryFont> getFonts ()
   // ---------------------------------------------------------------------------------//
   {
     return header.fonts;
   }
 
   // ---------------------------------------------------------------------------------//
-  public List<Image> getImages ()
+  public List<WizardryImage> getImages ()
   // ---------------------------------------------------------------------------------//
   {
     return images;
   }
 
   // ---------------------------------------------------------------------------------//
-  public Image getImage (int id)
+  public WizardryImage getImage (int id)
   // ---------------------------------------------------------------------------------//
   {
     if (id >= 0 && id < images.size ())

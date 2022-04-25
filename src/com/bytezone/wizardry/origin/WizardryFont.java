@@ -1,8 +1,7 @@
 package com.bytezone.wizardry.origin;
 
 // -----------------------------------------------------------------------------------//
-public class Font
-// -----------------------------------------------------------------------------------//
+public class WizardryFont
 {
   private static int nextId = 1;
 
@@ -12,7 +11,7 @@ public class Font
   public final int id = nextId++;
 
   // ---------------------------------------------------------------------------------//
-  public Font (String name, byte[] buffer, int offset, int length)
+  public WizardryFont (String name, byte[] buffer, int offset, int length)
   // ---------------------------------------------------------------------------------//
   {
     this.name = name;
