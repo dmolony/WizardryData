@@ -10,9 +10,9 @@ public class EnemyOdds
 
   public final int minEnemy;       // first monster
   public final int range0n;        // range size
-  public final int percWors;       // chance of upgrade
-  public final int worse01;        // max upgrades possible
-  public final int multWors;       // upgrade range size
+  public final int percWors;       // extra range odds
+  public final int worse01;        // extra ranges
+  public final int multWors;       // range offset
 
   // ---------------------------------------------------------------------------------//
   public EnemyOdds (byte[] buffer, int offset)
@@ -38,9 +38,11 @@ public class EnemyOdds
   }
 
   // ---------------------------------------------------------------------------------//
-  public void showOdds ()
+  public double[] showOdds ()
   // ---------------------------------------------------------------------------------//
   {
+    double[] oddsTable = new double[worse01 + 1];
+
     int min = minEnemy;
     int max = minEnemy + range0n - 1;
 
@@ -53,24 +55,29 @@ public class EnemyOdds
     for (int i = 0; i <= worse01; i++)
     {
       odds = oddsLeft * (1 - worse);
-      oddsLeft = oddsLeft * worse;
-
+      oddsLeft *= worse;
       total += odds;
 
       if (i == worse01)         // last line, so combine both fields
       {
-        System.out.printf ("%2d  %2d:%2d  %12.8f%n", i + 1, min, max, (odds + oddsLeft) * 100);
+        oddsTable[i] = odds + oddsLeft;
+        //        System.out.printf ("%2d  %2d:%2d  %12.8f%n", i + 1, min, max, (odds + oddsLeft) * 100);
         total += oddsLeft;
       }
       else
-        System.out.printf ("%2d  %2d:%2d  %12.8f%n", i + 1, min, max, odds * 100);
+      {
+        oddsTable[i] = odds;
+        //        System.out.printf ("%2d  %2d:%2d  %12.8f%n", i + 1, min, max, odds * 100);
+      }
 
       min += multWors;
       max += multWors;
     }
 
-    System.out.println ("           ------------");
-    System.out.printf ("           %12.8f%n", total * 100);
+    //    System.out.println ("           ------------");
+    //    System.out.printf ("           %12.8f%n", total * 100);
+
+    return oddsTable;
   }
 
   // ---------------------------------------------------------------------------------//
