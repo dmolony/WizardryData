@@ -1,4 +1,4 @@
-package com.bytezone.wizardry.disk;
+package com.bytezone.wizardry.origin;
 
 import java.io.File;
 import java.io.IOException;
