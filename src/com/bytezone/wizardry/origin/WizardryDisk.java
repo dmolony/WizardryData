@@ -22,7 +22,7 @@ public class WizardryDisk
     File file = new File (fileName);
     if (!file.exists () || !file.isFile ())
     {
-      System.out.println ("File does not exist");
+      System.out.println ("File does not exist: " + fileName);
       return;
     }
 
