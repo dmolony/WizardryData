@@ -18,20 +18,22 @@ public class Monster
   public final Dice[] damageDice = new Dice[7];            //  84  
   public final long experiencePoints;                      // 126  wizlong
   public final int drain;                                  // 132                    
-  public final int regen;                                  // 134                    
-  public final int rewardWandering;                        // 136  
-  public final int rewardLair;                             // 138  
+  public final int regen;                                  // 134  hit points healed per turn
+  public final int rewardWandering;                        // 136  reward index outside lair
+  public final int rewardLair;                             // 138  reward index inside lair
   public final int partnerId;                              // 140  
   public final int partnerOdds;                            // 142  partner %
-  public final int mageSpells;                             // 144  spell level?      
-  public final int priestSpells;                           // 146  spell level?      
+  public final int mageSpells;                             // 144  spell level?
+  public final int priestSpells;                           // 146  spell level?
   public final int unique;                                 // 148
-  public final int breathe;                                // 150
+  public final int breathe;                                // 150  index into breathValues
   public final int unaffect;                               // 152
-  public final int resistance;                                 // 154
-  public final int properties;                                 // 156
+  public final int resistance;                             // 154
+  public final int properties;                             // 156
 
   public final String damageDiceText;
+  private final String[] breathValues =
+      { "None", "Fire", "Frost", "Poison", "Level drain", "Stoning", "Magic" };
 
   // Scenario #1 values
   private static int[] experience = {                                     //
@@ -47,8 +49,6 @@ public class Monster
       4155, 3000, 9200, 3160, 7460, 7320, 15880, 1600, 2200, 1000,        // 90-99
       1900                                                                // 100 
   };
-
-  String[] breathValues = { "None", "Fire", "Frost", "Poison", "Level drain", "Stoning", "Magic" };
 
   // ---------------------------------------------------------------------------------//
   public Monster (int id, DataBlock dataBlock)
@@ -71,7 +71,7 @@ public class Monster
     monsterClass = Utility.getShort (buffer, offset + 78);
     armourClass = Utility.getSignedShort (buffer, offset + 80);
 
-    damageDiceSize = Utility.getShort (buffer, offset + 82);               // 0-7
+    damageDiceSize = Utility.getShort (buffer, offset + 82);       // 0-7
     StringBuilder dd = new StringBuilder ();
     for (int i = 0; i < damageDiceSize; i++)
     {
@@ -100,8 +100,8 @@ public class Monster
     breathe = Utility.getShort (buffer, offset + 150);
     unaffect = Utility.getShort (buffer, offset + 152);
 
-    resistance = Utility.getShort (buffer, offset + 154);             // wepvsty3
-    properties = Utility.getShort (buffer, offset + 156);             // sppc
+    resistance = Utility.getShort (buffer, offset + 154);         // flags
+    properties = Utility.getShort (buffer, offset + 156);         // flags
   }
 
   // ---------------------------------------------------------------------------------//

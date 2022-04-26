@@ -75,8 +75,7 @@ public class Character
     password = Utility.getPascalString (buffer, offset + 16);
     inMaze = Utility.getShort (buffer, offset + 32) != 0;
     race = WizardryData.Race.values ()[Utility.getShort (buffer, offset + 34)];
-    characterClass =
-        WizardryData.CharacterClass.values ()[Utility.getShort (buffer, offset + 36)];
+    characterClass = WizardryData.CharacterClass.values ()[Utility.getShort (buffer, offset + 36)];
     age = Utility.getShort (buffer, offset + 38);
     status = WizardryData.CharacterStatus.values ()[Utility.getShort (buffer, offset + 40)];
     alignment = WizardryData.Alignment.values ()[Utility.getShort (buffer, offset + 42)];
@@ -174,5 +173,11 @@ public class Character
   // ---------------------------------------------------------------------------------//
   {
     return name;
+  }
+
+  //-----------------------------------------------------------------------------------//
+  public record Possession (int id, boolean equipped, boolean cursed, boolean identified)
+  //-----------------------------------------------------------------------------------//
+  {
   }
 }
