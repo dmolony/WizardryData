@@ -1,6 +1,6 @@
 package com.bytezone.wizardry.origin;
 
-import com.bytezone.wizardry.origin.WizardryOrigin.Direction;
+import com.bytezone.wizardry.origin.WizardryData.Direction;
 
 // -----------------------------------------------------------------------------------//
 public class Location

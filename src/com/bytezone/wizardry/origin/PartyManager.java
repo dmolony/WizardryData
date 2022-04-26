@@ -5,17 +5,17 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.bytezone.wizardry.origin.WizardryOrigin.Alignment;
-import com.bytezone.wizardry.origin.WizardryOrigin.CharacterClass;
-import com.bytezone.wizardry.origin.WizardryOrigin.CharacterStatus;
+import com.bytezone.wizardry.origin.WizardryData.Alignment;
+import com.bytezone.wizardry.origin.WizardryData.CharacterClass;
+import com.bytezone.wizardry.origin.WizardryData.CharacterStatus;
 
 // -----------------------------------------------------------------------------------//
 public class PartyManager
 // -----------------------------------------------------------------------------------//
 {
-  WizardryOrigin wizardry;
+  WizardryData wizardry;
 
-  public PartyManager (WizardryOrigin wizardry)
+  public PartyManager (WizardryData wizardry)
   {
     this.wizardry = wizardry;
   }

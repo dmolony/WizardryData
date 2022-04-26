@@ -3,10 +3,10 @@ package com.bytezone.wizardry.origin;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bytezone.wizardry.origin.WizardryOrigin.Alignment;
-import com.bytezone.wizardry.origin.WizardryOrigin.CharacterClass;
-import com.bytezone.wizardry.origin.WizardryOrigin.CharacterStatus;
-import com.bytezone.wizardry.origin.WizardryOrigin.Race;
+import com.bytezone.wizardry.origin.WizardryData.Alignment;
+import com.bytezone.wizardry.origin.WizardryData.CharacterClass;
+import com.bytezone.wizardry.origin.WizardryData.CharacterStatus;
+import com.bytezone.wizardry.origin.WizardryData.Race;
 
 // -----------------------------------------------------------------------------------//
 public class Character
@@ -74,12 +74,12 @@ public class Character
 
     password = Utility.getPascalString (buffer, offset + 16);
     inMaze = Utility.getShort (buffer, offset + 32) != 0;
-    race = WizardryOrigin.Race.values ()[Utility.getShort (buffer, offset + 34)];
+    race = WizardryData.Race.values ()[Utility.getShort (buffer, offset + 34)];
     characterClass =
-        WizardryOrigin.CharacterClass.values ()[Utility.getShort (buffer, offset + 36)];
+        WizardryData.CharacterClass.values ()[Utility.getShort (buffer, offset + 36)];
     age = Utility.getShort (buffer, offset + 38);
-    status = WizardryOrigin.CharacterStatus.values ()[Utility.getShort (buffer, offset + 40)];
-    alignment = WizardryOrigin.Alignment.values ()[Utility.getShort (buffer, offset + 42)];
+    status = WizardryData.CharacterStatus.values ()[Utility.getShort (buffer, offset + 40)];
+    alignment = WizardryData.Alignment.values ()[Utility.getShort (buffer, offset + 42)];
 
     long attr = Utility.getLong (buffer, offset + 44);
     for (int i = 0; i < 6; i++)
@@ -122,7 +122,7 @@ public class Character
           if (index >= 0)
             spellsKnown[index] = true;
 
-        if (++index >= WizardryOrigin.spells.length)
+        if (++index >= WizardryData.spells.length)
           break;
       }
 

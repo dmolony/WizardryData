@@ -3,8 +3,8 @@ package com.bytezone.wizardry.origin;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bytezone.wizardry.origin.WizardryOrigin.Square;
-import com.bytezone.wizardry.origin.WizardryOrigin.Trade;
+import com.bytezone.wizardry.origin.WizardryData.Square;
+import com.bytezone.wizardry.origin.WizardryData.Trade;
 
 // -----------------------------------------------------------------------------------//
 public class Special
@@ -13,7 +13,7 @@ public class Special
   public static final String[] auxTypes = { "", "", "TRYGET", "WHOWADE", "DOSEARCH", "ITM2PASS",
       "CHKALIGN", "CHKAUX0", "BCK2SHOP", "LOOKOUT", "RIDDLES", "FEEIS", "", "PICTMESS", "ITMORTEL",
       "SPCMONST(CE)", "SPCMONST(CG)" };
-  private final WizardryOrigin wizardry;
+  private final WizardryData wizardry;
 
   public final Square square;
   public final int[] aux = new int[3];
@@ -21,7 +21,7 @@ public class Special
   public final List<Location> locations = new ArrayList<> ();
 
   // ---------------------------------------------------------------------------------//
-  public Special (WizardryOrigin wizardry, int index, byte[] buffer, int offset)
+  public Special (WizardryData wizardry, int index, byte[] buffer, int offset)
   // ---------------------------------------------------------------------------------//
   {
     this.wizardry = wizardry;
@@ -29,7 +29,7 @@ public class Special
     byte b = buffer[offset + (index) / 2];
     int val = index % 2 == 0 ? b & 0x0F : (b & 0xF0) >>> 4;
 
-    square = WizardryOrigin.Square.values ()[val];
+    square = WizardryData.Square.values ()[val];
     aux[0] = Utility.getSignedShort (buffer, offset + 8 + index * 2);
     aux[1] = Utility.getSignedShort (buffer, offset + 40 + index * 2);
     aux[2] = Utility.getSignedShort (buffer, offset + 72 + index * 2);

@@ -13,7 +13,7 @@ public class MazeLevel
   private static final Random random = new Random ();
 
   public final int displayLevel;                 // starts at 1
-  private WizardryOrigin wizardry;
+  private WizardryData wizardry;
 
   private MazeCell[][] mazeCells = new MazeCell[20][20];
 
@@ -23,7 +23,7 @@ public class MazeLevel
   private EnemyOdds[] enemyOdds;
 
   // ---------------------------------------------------------------------------------//
-  public MazeLevel (WizardryOrigin wizardry, int displayLevel, DataBlock dataBlock)
+  public MazeLevel (WizardryData wizardry, int displayLevel, DataBlock dataBlock)
   // ---------------------------------------------------------------------------------//
   {
     this.wizardry = wizardry;

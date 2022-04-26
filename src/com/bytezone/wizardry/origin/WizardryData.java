@@ -7,8 +7,7 @@ import java.util.List;
 import com.bytezone.wizardry.disk.WizardryDisk;
 
 // -----------------------------------------------------------------------------------//
-public class WizardryOrigin
-// -----------------------------------------------------------------------------------//
+public class WizardryData
 {
   public static final String[] monsterClass = { "Fighter", "Mage", "Priest", "Thief", "Midget",
       "Giant", "Mythical", "Dragon", "Animal", "Were", "Undead", "Demon", "Insect", "Enchanted" };
@@ -100,7 +99,7 @@ public class WizardryOrigin
   }
 
   // ---------------------------------------------------------------------------------//
-  public WizardryOrigin (String diskFileName)
+  public WizardryData (String diskFileName)
   // ---------------------------------------------------------------------------------//
   {
     File file = new File (diskFileName);

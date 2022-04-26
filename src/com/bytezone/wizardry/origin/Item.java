@@ -1,7 +1,7 @@
 package com.bytezone.wizardry.origin;
 
-import com.bytezone.wizardry.origin.WizardryOrigin.Alignment;
-import com.bytezone.wizardry.origin.WizardryOrigin.ObjectType;
+import com.bytezone.wizardry.origin.WizardryData.Alignment;
+import com.bytezone.wizardry.origin.WizardryData.ObjectType;
 
 // -----------------------------------------------------------------------------------//
 public class Item
