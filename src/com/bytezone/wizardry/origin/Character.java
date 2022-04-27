@@ -37,7 +37,7 @@ public class Character
   public final int hpLeft;
   public final int hpMax;
 
-  public final boolean mysteryBit;                          // first bit in spellsKnown
+  public final boolean mysteryBit;                 // first bit in spellsKnown
   public final boolean[] spellsKnown = new boolean[50];
   public final int[] mageSpells = new int[7];
   public final int[] priestSpells = new int[7];
@@ -48,14 +48,15 @@ public class Character
 
   public final boolean crithitm;
   public final int swingCount;
-  public final Dice hpdamrc;
+  public final Dice hpdamrc;                        // +184
+
+  boolean[][] wepvsty2 = new boolean[2][14];        // +190      4 bytes?
+  boolean[][] wepvsty3 = new boolean[2][7];         //           2 bytes?
+  boolean[] wepvstyp = new boolean[14];             //           2 bytes?
+
+  LostXYL lostXYL;                                  // + 206      awards?
 
   public final String awards;
-
-  boolean[][] wepvsty2 = new boolean[2][14];
-  boolean[][] wepvsty3 = new boolean[2][7];
-  boolean[] wepvstyp = new boolean[14];
-  LostXYL lostXYL;
 
   // ---------------------------------------------------------------------------------//
   public Character (int id, DataBlock dataBlock, int scenarioId) throws InvalidCharacterException

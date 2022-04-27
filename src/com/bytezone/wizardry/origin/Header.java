@@ -11,10 +11,24 @@ public class Header
       { "header", "maze", "monsters", "rewards", "items", "characters", "images", "char levels" };
   static public final String[] scenarioNames = { "PROVING GROUNDS OF THE MAD OVERLORD!",
       "THE KNIGHT OF DIAMONDS", "THE LEGACY OF LLYLGAMYN", "THE RETURN OF WERDNA" };
+  static final String[] spell012Text = { "Generic", "Person", "Group" };
 
-  List<ScenarioData> scenarioData = new ArrayList<> ();
+  List<ScenarioData> scenarioData = new ArrayList<> (typeText.length);
   String scenarioName;
   int scenarioId;
+
+  String[] race = new String[6];                // NORACE .. HOBBIT
+  String[] characterClass = new String[8];      // FIGHTER .. NINJA
+  String[] status = new String[8];              // OK .. LOST
+  String[] align = new String[4];               // UNALIGN .. EVIL
+
+  int[] spellhsh = new int[51];
+  int[] spellgrp = new int[51];
+  int[] spell012 = new int[51];
+
+  String[] spellName = new String[51];
+
+  int[][] totalSpells = new int[2][8];
 
   List<WizardryFont> fonts = new ArrayList<> ();
 
@@ -34,11 +48,106 @@ public class Header
     for (int i = 0; i < typeText.length; i++)
       scenarioData.add (new ScenarioData (buffer, i));
 
+    int offset = 64 + 42;
+    for (int i = 0; i < race.length; i++)
+      race[i] = Utility.getPascalString (buffer, offset + i * 10);
+
+    offset += race.length * 10;
+    for (int i = 0; i < characterClass.length; i++)
+      characterClass[i] = Utility.getPascalString (buffer, offset + i * 10);
+
+    offset += characterClass.length * 10;
+    for (int i = 0; i < status.length; i++)
+      status[i] = Utility.getPascalString (buffer, offset + i * 10);
+
+    offset += status.length * 10;
+    for (int i = 0; i < align.length; i++)
+      align[i] = Utility.getPascalString (buffer, offset + i * 10);
+
+    offset += align.length * 10;
+    for (int i = 0; i < spellhsh.length; i++)
+      spellhsh[i] = Utility.getSignedShort (buffer, offset + i * 2);
+
+    offset += spellhsh.length * 2;
+
+    int row = 0;
+    int col = 1;
+    int lastVal = 1;
+
+    int count = 0;
+    loop: while (true)
+    {
+      int val = Utility.getShort (buffer, offset);
+      offset += 2;
+
+      for (int j = 0; j < 5; j++)
+      {
+        int level = val & 0x07;           // 3 bits
+        spellgrp[count] = level;
+
+        if (level > 0)
+        {
+          if (level > lastVal)
+          {
+            ++col;
+            lastVal = level;
+          }
+          else if (level < lastVal)
+          {
+            ++row;
+            col = 1;
+            lastVal = level;
+          }
+          totalSpells[row][0]++;
+          totalSpells[row][col]++;
+        }
+
+        if (++count >= spellgrp.length)
+          break loop;
+
+        val >>>= 3;
+      }
+    }
+
+    count = 0;
+    loop2: while (true)
+    {
+      int val = Utility.getShort (buffer, offset);
+      offset += 2;
+
+      for (int j = 0; j < 8; j++)
+      {
+        spell012[count] = val & 0x03;           // 2 bits
+        if (++count >= spell012.length)
+          break loop2;
+        val >>>= 2;
+      }
+    }
+
+    offset = 512;
+
     if (scenarioId < 3)
     {
       fonts.add (new WizardryFont ("Alphabet", buffer, 512, 512));
       fonts.add (new WizardryFont ("Graphics", buffer, 1024, 512));
       fonts.add (new WizardryFont ("Unknown", buffer, 1536, 512));    // probably not a font
+
+      offset = 2048;
+    }
+
+    count = 1;
+    for (row = 0; row < 2; row++)
+    {
+      int ptr = offset;
+
+      for (int i = 0; i < totalSpells[row][0]; i++)
+      {
+        String spell = Utility.getDelimitedString (buffer, ptr, (byte) 0x0D);
+        ptr += spell.length () + 1;
+        spellName[count++] = spell.charAt (0) == '*' ? spell.substring (1) : spell;
+      }
+
+      offset += 512;
     }
   }
 
@@ -66,6 +175,23 @@ public class Header
       text.append ("\n");
     }
 
+    String[] head = { "Mage spells   ", "Priest spells " };
+    text.append ("\n");
+    for (int row = 0; row < 2; row++)
+    {
+      text.append (head[row]);
+      for (int col = 1; col < totalSpells[row].length; col++)
+        text.append (String.format ("%d ", totalSpells[row][col]));
+      text.append ("\n");
+    }
+
+    text.append ("\n");
+    for (int i = 1; i < spellhsh.length; i++)
+      text.append (String.format ("%2d  %-12s  %,6d  %d  %d  %s%n", i, spellName[i], spellhsh[i],
+          spellgrp[i], spell012[i], spell012Text[spell012[i]]));
+
+    Utility.trim (text);
+
     return text.toString ();
   }
 
@@ -87,7 +213,7 @@ public class Header
          ALIGN    : PACKED ARRAY[ UNALIGN..EVIL]   OF STRING[ 9];
          SPELLHSH : PACKED ARRAY[ 0..50] OF INTEGER;
          SPELLGRP : PACKED ARRAY[ 0..50] OF 0..7;
-         SPELL012 : PACKED ARRAY[ 0..50] OF TSPEL012;
+         SPELL012 : PACKED ARRAY[ 0..50] OF TSPEL012;     (GENERIC, PERSON, GROUP)
        END;
       */
 }

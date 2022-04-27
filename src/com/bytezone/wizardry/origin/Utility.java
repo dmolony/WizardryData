@@ -132,4 +132,34 @@ public class Utility
         break;
     }
   }
+
+  // ---------------------------------------------------------------------------------//
+  public static void trim (StringBuilder text)
+  // ---------------------------------------------------------------------------------//
+  {
+    while (text.length () > 0)
+    {
+      if (text.charAt (text.length () - 1) == '\n')
+        text.deleteCharAt (text.length () - 1);
+      else
+        break;
+    }
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public static String getDelimitedString (byte[] buffer, int offset, byte delimiter)
+  // ---------------------------------------------------------------------------------//
+  {
+    StringBuilder text = new StringBuilder ();
+
+    while (true)
+    {
+      int val = buffer[offset++] & 0xFF;
+      if (val == delimiter)
+        break;
+      text.append ((char) val);
+    }
+
+    return text.toString ();
+  }
 }
