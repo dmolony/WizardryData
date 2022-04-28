@@ -175,6 +175,22 @@ public class Header
       text.append ("\n");
     }
 
+    text.append ("\nRace:\n");
+    for (String s : race)
+      text.append ("  " + s + "\n");
+
+    text.append ("\nClass:\n");
+    for (String s : characterClass)
+      text.append ("  " + s + "\n");
+
+    text.append ("\nStatus:\n");
+    for (String s : status)
+      text.append ("  " + s + "\n");
+
+    text.append ("\nAlignment:\n");
+    for (String s : align)
+      text.append ("  " + s + "\n");
+
     String[] head = { "Mage spells   ", "Priest spells " };
     text.append ("\n");
     for (int row = 0; row < 2; row++)
@@ -185,10 +201,16 @@ public class Header
       text.append ("\n");
     }
 
+    int lastLevel = 0;
     text.append ("\n");
     for (int i = 1; i < spellhsh.length; i++)
+    {
+      if (spellgrp[i] < lastLevel)
+        text.append ("\n");
       text.append (String.format ("%2d  %-12s  %,6d  %d  %d  %s%n", i, spellName[i], spellhsh[i],
           spellgrp[i], spell012[i], spell012Text[spell012[i]]));
+      lastLevel = spellgrp[i];
+    }
 
     Utility.trim (text);
 

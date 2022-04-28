@@ -119,31 +119,31 @@ public class Utility
   }
 
   // ---------------------------------------------------------------------------------//
-  public static void trimComma (StringBuilder text)
+  public static StringBuilder trimComma (StringBuilder text)
   // ---------------------------------------------------------------------------------//
   {
     while (text.length () > 0)
-    {
       if (text.charAt (text.length () - 1) == ' ')
         text.deleteCharAt (text.length () - 1);
       else if (text.charAt (text.length () - 1) == ',')
         text.deleteCharAt (text.length () - 1);
       else
         break;
-    }
+
+    return text;
   }
 
   // ---------------------------------------------------------------------------------//
-  public static void trim (StringBuilder text)
+  public static StringBuilder trim (StringBuilder text)
   // ---------------------------------------------------------------------------------//
   {
     while (text.length () > 0)
-    {
       if (text.charAt (text.length () - 1) == '\n')
         text.deleteCharAt (text.length () - 1);
       else
         break;
-    }
+
+    return text;
   }
 
   // ---------------------------------------------------------------------------------//
