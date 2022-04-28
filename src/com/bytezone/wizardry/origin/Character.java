@@ -78,6 +78,7 @@ public class Character
     race = WizardryData.Race.values ()[Utility.getShort (buffer, offset + 34)];
     characterClass = WizardryData.CharacterClass.values ()[Utility.getShort (buffer, offset + 36)];
     age = Utility.getShort (buffer, offset + 38);
+
     status = WizardryData.CharacterStatus.values ()[Utility.getShort (buffer, offset + 40)];
     alignment = WizardryData.Alignment.values ()[Utility.getShort (buffer, offset + 42)];
 

@@ -207,8 +207,8 @@ public class Header
     {
       if (spellgrp[i] < lastLevel)
         text.append ("\n");
-      text.append (String.format ("%2d  %-12s  %,6d  %d  %d  %s%n", i, spellName[i], spellhsh[i],
-          spellgrp[i], spell012[i], spell012Text[spell012[i]]));
+      text.append (String.format ("%2d  %-12s  %d  %s%n", i, spellName[i], spellgrp[i],
+          spell012Text[spell012[i]]));
       lastLevel = spellgrp[i];
     }
 
