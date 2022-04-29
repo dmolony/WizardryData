@@ -193,7 +193,8 @@ public class Special
 
       case PIT:
         Damage damage = new Damage (aux);
-        description.append (String.format ("Pit - %s", damage));
+        description.append (String.format ("Pit - %s (if agility < 1d25+%d)", damage,
+            locations.get (0).getLevel ()));
         break;
 
       case CHUTE:
@@ -214,6 +215,9 @@ public class Special
         break;
 
       case OUCHY:
+        damage = new Damage (aux);
+        description.append (String.format ("Ouch - %s (if agility < 1d25+%d)", damage,
+            locations.get (0).getLevel ()));
         break;
 
       case BUTTONZ:
