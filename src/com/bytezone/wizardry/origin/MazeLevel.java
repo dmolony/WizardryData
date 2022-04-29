@@ -272,7 +272,7 @@ public class MazeLevel
       for (int col = 0; col < 20; col++)
       {
         MazeCell mazeCell = mazeCells[col][row];
-        text.append (mazeCell.getLair () ? " * " : "   ");
+        text.append (mazeCell.isLair () ? " * " : "   ");
       }
 
       text.append ("|\n");

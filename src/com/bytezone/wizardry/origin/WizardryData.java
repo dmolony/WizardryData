@@ -210,10 +210,18 @@ public class WizardryData
   public Special getSpecial (Location location)
   // ---------------------------------------------------------------------------------//
   {
-    MazeLevel mazeLevel = mazeLevels.get (location.getLevel () - 1);
-    MazeCell mazeCell = mazeLevel.getMazeCell (location);
+    //    MazeLevel mazeLevel = mazeLevels.get (location.getLevel () - 1);
+    //    MazeCell mazeCell = mazeLevel.getMazeCell (location);
 
-    return mazeCell.getSpecial ();
+    return getCell (location).getSpecial ();
+  }
+
+  // ---------------------------------------------------------------------------------//
+  MazeCell getCell (Location location)
+  // ---------------------------------------------------------------------------------//
+  {
+    MazeLevel mazeLevel = mazeLevels.get (location.getLevel () - 1);
+    return mazeLevel.getMazeCell (location);
   }
 
   // ---------------------------------------------------------------------------------//

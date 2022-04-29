@@ -176,11 +176,11 @@ public class Special
                 .append (String.format ("Required : %s else teleport N%d E%d", item, north, east));
             break;
 
-          case 15:                              // SPCMONST( CRYSEVIL)
+          case 15:                              // SPCMONST (CRYSEVIL)
             description.append ("SPCMONST (CRYSEVIL) : " + wizardry.getMonster (aux[1]));
             break;
 
-          case 16:                              // SPCMONST( CRYSGOOD)
+          case 16:                              // SPCMONST (CRYSGOOD)
             description.append ("SPCMONST (CRYSGOOD) : " + wizardry.getMonster (aux[1]));
             break;
         }
@@ -236,8 +236,11 @@ public class Special
         Monster monster = wizardry.getMonster (aux[2]);
         String when = aux[0] == -1 ? "always" : aux[0] + " left";
         description.append (String.format ("%s (%s)", monster, when));
-        //          if (!lair)
-        //            description.append ("\n\nError - room is not a LAIR");
+
+        location = locations.get (0);
+        MazeCell mazeCell = wizardry.getCell (location);
+        if (!mazeCell.isLair ())
+          description.append (" - Error - room is not a LAIR");
         break;
 
       case NORMAL:
