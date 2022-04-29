@@ -6,6 +6,7 @@ import java.util.List;
 
 // -----------------------------------------------------------------------------------//
 public class WizardryData
+// -----------------------------------------------------------------------------------//
 {
   public static final String[] monsterClass = { "Fighter", "Mage", "Priest", "Thief", "Midget",
       "Giant", "Mythical", "Dragon", "Animal", "Were", "Undead", "Demon", "Insect", "Enchanted" };
@@ -40,8 +41,9 @@ public class WizardryData
   static final int IMAGE_AREA = 6;
   static final int EXPERIENCE_AREA = 7;
 
-  Messages messages;
-  Header header;
+  private Messages messages;
+  private Header header;
+  private String fileName;
 
   private List<Monster> monsters;
   private List<Item> items;
@@ -114,6 +116,7 @@ public class WizardryData
       return;
     }
 
+    this.fileName = diskFileName;
     byte[] buffer = disk.getScenarioData ();
     header = new Header (buffer);
 
@@ -204,6 +207,13 @@ public class WizardryData
     if (false)
       for (int i = 0; i < mazeLevels.size (); i++)
         mazeLevels.get (i).showOdds ();
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public String getFileName ()
+  // ---------------------------------------------------------------------------------//
+  {
+    return fileName;
   }
 
   // ---------------------------------------------------------------------------------//
