@@ -30,7 +30,7 @@ public class WizardryData
       "Badialma", "Litokan", "Kandi", "Di", "Badi", "Lorto", "Madi", "Mabadi", "Loktofeit",
       "Malikto", "Kadorto" };
 
-  public static final String[] race = { "No race", "Human", "Elf", "Dwarf", "Gnome", "Hobbit" };
+  //  public static final String[] race = { "No race", "Human", "Elf", "Dwarf", "Gnome", "Hobbit" };
 
   static final int HEADER_AREA = 0;
   static final int MAZE_AREA = 1;
@@ -120,7 +120,7 @@ public class WizardryData
     byte[] buffer = disk.getScenarioData ();
     header = new Header (buffer);
 
-    // add messages (must happen before maze levels are added)
+    // create message lines (must happen before maze levels are added)
     messages = new Messages (disk.getScenarioMessages (), getScenarioId ());
 
     // add maze levels
