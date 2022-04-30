@@ -10,6 +10,9 @@ public class Utility
   public static String removeUserName (String filePath)
   // ---------------------------------------------------------------------------------//
   {
+    if (filePath == null)
+      return "** null file path **";
+
     String userHome = System.getProperty ("user.home");
 
     if (filePath.startsWith (userHome))
