@@ -10,9 +10,10 @@ import java.util.TreeMap;
 public class Messages
 // -----------------------------------------------------------------------------------//
 {
-  private int codeOffset = 185;
   private List<MessageLine> messageLines = new ArrayList<> ();
   private Map<Integer, Message> messages = new TreeMap<> ();
+
+  private int codeOffset = 185;           // used for coded messages
 
   // ---------------------------------------------------------------------------------//
   public Messages (byte[] buffer, int scenarioId)
@@ -24,8 +25,9 @@ public class Messages
     {
       for (int i = 0; i < 504; i += 42)
       {
-        String line = scenarioId == 1 ? Utility.getPascalString (buffer, offset + i)
-            : getCodedLine (buffer, offset + i);
+        String line = scenarioId == 1 ?                       //
+            Utility.getPascalString (buffer, offset + i) :    //
+            getCodedLine (buffer, offset + i);
         messageLines.add (new MessageLine (line, buffer[offset + i + 40] == 1));
       }
       offset += 512;

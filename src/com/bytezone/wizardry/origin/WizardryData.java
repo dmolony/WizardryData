@@ -103,16 +103,16 @@ public class WizardryData
   // ---------------------------------------------------------------------------------//
   {
     File file = new File (diskFileName);
-    if (!file.exists ())
+    if (!file.exists () || !file.isFile ())
     {
-      System.out.println ("File does not exist");
+      System.out.println ("File does not exist: " + diskFileName);
       return;
     }
 
     WizardryDisk disk = new WizardryDisk (diskFileName);
     if (disk == null)
     {
-      System.out.println ("Not a Wizardry disk");
+      System.out.println ("Not a Wizardry disk: " + diskFileName);
       return;
     }
 
@@ -120,7 +120,7 @@ public class WizardryData
     byte[] buffer = disk.getScenarioData ();
     header = new Header (buffer);
 
-    // add messages (before maze levels)
+    // add messages (must happen before maze levels are added)
     messages = new Messages (disk.getScenarioMessages (), getScenarioId ());
 
     // add maze levels
@@ -153,8 +153,6 @@ public class WizardryData
       }
       catch (InvalidCharacterException e)
       {
-        //        System.out.println (e);
-        //        break;
         continue;
       }
 
@@ -220,9 +218,6 @@ public class WizardryData
   public Special getSpecial (Location location)
   // ---------------------------------------------------------------------------------//
   {
-    //    MazeLevel mazeLevel = mazeLevels.get (location.getLevel () - 1);
-    //    MazeCell mazeCell = mazeLevel.getMazeCell (location);
-
     return getCell (location).getSpecial ();
   }
 
@@ -357,10 +352,7 @@ public class WizardryData
     itemNo *= -1;
     itemNo -= 20000;
 
-    int item1 = itemNo / 100;
-    int item2 = itemNo % 100;
-
-    return new Trade (item1, item2);
+    return new Trade (itemNo / 100, itemNo % 100);
   }
 
   // ---------------------------------------------------------------------------------//
