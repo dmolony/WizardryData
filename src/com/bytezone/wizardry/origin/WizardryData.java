@@ -112,10 +112,7 @@ public class WizardryData
 
     WizardryDisk disk = new WizardryDisk (diskFileName);
     if (disk == null)
-    {
-      System.out.println ("Not a Wizardry disk: " + diskFileName);
-      return;
-    }
+      throw new DiskFormatException ("Not a Wizardry disk: " + diskFileName);
 
     this.fileName = diskFileName;
     byte[] buffer = disk.getScenarioData ();

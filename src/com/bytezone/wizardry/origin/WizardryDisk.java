@@ -22,10 +22,7 @@ public class WizardryDisk
   {
     File file = new File (fileName);
     if (!file.exists () || !file.isFile ())
-    {
-      System.out.println ("File does not exist: " + fileName);
       throw new FileNotFoundException ("File does not exist: " + fileName);
-    }
 
     try
     {
@@ -39,21 +36,19 @@ public class WizardryDisk
     }
     catch (IOException e)
     {
-      e.printStackTrace ();
-      return;
+      throw new DiskFormatException ("Error reading file: " + fileName, e);
     }
 
     if (fs == null)
-    {
-      System.out.println ("Not a Pascal disk");
       throw new DiskFormatException ("Not a Pascal disk");
-    }
 
     if (isWizardryIVorV ())
     {
-      System.out.println ("Wizardry IV or V disk");
       throw new DiskFormatException ("Wizardry IV or V not supported");
     }
+
+    if (findFile ("SCENARIO.DATA") == null || findFile ("SCENARIO.MESGS") == null)
+      throw new DiskFormatException ("Not a Wizardry scenario: " + fileName);
   }
 
   // ---------------------------------------------------------------------------------//
@@ -72,12 +67,23 @@ public class WizardryDisk
   }
 
   // ---------------------------------------------------------------------------------//
-  public byte[] getScenarioData ()
+  private AppleFile findFile (String fileName)
   // ---------------------------------------------------------------------------------//
   {
     for (AppleFile appleFile : fs.getFiles ())
-      if ("SCENARIO.DATA".equals (appleFile.getName ()))
-        return appleFile.read ();
+      if (fileName.equals (appleFile.getName ()))
+        return appleFile;
+
+    return null;
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public byte[] getScenarioData ()
+  // ---------------------------------------------------------------------------------//
+  {
+    AppleFile appleFile = findFile ("SCENARIO.DATA");
+    if (appleFile != null)
+      return appleFile.read ();
 
     return null;
   }
@@ -86,9 +92,9 @@ public class WizardryDisk
   public byte[] getScenarioMessages ()
   // ---------------------------------------------------------------------------------//
   {
-    for (AppleFile appleFile : fs.getFiles ())
-      if ("SCENARIO.MESGS".equals (appleFile.getName ()))
-        return appleFile.read ();
+    AppleFile appleFile = findFile ("SCENARIO.MESGS");
+    if (appleFile != null)
+      return appleFile.read ();
 
     return null;
   }

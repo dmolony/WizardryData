@@ -10,4 +10,11 @@ public class DiskFormatException extends Exception
   {
     super (reason);
   }
+
+  // ---------------------------------------------------------------------------------//
+  public DiskFormatException (String reason, Throwable error)
+  // ---------------------------------------------------------------------------------//
+  {
+    super (reason, error);
+  }
 }
