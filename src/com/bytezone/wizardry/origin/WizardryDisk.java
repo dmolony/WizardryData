@@ -1,6 +1,7 @@
 package com.bytezone.wizardry.origin;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -16,14 +17,14 @@ public class WizardryDisk
   FsPascal fs;
 
   // ---------------------------------------------------------------------------------//
-  public WizardryDisk (String fileName)
+  public WizardryDisk (String fileName) throws DiskFormatException, FileNotFoundException
   // ---------------------------------------------------------------------------------//
   {
     File file = new File (fileName);
     if (!file.exists () || !file.isFile ())
     {
       System.out.println ("File does not exist: " + fileName);
-      return;
+      throw new FileNotFoundException ("File does not exist: " + fileName);
     }
 
     try
@@ -45,8 +46,29 @@ public class WizardryDisk
     if (fs == null)
     {
       System.out.println ("Not a Pascal disk");
-      return;
+      throw new DiskFormatException ("Not a Pascal disk");
     }
+
+    if (isWizardryIVorV ())
+    {
+      System.out.println ("Wizardry IV or V disk");
+      throw new DiskFormatException ("Wizardry IV or V not supported");
+    }
+  }
+
+  // ---------------------------------------------------------------------------------//
+  private boolean isWizardryIVorV ()
+  // ---------------------------------------------------------------------------------//
+  {
+    // Wizardry IV or V boot code
+    byte[] header = { 0x00, (byte) 0xEA, (byte) 0xA9, 0x60, (byte) 0x8D, 0x01, 0x08 };
+    byte[] buffer = fs.readBlock (fs.getBlock (0));
+
+    if (!Utility.matches (buffer, 0, header))
+      return false;
+
+    buffer = fs.readBlock (fs.getBlock (1));
+    return buffer[510] == 1 && buffer[511] == 0;          // disk #1
   }
 
   // ---------------------------------------------------------------------------------//

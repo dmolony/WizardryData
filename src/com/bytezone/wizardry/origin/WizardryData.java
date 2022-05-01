@@ -1,6 +1,7 @@
 package com.bytezone.wizardry.origin;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,7 +100,7 @@ public class WizardryData
   }
 
   // ---------------------------------------------------------------------------------//
-  public WizardryData (String diskFileName)
+  public WizardryData (String diskFileName) throws DiskFormatException, FileNotFoundException
   // ---------------------------------------------------------------------------------//
   {
     File file = new File (diskFileName);

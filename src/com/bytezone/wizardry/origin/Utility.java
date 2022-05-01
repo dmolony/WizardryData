@@ -165,4 +165,16 @@ public class Utility
 
     return text.toString ();
   }
+
+  // ---------------------------------------------------------------------------------//
+  public static boolean matches (byte[] buffer, int offset, byte[] key)
+  // ---------------------------------------------------------------------------------//
+  {
+    int ptr = 0;
+    while (offset < buffer.length && ptr < key.length)
+      if (buffer[offset++] != key[ptr++])
+        return false;
+
+    return true;
+  }
 }
