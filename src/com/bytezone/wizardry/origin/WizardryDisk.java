@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import com.bytezone.filesystem.AppleFile;
 import com.bytezone.filesystem.AppleFileSystem;
 import com.bytezone.filesystem.FileSystemFactory;
+import com.bytezone.filesystem.FsData;
 import com.bytezone.filesystem.FsPascal;
 
 // -----------------------------------------------------------------------------------//
@@ -42,13 +43,82 @@ public class WizardryDisk
     if (fs == null)
       throw new DiskFormatException ("Not a Pascal disk");
 
+    if (findFile ("SCENARIO.DATA") == null)// || findFile ("SCENARIO.MESGS") == null)
+      throw new DiskFormatException ("Not a Wizardry scenario: " + fileName);
+
     if (isWizardryIVorV ())
     {
-      throw new DiskFormatException ("Wizardry IV or V not supported");
+      createNewDisk (file, fs);
+      //      throw new DiskFormatException ("Wizardry IV or V not supported");
+    }
+  }
+
+  // ---------------------------------------------------------------------------------//
+  private void createNewDisk (File file, FsPascal fs) throws DiskFormatException
+  // ---------------------------------------------------------------------------------//
+  {
+    String fileName = file.getAbsolutePath ().toLowerCase ();
+    int pos = file.getAbsolutePath ().indexOf ('.');
+    char c = fileName.charAt (pos - 1);
+    int requiredDisks = c == '1' ? 6 : c == 'a' ? 10 : 0;
+
+    if (requiredDisks == 0)
+      return;
+
+    AppleFileSystem[] disks = new AppleFileSystem[requiredDisks];
+
+    byte[] buffer = new byte[fs.getVolumeTotalBlocks () * fs.getBlockSize ()];
+    System.arraycopy (fs.getBuffer (), fs.getOffset (), buffer, 0, fs.getBuffer ().length);
+    disks[0] = new FsPascal ("Wiz4", buffer, fs.getBlockReader ());
+    disks[1] = fs;           // will be used as a DataDisk
+    this.fs = (FsPascal) disks[0];
+
+    if (!collectDataDisks (file.getAbsolutePath (), pos, disks))
+      throw new DiskFormatException ("Couldn't collect extra disks required");
+
+    relocate (disks);
+  }
+
+  // ---------------------------------------------------------------------------------//
+  private void relocate (AppleFileSystem[] disks) throws DiskFormatException
+  // ---------------------------------------------------------------------------------//
+  {
+    AppleFile appleFile = findFile ("SYSTEM.RELOC");
+    if (appleFile == null)
+      throw new DiskFormatException ("SYSTEM.RELOC not found");
+
+    Relocator relocator = new Relocator (appleFile.read ());
+    relocator.createNewBuffer (disks);
+  }
+
+  // ---------------------------------------------------------------------------------//
+  private boolean collectDataDisks (String fileName, int dotPos, AppleFileSystem[] disks)
+  // ---------------------------------------------------------------------------------//
+  {
+    char c = fileName.charAt (dotPos - 1);
+    String suffix = fileName.substring (dotPos + 1);
+
+    for (int i = 2; i < disks.length; i++)
+    {
+      String old = new String (c + "." + suffix);
+      String rep = new String ((char) (c + i - 1) + "." + suffix);
+
+      File f = new File (fileName.replace (old, rep));
+      if (!f.exists () || !f.isFile ())
+        return false;
+
+      try
+      {
+        byte[] diskBuffer = Files.readAllBytes (f.toPath ());
+        disks[i] = new FsData ("WizData" + i, diskBuffer, disks[0].getBlockReader ());
+      }
+      catch (IOException e)
+      {
+        e.printStackTrace ();
+      }
     }
 
-    if (findFile ("SCENARIO.DATA") == null || findFile ("SCENARIO.MESGS") == null)
-      throw new DiskFormatException ("Not a Wizardry scenario: " + fileName);
+    return true;
   }
 
   // ---------------------------------------------------------------------------------//
@@ -63,7 +133,8 @@ public class WizardryDisk
       return false;
 
     buffer = fs.readBlock (fs.getBlock (1));
-    return buffer[510] == 1 && buffer[511] == 0;          // disk #1
+
+    return Utility.getShort (buffer, 510) == 1;
   }
 
   // ---------------------------------------------------------------------------------//
@@ -95,6 +166,25 @@ public class WizardryDisk
     AppleFile appleFile = findFile ("SCENARIO.MESGS");
     if (appleFile != null)
       return appleFile.read ();
+
+    return null;
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public byte[] getScenarioMessages4 () throws DiskFormatException
+  // ---------------------------------------------------------------------------------//
+  {
+    AppleFile appleFile1 = findFile ("ASCII.HUFF");
+    if (appleFile1 == null)
+      throw new DiskFormatException ("ASCII.HUFF not found");
+
+    Huffman huffman = new Huffman (appleFile1.read ());
+
+    AppleFile appleFile2 = findFile ("ASCII.KRN");
+    if (appleFile2 == null)
+      throw new DiskFormatException ("ASCII.KRN not found");
+
+    MessageBlock messageBlock = new MessageBlock (appleFile2.read (), huffman);
 
     return null;
   }

@@ -119,90 +119,104 @@ public class WizardryData
     header = new Header (buffer);
 
     // create message lines (must happen before maze levels are added)
-    messages = new Messages (disk.getScenarioMessages (), getScenarioId ());
-
-    // add maze levels
-    ScenarioData sd = header.get (MAZE_AREA);
-    mazeLevels = new ArrayList<> (sd.totalUnits);
-
-    int id = 0;
-    for (DataBlock dataBlock : sd.dataBlocks)
+    if (getScenarioId () <= 3)
     {
-      MazeLevel mazeLevel = new MazeLevel (this, ++id, dataBlock);
-      mazeLevels.add (mazeLevel);
+      byte[] messageBuffer = disk.getScenarioMessages ();
+      messages = new MessagesV1 (messageBuffer, getScenarioId ());
 
-      for (Special special : mazeLevel.getSpecials ())
-        if (special.square == Square.SCNMSG && special.aux[2] <= 13)
+      // add maze levels
+      ScenarioData sd = header.get (MAZE_AREA);
+      mazeLevels = new ArrayList<> (sd.totalUnits);
+
+      int id = 0;
+      for (DataBlock dataBlock : sd.dataBlocks)
+      {
+        MazeLevel mazeLevel = new MazeLevel (this, ++id, dataBlock);
+        mazeLevels.add (mazeLevel);
+
+        for (Special special : mazeLevel.getSpecials ())
+          if (special.square == Square.SCNMSG && special.aux[2] <= 13)
+          {
+            Message message = getMessage (special.aux[1]);          // force message creation
+            message.addLocations (special.locations);
+          }
+      }
+
+      // add characters
+      sd = header.get (CHARACTER_AREA);
+      characters = new ArrayList<> (sd.totalUnits);
+
+      id = 0;
+      for (DataBlock dataBlock : sd.dataBlocks)
+        try
         {
-          Message message = getMessage (special.aux[1]);          // force message creation
-          message.addLocations (special.locations);
+          characters.add (new Character (id++, dataBlock, getScenarioId ()));
         }
+        catch (InvalidCharacterException e)
+        {
+          continue;
+        }
+
+      // add monsters
+      sd = header.get (MONSTER_AREA);
+      monsters = new ArrayList<> (sd.totalUnits);
+
+      id = 0;
+      for (DataBlock dataBlock : sd.dataBlocks)
+        monsters.add (new Monster (id++, dataBlock));
+
+      // add items
+      sd = header.get (ITEM_AREA);
+      items = new ArrayList<> (sd.totalUnits);
+
+      id = 0;
+      for (DataBlock dataBlock : sd.dataBlocks)
+        items.add (new Item (id++, dataBlock));
+
+      // add rewards
+      sd = header.get (TREASURE_TABLE_AREA);
+      rewards = new ArrayList<> (sd.totalUnits);
+
+      id = 0;
+      for (DataBlock dataBlock : sd.dataBlocks)
+        rewards.add (new Reward (id++, dataBlock));
+
+      // add images
+      sd = header.get (IMAGE_AREA);
+      images = new ArrayList<> (sd.totalUnits);
+
+      id = 0;
+      for (DataBlock dataBlock : sd.dataBlocks)
+        images.add (new WizardryImage (id++, dataBlock, getScenarioId ()));
+
+      if (false)
+      {
+        int[] imageTotals = new int[images.size ()];
+        for (Monster monster : monsters)
+          imageTotals[monster.image]++;
+
+        for (int i = 0; i < imageTotals.length; i++)
+          System.out.printf ("%2d  %2d%n", i, imageTotals[i]);
+      }
+
+      if (false)
+        for (int i = 0; i < 10; i++)
+          histogram (i);
+
+      if (false)
+        for (int i = 0; i < mazeLevels.size (); i++)
+          mazeLevels.get (i).showOdds ();
     }
-
-    // add characters
-    sd = header.get (CHARACTER_AREA);
-    characters = new ArrayList<> (sd.totalUnits);
-
-    id = 0;
-    for (DataBlock dataBlock : sd.dataBlocks)
-      try
-      {
-        characters.add (new Character (id++, dataBlock, getScenarioId ()));
-      }
-      catch (InvalidCharacterException e)
-      {
-        continue;
-      }
-
-    // add monsters
-    sd = header.get (MONSTER_AREA);
-    monsters = new ArrayList<> (sd.totalUnits);
-
-    id = 0;
-    for (DataBlock dataBlock : sd.dataBlocks)
-      monsters.add (new Monster (id++, dataBlock));
-
-    // add items
-    sd = header.get (ITEM_AREA);
-    items = new ArrayList<> (sd.totalUnits);
-
-    id = 0;
-    for (DataBlock dataBlock : sd.dataBlocks)
-      items.add (new Item (id++, dataBlock));
-
-    // add rewards
-    sd = header.get (TREASURE_TABLE_AREA);
-    rewards = new ArrayList<> (sd.totalUnits);
-
-    id = 0;
-    for (DataBlock dataBlock : sd.dataBlocks)
-      rewards.add (new Reward (id++, dataBlock));
-
-    // add images
-    sd = header.get (IMAGE_AREA);
-    images = new ArrayList<> (sd.totalUnits);
-
-    id = 0;
-    for (DataBlock dataBlock : sd.dataBlocks)
-      images.add (new WizardryImage (id++, dataBlock, getScenarioId ()));
-
-    if (false)
+    else
     {
-      int[] imageTotals = new int[images.size ()];
-      for (Monster monster : monsters)
-        imageTotals[monster.image]++;
-
-      for (int i = 0; i < imageTotals.length; i++)
-        System.out.printf ("%2d  %2d%n", i, imageTotals[i]);
+      messages = new MessagesV2 ();
+      mazeLevels = new ArrayList<> ();
+      characters = new ArrayList<> ();
+      monsters = new ArrayList<> ();
+      items = new ArrayList<> ();
+      rewards = new ArrayList<> ();
+      images = new ArrayList<> ();
     }
-
-    if (false)
-      for (int i = 0; i < 10; i++)
-        histogram (i);
-
-    if (false)
-      for (int i = 0; i < mazeLevels.size (); i++)
-        mazeLevels.get (i).showOdds ();
   }
 
   // ---------------------------------------------------------------------------------//

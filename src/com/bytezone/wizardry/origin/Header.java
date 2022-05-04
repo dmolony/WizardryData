@@ -135,19 +135,22 @@ public class Header
       offset = 2048;
     }
 
-    count = 1;
-    for (row = 0; row < 2; row++)
+    if (scenarioId <= 3)
     {
-      int ptr = offset;
-
-      for (int i = 0; i < totalSpells[row][0]; i++)
+      count = 1;
+      for (row = 0; row < 2; row++)
       {
-        String spell = Utility.getDelimitedString (buffer, ptr, (byte) 0x0D);
-        ptr += spell.length () + 1;
-        spellName[count++] = spell.charAt (0) == '*' ? spell.substring (1) : spell;
-      }
+        int ptr = offset;
 
-      offset += 512;
+        for (int i = 0; i < totalSpells[row][0]; i++)
+        {
+          String spell = Utility.getDelimitedString (buffer, ptr, (byte) 0x0D);
+          ptr += spell.length () + 1;
+          spellName[count++] = spell.charAt (0) == '*' ? spell.substring (1) : spell;
+        }
+
+        offset += 512;
+      }
     }
   }
 
