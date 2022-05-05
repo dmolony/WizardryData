@@ -54,20 +54,6 @@ public class Message
   }
 
   // ---------------------------------------------------------------------------------//
-  //  public boolean match (int messageNum)
-  //  // ---------------------------------------------------------------------------------//
-  //  {
-  //    if (messageId == messageNum)
-  //      return true;
-  //
-  //    // this code is to allow for a bug in scenario #1
-  //    if (messageNum > messageId && messageNum < (messageId + messageLines.size ()))
-  //      return true;
-  //
-  //    return false;
-  //  }
-
-  // ---------------------------------------------------------------------------------//
   public String getText ()
   // ---------------------------------------------------------------------------------//
   {

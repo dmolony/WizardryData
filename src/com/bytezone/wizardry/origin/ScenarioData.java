@@ -34,6 +34,9 @@ class ScenarioData
     firstBlock = buffer[offset + 48] & 0xFF;
     type = seq;
 
+    if (totalBlocks == 0)
+      totalBlocks = totalUnits * 2;
+
     offset = firstBlock * 512;
     int total = 0;
     int unitSize = recordLengths[type];

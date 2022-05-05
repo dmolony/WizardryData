@@ -18,8 +18,6 @@ class MessageBlock implements Iterable<MessageDataBlock>
   MessageBlock (byte[] buffer, Huffman huffman)
   // ---------------------------------------------------------------------------------//
   {
-    //    super ("bollocks", buffer);
-
     indexOffset = Utility.getShort (buffer, 0);
     indexLength = Utility.getShort (buffer, 2);
 
@@ -46,6 +44,7 @@ class MessageBlock implements Iterable<MessageDataBlock>
       if (messageDataBlock.lastMessageNo >= messageNo)
         return messageDataBlock.getText (messageNo);
     }
+
     return null;
   }
 
@@ -74,6 +73,7 @@ class MessageBlock implements Iterable<MessageDataBlock>
           break;
       }
     }
+
     return lines;
   }
 
@@ -87,6 +87,7 @@ class MessageBlock implements Iterable<MessageDataBlock>
       if (messageDataBlock.firstMessageNo > messageNo)
         return messageDataBlocks.get (i - 1).getMessage (messageNo);
     }
+
     return null;
   }
 

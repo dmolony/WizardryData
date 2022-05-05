@@ -149,43 +149,20 @@ public class WizardryDisk
   }
 
   // ---------------------------------------------------------------------------------//
-  public byte[] getScenarioData ()
+  public byte[] getFileData (String fileName) throws DiskFormatException
   // ---------------------------------------------------------------------------------//
   {
-    AppleFile appleFile = findFile ("SCENARIO.DATA");
-    if (appleFile != null)
-      return appleFile.read ();
+    AppleFile appleFile = findFile (fileName);
+    if (appleFile == null)
+      throw new DiskFormatException (fileName + " not found");
 
-    return null;
+    return appleFile.read ();
   }
 
   // ---------------------------------------------------------------------------------//
-  public byte[] getScenarioMessages ()
+  public MessageBlock getScenarioMessages4 () throws DiskFormatException
   // ---------------------------------------------------------------------------------//
   {
-    AppleFile appleFile = findFile ("SCENARIO.MESGS");
-    if (appleFile != null)
-      return appleFile.read ();
-
-    return null;
-  }
-
-  // ---------------------------------------------------------------------------------//
-  public byte[] getScenarioMessages4 () throws DiskFormatException
-  // ---------------------------------------------------------------------------------//
-  {
-    AppleFile appleFile1 = findFile ("ASCII.HUFF");
-    if (appleFile1 == null)
-      throw new DiskFormatException ("ASCII.HUFF not found");
-
-    Huffman huffman = new Huffman (appleFile1.read ());
-
-    AppleFile appleFile2 = findFile ("ASCII.KRN");
-    if (appleFile2 == null)
-      throw new DiskFormatException ("ASCII.KRN not found");
-
-    MessageBlock messageBlock = new MessageBlock (appleFile2.read (), huffman);
-
-    return null;
+    return new MessageBlock (getFileData ("ASCII.KRN"), new Huffman (getFileData ("ASCII.HUFF")));
   }
 }

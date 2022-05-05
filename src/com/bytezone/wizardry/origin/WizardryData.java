@@ -115,13 +115,13 @@ public class WizardryData
       throw new DiskFormatException ("Not a Wizardry disk: " + diskFileName);
 
     this.fileName = diskFileName;
-    byte[] buffer = disk.getScenarioData ();
+    byte[] buffer = disk.getFileData ("SCENARIO.DATA");
     header = new Header (buffer);
 
-    // create message lines (must happen before maze levels are added)
     if (getScenarioId () <= 3)
     {
-      byte[] messageBuffer = disk.getScenarioMessages ();
+      // create message lines (must happen before maze levels are added)
+      byte[] messageBuffer = disk.getFileData ("SCENARIO.MESGS");
       messages = new MessagesV1 (messageBuffer, getScenarioId ());
 
       // add maze levels
@@ -209,8 +209,32 @@ public class WizardryData
     }
     else
     {
-      messages = new MessagesV2 ();
-      mazeLevels = new ArrayList<> ();
+      // create message lines (must happen before maze levels are added)
+      MessageBlock messageBlock = disk.getScenarioMessages4 ();
+      messages = new MessagesV2 (messageBlock);
+
+      // add maze levels
+      ScenarioData sd = header.get (MAZE_AREA);
+      mazeLevels = new ArrayList<> (sd.totalUnits);
+
+      //      sd.displayDataBlocks ();
+
+      int id = 0;
+      for (DataBlock dataBlock : sd.dataBlocks)
+      {
+        //        System.out.println (dataBlock);
+        MazeLevel mazeLevel = new MazeLevel (this, ++id, dataBlock);
+        mazeLevels.add (mazeLevel);
+
+        //        for (Special special : mazeLevel.getSpecials ())
+        //          if (special.square == Square.SCNMSG && special.aux[2] <= 13)
+        //          {
+        //            Message message = getMessage (special.aux[1]);          // force message creation
+        //            message.addLocations (special.locations);
+        //          }
+      }
+
+      //      mazeLevels = new ArrayList<> ();
       characters = new ArrayList<> ();
       monsters = new ArrayList<> ();
       items = new ArrayList<> ();
@@ -326,6 +350,12 @@ public class WizardryData
   public Monster getMonster (int id)
   // ---------------------------------------------------------------------------------//
   {
+    if (id < 0 || id >= monsters.size ())
+    {
+      System.out.println ("Monster out of range: " + id);
+      return null;
+    }
+
     return monsters.get (id);
   }
 
@@ -403,6 +433,11 @@ public class WizardryData
   public String getMessageText (int id)
   // ---------------------------------------------------------------------------------//
   {
+    if (messages.getMessage (id) == null)
+    {
+      System.out.println ("Message out of range: " + id);
+      return null;
+    }
     return messages.getMessage (id).getText ();
   }
 
