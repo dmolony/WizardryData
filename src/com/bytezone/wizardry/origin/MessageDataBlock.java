@@ -73,19 +73,19 @@ class MessageDataBlock
   }
 
   // ---------------------------------------------------------------------------------//
-  byte[] getMessage (int messageNo)
-  // ---------------------------------------------------------------------------------//
-  {
-    for (Message message : messages)
-      if (message.msgNo == messageNo)
-      {
-        byte[] returnMessage = new byte[message.length];
-        System.arraycopy (buffer, message.offset, returnMessage, 0, message.length);
-        return returnMessage;
-      }
-
-    return null;
-  }
+  //  byte[] getMessage (int messageNo)
+  //  // ---------------------------------------------------------------------------------//
+  //  {
+  //    for (Message message : messages)
+  //      if (message.msgNo == messageNo)
+  //      {
+  //        byte[] returnMessage = new byte[message.length];
+  //        System.arraycopy (buffer, message.offset, returnMessage, 0, message.length);
+  //        return returnMessage;
+  //      }
+  //
+  //    return null;
+  //  }
 
   // ---------------------------------------------------------------------------------//
   String getText (int messageNo)
@@ -93,11 +93,7 @@ class MessageDataBlock
   {
     for (Message message : messages)
       if (message.msgNo == messageNo)
-      {
-        byte[] returnMessage = new byte[message.length];
-        System.arraycopy (buffer, message.offset, returnMessage, 0, message.length);
-        return huffman.decodeMessage (returnMessage);
-      }
+        return message.text;
 
     return null;
   }
@@ -119,11 +115,9 @@ class MessageDataBlock
     {
       if (message.msgNo != lastMessageNo + 1)
         text.append ("\n");
+
       lastMessageNo = message.msgNo;
-      byte[] returnMessage = new byte[message.length];
-      System.arraycopy (buffer, message.offset, returnMessage, 0, message.length);
-      text.append (
-          String.format ("%5d  %s%n", message.msgNo, huffman.decodeMessage (returnMessage)));
+      text.append (String.format ("%5d  %s%n", message.msgNo, message.text));
     }
 
     if (text.length () > 0)
@@ -158,12 +152,18 @@ class MessageDataBlock
     final int msgNo;
     final int offset;
     final int length;
+    final String text;
 
     public Message (int msgNo, int offset, int length)
     {
       this.msgNo = msgNo;
       this.offset = offset;
       this.length = length;
+
+      byte[] returnMessage = new byte[length];
+      System.arraycopy (buffer, offset, returnMessage, 0, length);
+
+      text = huffman.decodeMessage (returnMessage);
     }
 
     @Override

@@ -26,7 +26,7 @@ public class Header
   int[] spellgrp = new int[51];
   int[] spell012 = new int[51];
 
-  String[] spellName = new String[51];
+  String[] spellNames = new String[51];
 
   int[][] totalSpells = new int[2][8];
 
@@ -146,12 +146,19 @@ public class Header
         {
           String spell = Utility.getDelimitedString (buffer, ptr, (byte) 0x0D);
           ptr += spell.length () + 1;
-          spellName[count++] = spell.charAt (0) == '*' ? spell.substring (1) : spell;
+          spellNames[count++] = spell.charAt (0) == '*' ? spell.substring (1) : spell;
         }
 
         offset += 512;
       }
     }
+  }
+
+  // ---------------------------------------------------------------------------------//
+  void addSpellNames (String[] spellNames)
+  // ---------------------------------------------------------------------------------//
+  {
+    this.spellNames = spellNames;
   }
 
   // ---------------------------------------------------------------------------------//
@@ -210,7 +217,7 @@ public class Header
     {
       if (spellgrp[i] < lastLevel)
         text.append ("\n");
-      text.append (String.format ("%2d  %-12s  %d  %s%n", i, spellName[i], spellgrp[i],
+      text.append (String.format ("%2d  %-12s  %d  %s%n", i, spellNames[i], spellgrp[i],
           spell012Text[spell012[i]]));
       lastLevel = spellgrp[i];
     }

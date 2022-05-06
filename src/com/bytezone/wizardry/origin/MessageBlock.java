@@ -49,6 +49,23 @@ class MessageBlock implements Iterable<MessageDataBlock>
   }
 
   // ---------------------------------------------------------------------------------//
+  public String getMessageLine (int messageNo)
+  // ---------------------------------------------------------------------------------//
+  {
+    for (MessageDataBlock messageDataBlock : messageDataBlocks)
+    {
+      if (messageNo > messageDataBlock.lastMessageNo)
+        continue;
+      if (messageNo < messageDataBlock.firstMessageNo)
+        break;
+
+      return messageDataBlock.getText (messageNo);
+    }
+
+    return "No message";
+  }
+
+  // ---------------------------------------------------------------------------------//
   public List<String> getMessageLines (int messageNo)
   // ---------------------------------------------------------------------------------//
   {
@@ -63,14 +80,10 @@ class MessageBlock implements Iterable<MessageDataBlock>
 
       while (true)
       {
-        String message = messageDataBlock.getText (messageNo);
-        if (message != null)
-        {
-          lines.add (message);
-          ++messageNo;
-        }
-        else
+        String message = messageDataBlock.getText (messageNo++);
+        if (message == null)
           break;
+        lines.add (message);
       }
     }
 
@@ -78,18 +91,18 @@ class MessageBlock implements Iterable<MessageDataBlock>
   }
 
   // ---------------------------------------------------------------------------------//
-  public byte[] getMessage (int messageNo)
-  // ---------------------------------------------------------------------------------//
-  {
-    for (int i = 0; i < messageDataBlocks.size (); i++)
-    {
-      MessageDataBlock messageDataBlock = messageDataBlocks.get (i);
-      if (messageDataBlock.firstMessageNo > messageNo)
-        return messageDataBlocks.get (i - 1).getMessage (messageNo);
-    }
-
-    return null;
-  }
+  //  public byte[] getMessage (int messageNo)
+  //  // ---------------------------------------------------------------------------------//
+  //  {
+  //    for (int i = 0; i < messageDataBlocks.size (); i++)
+  //    {
+  //      MessageDataBlock messageDataBlock = messageDataBlocks.get (i);
+  //      if (messageDataBlock.firstMessageNo > messageNo)
+  //        return messageDataBlocks.get (i - 1).getMessage (messageNo);
+  //    }
+  //
+  //    return null;
+  //  }
 
   // ---------------------------------------------------------------------------------//
   public String getText ()

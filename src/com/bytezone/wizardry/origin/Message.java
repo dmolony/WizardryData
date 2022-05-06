@@ -8,7 +8,7 @@ public class Message
 // ---------------------------------------------------------------------------------//
 {
   private List<Location> locations = new ArrayList<> ();
-  private List<MessageLine> messageLines = new ArrayList<> ();
+  private List<String> messageLines = new ArrayList<> ();
   private int messageId;
 
   // ---------------------------------------------------------------------------------//
@@ -20,6 +20,13 @@ public class Message
 
   // ---------------------------------------------------------------------------------//
   void addLine (MessageLine messageLine)
+  // ---------------------------------------------------------------------------------//
+  {
+    messageLines.add (messageLine.text);
+  }
+
+  // ---------------------------------------------------------------------------------//
+  void addLine (String messageLine)
   // ---------------------------------------------------------------------------------//
   {
     messageLines.add (messageLine);
@@ -59,7 +66,7 @@ public class Message
   {
     StringBuilder text = new StringBuilder ();
 
-    for (MessageLine line : messageLines)
+    for (String line : messageLines)
     {
       text.append (line);
       text.append ("\n");

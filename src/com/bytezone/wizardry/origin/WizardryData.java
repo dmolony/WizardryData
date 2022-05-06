@@ -136,10 +136,7 @@ public class WizardryData
 
         for (Special special : mazeLevel.getSpecials ())
           if (special.square == Square.SCNMSG && special.aux[2] <= 13)
-          {
-            Message message = getMessage (special.aux[1]);          // force message creation
-            message.addLocations (special.locations);
-          }
+            getMessage (special.aux[1]).addLocations (special.locations); // force message creation
       }
 
       // add characters
@@ -210,36 +207,44 @@ public class WizardryData
     else
     {
       // create message lines (must happen before maze levels are added)
-      MessageBlock messageBlock = disk.getScenarioMessages4 ();
-      messages = new MessagesV2 (messageBlock);
+      messages = new MessagesV2 (disk.messageBlock);
+
+      // add spell names
+      header.addSpellNames (((MessagesV2) messages).spellNames);
 
       // add maze levels
       ScenarioData sd = header.get (MAZE_AREA);
       mazeLevels = new ArrayList<> (sd.totalUnits);
 
-      //      sd.displayDataBlocks ();
-
       int id = 0;
       for (DataBlock dataBlock : sd.dataBlocks)
       {
-        //        System.out.println (dataBlock);
         MazeLevel mazeLevel = new MazeLevel (this, ++id, dataBlock);
         mazeLevels.add (mazeLevel);
 
-        //        for (Special special : mazeLevel.getSpecials ())
-        //          if (special.square == Square.SCNMSG && special.aux[2] <= 13)
-        //          {
-        //            Message message = getMessage (special.aux[1]);          // force message creation
-        //            message.addLocations (special.locations);
-        //          }
+        for (Special special : mazeLevel.getSpecials ())
+          if (special.square == Square.SCNMSG && special.aux[2] <= 13)
+            getMessage (special.aux[1]).addLocations (special.locations);
       }
 
-      //      mazeLevels = new ArrayList<> ();
+      // add monsters
+      sd = header.get (MONSTER_AREA);
+      monsters = new ArrayList<> (sd.totalUnits);
+
+      id = 0;
+      //      for (DataBlock dataBlock : sd.dataBlocks)
+      //        System.out.println (dataBlock);
+      //        monsters.add (new Monster (id++, dataBlock));
+
       characters = new ArrayList<> ();
-      monsters = new ArrayList<> ();
+      //      monsters = new ArrayList<> ();
       items = new ArrayList<> ();
       rewards = new ArrayList<> ();
+
+      buffer = disk.getFileData ("200.MONSTERS");
       images = new ArrayList<> ();
+
+      buffer = disk.getFileData ("WERDNA.DATA");
     }
   }
 

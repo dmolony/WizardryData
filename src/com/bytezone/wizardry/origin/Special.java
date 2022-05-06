@@ -30,6 +30,7 @@ public class Special
     int val = index % 2 == 0 ? b & 0x0F : (b & 0xF0) >>> 4;
 
     square = WizardryData.Square.values ()[val];
+
     aux[0] = Utility.getSignedShort (buffer, offset + 8 + index * 2);
     aux[1] = Utility.getSignedShort (buffer, offset + 40 + index * 2);
     aux[2] = Utility.getSignedShort (buffer, offset + 72 + index * 2);
@@ -67,7 +68,7 @@ public class Special
   public boolean isMessage ()
   // ---------------------------------------------------------------------------------//
   {
-    return square == Square.SCNMSG && aux[2] <= 13;
+    return square == Square.SCNMSG && aux[2] >= 0 && aux[2] <= 13;
   }
 
   // ---------------------------------------------------------------------------------//
@@ -182,6 +183,11 @@ public class Special
 
           case 16:                              // SPCMONST (CRYSGOOD)
             description.append ("SPCMONST (CRYSGOOD) : " + wizardry.getMonster (aux[1]));
+            break;
+
+          case 200:
+          case 201:
+            description.append ("Summoning circle");
             break;
         }
         break;

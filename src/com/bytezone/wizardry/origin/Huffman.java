@@ -9,8 +9,8 @@ package com.bytezone.wizardry.origin;
 class Huffman
 // -----------------------------------------------------------------------------------//
 {
-  private static final byte[] mask = { 2, 1 };          // bits: 10 or 01
-  private static final int[] offset = { 512, 256 };     // offset to left/right nodes
+  private static final byte[] mask = { 2, 1 };              // bits: 10 or 01
+  private static final int[] nodeOffset = { 512, 256 };     // offset to left/right nodes
 
   private byte[] buffer;
 
@@ -36,10 +36,19 @@ class Huffman
     msgPtr = 0;
     currentByte = 0;
 
-    int len = getChar ();
+    int len = getChar () & 0xFF;
     StringBuilder text = new StringBuilder ();
     for (int i = 0; i < len; i++)
-      text.append ((char) getChar ());
+    {
+      int c = (char) getChar () & 0xFF;
+      text.append (switch (c)
+      {
+        case 0x09 -> " OF ";
+        case 0x0A -> "POTION";
+        case 0x0B -> "*POTION";
+        default -> (char) c;
+      });
+    }
 
     return text.toString ();
   }
@@ -59,7 +68,7 @@ class Huffman
       currentByte >>= 1;                        // and remove it from the current byte
 
       // use currentBit to determine whether to use the left or right node
-      byte nodeValue = buffer[treePtr + offset[currentBit]];
+      byte nodeValue = buffer[treePtr + nodeOffset[currentBit]];
 
       // if the node is a leaf, return its contents
       if ((buffer[treePtr] & mask[currentBit]) != 0)
