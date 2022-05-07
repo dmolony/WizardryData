@@ -1,16 +1,14 @@
 package com.bytezone.wizardry.origin;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 // -----------------------------------------------------------------------------------//
-class MessageBlock implements Iterable<MessageDataBlock>
+class MessageBlock
 // -----------------------------------------------------------------------------------//
 {
   private final int indexOffset;
   private final int indexLength;
-  private String text;
 
   private final List<MessageDataBlock> messageDataBlocks = new ArrayList<> ();
 
@@ -32,20 +30,6 @@ class MessageBlock implements Iterable<MessageDataBlock>
           new MessageDataBlock (" Message " + firstMessageNo, data, firstMessageNo, huffman);
       messageDataBlocks.add (messageDataBlock);
     }
-  }
-
-  // ---------------------------------------------------------------------------------//
-  public String getMessageText (int messageNo)
-  // ---------------------------------------------------------------------------------//
-  {
-    for (int i = 0; i < messageDataBlocks.size (); i++)
-    {
-      MessageDataBlock messageDataBlock = messageDataBlocks.get (i);
-      if (messageDataBlock.lastMessageNo >= messageNo)
-        return messageDataBlock.getText (messageNo);
-    }
-
-    return null;
   }
 
   // ---------------------------------------------------------------------------------//
@@ -87,47 +71,5 @@ class MessageBlock implements Iterable<MessageDataBlock>
     }
 
     return lines;
-  }
-
-  // ---------------------------------------------------------------------------------//
-  //  public byte[] getMessage (int messageNo)
-  //  // ---------------------------------------------------------------------------------//
-  //  {
-  //    for (int i = 0; i < messageDataBlocks.size (); i++)
-  //    {
-  //      MessageDataBlock messageDataBlock = messageDataBlocks.get (i);
-  //      if (messageDataBlock.firstMessageNo > messageNo)
-  //        return messageDataBlocks.get (i - 1).getMessage (messageNo);
-  //    }
-  //
-  //    return null;
-  //  }
-
-  // ---------------------------------------------------------------------------------//
-  public String getText ()
-  // ---------------------------------------------------------------------------------//
-  {
-    if (text != null)
-      return text;
-
-    StringBuilder text = new StringBuilder ();
-
-    for (MessageDataBlock mdb : messageDataBlocks)
-    {
-      text.append (mdb);
-      text.append ("\n");
-    }
-
-    this.text = text.toString ();
-
-    return this.text;
-  }
-
-  // ---------------------------------------------------------------------------------//
-  @Override
-  public Iterator<MessageDataBlock> iterator ()
-  // ---------------------------------------------------------------------------------//
-  {
-    return messageDataBlocks.iterator ();
   }
 }
