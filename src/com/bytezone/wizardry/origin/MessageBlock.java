@@ -70,6 +70,7 @@ class MessageBlock implements Iterable<MessageDataBlock>
   // ---------------------------------------------------------------------------------//
   {
     List<String> lines = new ArrayList<> ();
+    String messageLine;
 
     for (MessageDataBlock messageDataBlock : messageDataBlocks)
     {
@@ -78,12 +79,10 @@ class MessageBlock implements Iterable<MessageDataBlock>
       if (messageNo < messageDataBlock.firstMessageNo)
         break;
 
-      while (true)
+      while ((messageLine = messageDataBlock.getText (messageNo)) != null)
       {
-        String message = messageDataBlock.getText (messageNo++);
-        if (message == null)
-          break;
-        lines.add (message);
+        lines.add (messageLine);
+        ++messageNo;
       }
     }
 

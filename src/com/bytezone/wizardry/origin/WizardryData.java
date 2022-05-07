@@ -228,7 +228,7 @@ public class WizardryData
             getMessage (special.aux[1]).addLocations (special.locations);
       }
 
-      // add monsters
+      // add monster names
       sd = header.get (MONSTER_AREA);
       monsters = new ArrayList<> (sd.totalUnits);
       String[] monsterNames = new String[4];
@@ -241,7 +241,7 @@ public class WizardryData
           monsters.add (new Monster (i, monsterNames));
       }
 
-      // add items
+      // add item names
       items = new ArrayList<> ();
 
       for (int i = 0; i < 120; i++)

@@ -68,7 +68,7 @@ public class Message
 
     for (String line : messageLines)
     {
-      text.append (line);
+      text.append (line.startsWith ("^") ? line.substring (1) : line);
       text.append ("\n");
     }
 
