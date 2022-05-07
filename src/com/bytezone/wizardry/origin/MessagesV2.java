@@ -10,13 +10,8 @@ public class MessagesV2 extends Messages
 
   String[] spellNames = new String[51];
 
-  String[] monsterNamesGeneric = new String[120];
-  String[] monsterNamesGenericPlural = new String[120];
-  String[] monsterNames = new String[120];
-  String[] monsterNamesPlural = new String[120];
-
-  String[] itemNamesGeneric = new String[120];
-  String[] itemNames = new String[120];
+  String[][] monsterNames = new String[120][4];
+  String[][] itemNames = new String[120][2];
 
   // ---------------------------------------------------------------------------------//
   public MessagesV2 (MessageBlock messageBlock)
@@ -46,23 +41,16 @@ public class MessagesV2 extends Messages
 
     for (int i = 0; i < monsterNames.length; i++)
     {
-      monsterNamesGeneric[i] = messageBlock.getMessageLine (i * 4 + 13000);
-      monsterNamesGenericPlural[i] = messageBlock.getMessageLine (i * 4 + 13000 + 1);
-      monsterNames[i] = messageBlock.getMessageLine (i * 4 + 13000 + 2);
-      monsterNamesPlural[i] = messageBlock.getMessageLine (i * 4 + 13000 + 3);
-
-      System.out.printf ("%3d  %5d  %-15s %-15s %-15s %-15s%n", i, 13000 + i * 4,
-          monsterNamesGeneric[i], monsterNamesGenericPlural[i], monsterNames[i],
-          monsterNamesPlural[i]);
+      monsterNames[i][2] = messageBlock.getMessageLine (i * 4 + 13000);
+      monsterNames[i][3] = messageBlock.getMessageLine (i * 4 + 13000 + 1);
+      monsterNames[i][0] = messageBlock.getMessageLine (i * 4 + 13000 + 2);
+      monsterNames[i][1] = messageBlock.getMessageLine (i * 4 + 13000 + 3);
     }
 
     for (int i = 0; i < itemNames.length; i++)
     {
-      itemNamesGeneric[i] = messageBlock.getMessageLine (i * 2 + 14000);
-      itemNames[i] = messageBlock.getMessageLine (i * 2 + 14000 + 1);
-
-      System.out.printf ("%3d  %5d  %-15s %s%n", i, 14000 + i * 2, itemNamesGeneric[i],
-          itemNames[i]);
+      itemNames[i][1] = messageBlock.getMessageLine (i * 2 + 14000);
+      itemNames[i][0] = messageBlock.getMessageLine (i * 2 + 14000 + 1);
     }
   }
 

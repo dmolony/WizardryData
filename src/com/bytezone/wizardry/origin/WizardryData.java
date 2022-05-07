@@ -230,15 +230,19 @@ public class WizardryData
       // add monsters
       sd = header.get (MONSTER_AREA);
       monsters = new ArrayList<> (sd.totalUnits);
-
-      id = 0;
-      //      for (DataBlock dataBlock : sd.dataBlocks)
-      //        System.out.println (dataBlock);
-      //        monsters.add (new Monster (id++, dataBlock));
+      String[][] monsterNames = ((MessagesV2) messages).monsterNames;
+      for (int i = 0; i < monsterNames.length; i++)
+        if (monsterNames[i][0] != null)
+          monsters.add (new Monster (i, monsterNames[i]));
 
       characters = new ArrayList<> ();
-      //      monsters = new ArrayList<> ();
+
       items = new ArrayList<> ();
+      String[][] itemNames = ((MessagesV2) messages).itemNames;
+      for (int i = 0; i < itemNames.length; i++)
+        if (itemNames[i][0] != null)
+          items.add (new Item (i, itemNames[i]));
+
       rewards = new ArrayList<> ();
 
       buffer = disk.getFileData ("200.MONSTERS");

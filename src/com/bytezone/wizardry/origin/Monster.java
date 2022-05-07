@@ -51,6 +51,42 @@ public class Monster
   };
 
   // ---------------------------------------------------------------------------------//
+  public Monster (int id, String[] names)
+  // ---------------------------------------------------------------------------------//
+  {
+    this.id = id;
+
+    name = names[0];
+    namePlural = names[1];
+    genericName = names[2];
+    genericNamePlural = names[3];
+
+    Dice noDice = new Dice (1, 1, 0);
+
+    image = -1;
+    groupSize = noDice;
+    hitPoints = noDice;
+    monsterClass = 0;
+    armourClass = 0;
+    damageDiceSize = 0;
+    experiencePoints = 0;
+    drain = 0;
+    regen = 0;
+    rewardWandering = 0;
+    rewardLair = 0;
+    partnerId = 0;
+    partnerOdds = 0;
+    mageSpells = 0;
+    priestSpells = 0;
+    unique = 0;
+    breathe = 0;
+    unaffect = 0;
+    resistance = 0;
+    properties = 0;
+    damageDiceText = "";
+  }
+
+  // ---------------------------------------------------------------------------------//
   public Monster (int id, DataBlock dataBlock)
   // ---------------------------------------------------------------------------------//
   {

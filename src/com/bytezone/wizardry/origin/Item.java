@@ -32,6 +32,38 @@ public class Item
   public final int wepvstyFlags;
 
   // ---------------------------------------------------------------------------------//
+  public Item (int id, String[] names)
+  // ---------------------------------------------------------------------------------//
+  {
+    this.id = id;
+
+    name = names[0];
+    nameUnknown = names[1];
+
+    Dice noDice = new Dice (1, 1, 0);
+
+    type = null;
+    alignment = null;
+    cursed = false;
+    special = 0;
+    changeTo = 0;
+    changeChance = 0;
+    price = 0;
+    boltac = 0;
+    spellPwr = 0;
+    healPts = 0;
+    armourClass = 0;
+    wephitmd = 0;
+    wephpdam = noDice;
+    xtraSwing = 0;
+    crithitm = false;
+    classUseFlags = 0;
+    wepvsty2Flags = 0;
+    wepvsty3Flags = 0;
+    wepvstyFlags = 0;
+  }
+
+  // ---------------------------------------------------------------------------------//
   public Item (int id, DataBlock dataBlock)
   // ---------------------------------------------------------------------------------//
   {
