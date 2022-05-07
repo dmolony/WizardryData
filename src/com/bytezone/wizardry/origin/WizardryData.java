@@ -208,6 +208,7 @@ public class WizardryData
     {
       // create message lines (must happen before maze levels are added)
       messages = new MessagesV2 (disk.messageBlock);
+      MessagesV2 messagesV2 = ((MessagesV2) messages);
 
       // add spell names
       header.addSpellNames (((MessagesV2) messages).spellNames);
@@ -230,18 +231,29 @@ public class WizardryData
       // add monsters
       sd = header.get (MONSTER_AREA);
       monsters = new ArrayList<> (sd.totalUnits);
-      String[][] monsterNames = ((MessagesV2) messages).monsterNames;
-      for (int i = 0; i < monsterNames.length; i++)
-        if (monsterNames[i][0] != null)
-          monsters.add (new Monster (i, monsterNames[i]));
+      String[] monsterNames = new String[4];
+      for (int i = 0; i < 120; i++)
+      {
+        for (int j = 0; j < 4; j++)
+          monsterNames[j] = messagesV2.getMessageLine (i * 4 + 13000 + j);
+
+        if (monsterNames[0] != null)
+          monsters.add (new Monster (i, monsterNames));
+      }
+
+      // add items
+      items = new ArrayList<> ();
+
+      for (int i = 0; i < 120; i++)
+      {
+        String itemName = messagesV2.getMessageLine (i * 2 + 14000);
+        String itemNameGeneric = messagesV2.getMessageLine (i * 2 + 14000 + 1);
+
+        if (itemName != null)
+          items.add (new Item (i, itemName, itemNameGeneric));
+      }
 
       characters = new ArrayList<> ();
-
-      items = new ArrayList<> ();
-      String[][] itemNames = ((MessagesV2) messages).itemNames;
-      for (int i = 0; i < itemNames.length; i++)
-        if (itemNames[i][0] != null)
-          items.add (new Item (i, itemNames[i]));
 
       rewards = new ArrayList<> ();
 

@@ -56,10 +56,10 @@ public class Monster
   {
     this.id = id;
 
-    name = names[0];
-    namePlural = names[1];
-    genericName = names[2];
-    genericNamePlural = names[3];
+    genericName = names[0];
+    genericNamePlural = names[1];
+    name = names[2];
+    namePlural = names[3];
 
     Dice noDice = new Dice (1, 1, 0);
 

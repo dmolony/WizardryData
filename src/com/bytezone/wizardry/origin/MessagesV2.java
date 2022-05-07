@@ -10,9 +10,6 @@ public class MessagesV2 extends Messages
 
   String[] spellNames = new String[51];
 
-  String[][] monsterNames = new String[120][4];
-  String[][] itemNames = new String[120][2];
-
   // ---------------------------------------------------------------------------------//
   public MessagesV2 (MessageBlock messageBlock)
   // ---------------------------------------------------------------------------------//
@@ -38,20 +35,20 @@ public class MessagesV2 extends Messages
       String line = messageBlock.getMessageLine (i + 5000);
       spellNames[i] = line.startsWith ("*") ? line.substring (1) : line;
     }
+  }
 
-    for (int i = 0; i < monsterNames.length; i++)
-    {
-      monsterNames[i][2] = messageBlock.getMessageLine (i * 4 + 13000);
-      monsterNames[i][3] = messageBlock.getMessageLine (i * 4 + 13000 + 1);
-      monsterNames[i][0] = messageBlock.getMessageLine (i * 4 + 13000 + 2);
-      monsterNames[i][1] = messageBlock.getMessageLine (i * 4 + 13000 + 3);
-    }
+  // ---------------------------------------------------------------------------------//
+  public String getMessageLine (int messageNo)
+  // ---------------------------------------------------------------------------------//
+  {
+    return messageBlock.getMessageLine (messageNo);
+  }
 
-    for (int i = 0; i < itemNames.length; i++)
-    {
-      itemNames[i][1] = messageBlock.getMessageLine (i * 2 + 14000);
-      itemNames[i][0] = messageBlock.getMessageLine (i * 2 + 14000 + 1);
-    }
+  // ---------------------------------------------------------------------------------//
+  public List<String> getMessageLines (int messageNo)
+  // ---------------------------------------------------------------------------------//
+  {
+    return messageBlock.getMessageLines (messageNo);
   }
 
   // ---------------------------------------------------------------------------------//
