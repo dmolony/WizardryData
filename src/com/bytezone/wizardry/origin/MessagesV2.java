@@ -8,8 +8,6 @@ public class MessagesV2 extends Messages
 {
   MessageBlock messageBlock;
 
-  String[] spellNames = new String[51];
-
   // ---------------------------------------------------------------------------------//
   public MessagesV2 (MessageBlock messageBlock)
   // ---------------------------------------------------------------------------------//
@@ -28,12 +26,6 @@ public class MessagesV2 extends Messages
 
         messages.put (message.getId (), message);
       }
-    }
-
-    for (int i = 0; i < spellNames.length; i++)
-    {
-      String line = messageBlock.getMessageLine (i + 5000);
-      spellNames[i] = line.startsWith ("*") ? line.substring (1) : line;
     }
   }
 

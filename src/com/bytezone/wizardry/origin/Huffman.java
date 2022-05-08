@@ -1,5 +1,8 @@
 package com.bytezone.wizardry.origin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // Based on a pascal routine by Tom Ewers
 
 // link for possible display algorithm:
@@ -27,6 +30,28 @@ class Huffman
   }
 
   // ---------------------------------------------------------------------------------//
+  byte[] decodeMessage (byte[] buffer, int offset, int length)
+  // ---------------------------------------------------------------------------------//
+  {
+    this.message = buffer;
+    List<Byte> decoded = new ArrayList<> ();
+    int retPtr = 0;
+    int max = offset + length;
+
+    depth = 0;
+    msgPtr = offset;
+    currentByte = 0;
+
+    while (msgPtr < max)
+      decoded.add (getChar ());
+
+    byte[] returnBuffer = new byte[decoded.size ()];
+    for (Byte b : decoded)
+      returnBuffer[retPtr++] = b;
+    return returnBuffer;
+  }
+
+  // ---------------------------------------------------------------------------------//
   String decodeMessage (byte[] message)
   // ---------------------------------------------------------------------------------//
   {
@@ -40,12 +65,12 @@ class Huffman
     StringBuilder text = new StringBuilder ();
     for (int i = 0; i < len; i++)
     {
-      int c = (char) getChar () & 0xFF;
+      int c = getChar () & 0xFF;
       text.append (switch (c)
       {
         case 0x09 -> " OF ";
         case 0x0A -> "POTION";
-        case 0x0B -> "*POTION";
+        case 0x0B -> "STAFF";
         default -> (char) c;
       });
     }

@@ -17,6 +17,7 @@ public class WizardryDisk
 {
   FsPascal fs;
   MessageBlock messageBlock;          // Wiz 4/5
+  Huffman huffman;
 
   // ---------------------------------------------------------------------------------//
   public WizardryDisk (String fileName) throws DiskFormatException, FileNotFoundException
@@ -50,8 +51,8 @@ public class WizardryDisk
     if (isWizardryIVorV ())
     {
       createNewDisk (file, fs);
-      messageBlock =
-          new MessageBlock (getFileData ("ASCII.KRN"), new Huffman (getFileData ("ASCII.HUFF")));
+      huffman = new Huffman (getFileData ("ASCII.HUFF"));
+      messageBlock = new MessageBlock (getFileData ("ASCII.KRN"), huffman);
     }
   }
 

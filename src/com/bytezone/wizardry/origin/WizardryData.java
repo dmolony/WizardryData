@@ -4,11 +4,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 // -----------------------------------------------------------------------------------//
 public class WizardryData
 // -----------------------------------------------------------------------------------//
 {
+  private static final int CHARACTER_RECORD_LENGTH = 0x63;
+
   public static final String[] monsterClass = { "Fighter", "Mage", "Priest", "Thief", "Midget",
       "Giant", "Mythical", "Dragon", "Animal", "Were", "Undead", "Demon", "Insect", "Enchanted" };
   public static final String[] resistance =
@@ -47,7 +51,7 @@ public class WizardryData
   private String fileName;
 
   private List<Monster> monsters;
-  private List<Item> items;
+  private Map<Integer, Item> items;
   private List<MazeLevel> mazeLevels;
   private List<Reward> rewards;
   private List<WizardryImage> images;
@@ -164,11 +168,11 @@ public class WizardryData
 
       // add items
       sd = header.get (ITEM_AREA);
-      items = new ArrayList<> (sd.totalUnits);
+      items = new TreeMap<> ();
 
       id = 0;
       for (DataBlock dataBlock : sd.dataBlocks)
-        items.add (new Item (id++, dataBlock));
+        items.put (id, new Item (id++, dataBlock));
 
       // add rewards
       sd = header.get (TREASURE_TABLE_AREA);
@@ -211,7 +215,13 @@ public class WizardryData
       MessagesV2 messagesV2 = ((MessagesV2) messages);
 
       // add spell names
-      header.addSpellNames (((MessagesV2) messages).spellNames);
+      String[] spellNames = new String[51];
+      for (int i = 0; i < spellNames.length; i++)
+      {
+        String line = messagesV2.getMessageLine (i + 5000);
+        spellNames[i] = line.startsWith ("*") ? line.substring (1) : line;
+      }
+      header.addSpellNames (spellNames);
 
       // add maze levels
       ScenarioData sd = header.get (MAZE_AREA);
@@ -242,18 +252,29 @@ public class WizardryData
       }
 
       // add item names
-      items = new ArrayList<> ();
+      items = new TreeMap<> ();
 
       for (int i = 0; i < 120; i++)
       {
-        String itemName = messagesV2.getMessageLine (i * 2 + 14000);
-        String itemNameGeneric = messagesV2.getMessageLine (i * 2 + 14000 + 1);
+        String itemNameGeneric = messagesV2.getMessageLine (i * 2 + 14000);
+        String itemName = messagesV2.getMessageLine (i * 2 + 14000 + 1);
 
         if (itemName != null)
-          items.add (new Item (i, itemName, itemNameGeneric));
+          items.put (i, new Item (i, itemName, itemNameGeneric));
       }
 
+      // add characters
       characters = new ArrayList<> ();
+      int ptr = 1024;
+
+      for (int i = 0; i < 500; i++)       // max length 247
+      {
+        byte[] out = disk.huffman.decodeMessage (buffer, ptr, CHARACTER_RECORD_LENGTH);
+        ptr += CHARACTER_RECORD_LENGTH;
+
+        if (out[1] > 0)       // name length
+          characters.add (new Character (i, out));
+      }
 
       rewards = new ArrayList<> ();
 
@@ -381,7 +402,7 @@ public class WizardryData
   }
 
   // ---------------------------------------------------------------------------------//
-  public List<Item> getItems ()
+  public Map<Integer, Item> getItems ()
   // ---------------------------------------------------------------------------------//
   {
     return items;

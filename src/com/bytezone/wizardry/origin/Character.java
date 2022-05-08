@@ -59,6 +59,46 @@ public class Character
   public final String awards;
 
   // ---------------------------------------------------------------------------------//
+  public Character (int id, byte[] buffer)
+  // ---------------------------------------------------------------------------------//
+  {
+    name = Utility.getPascalString (buffer, 1);
+    password = Utility.getPascalString (buffer, 17);        // slogan of some kind
+
+    inMaze = false;
+    race = Race.NORACE;
+    characterClass = CharacterClass.BISHOP;
+    age = 0;
+    status = CharacterStatus.OK;
+    alignment = Alignment.UNALIGN;
+    gold = 0;
+    possessionsCount = Utility.getShort (buffer, 59);
+    experience = 0;
+    maxlevac = 0;
+    charlev = 0;
+    hpLeft = Utility.getShort (buffer, 135);
+    hpMax = Utility.getShort (buffer, 137);
+    mysteryBit = false;
+    hpCalCmd = 0;
+    armourClass = Utility.getSignedShort (buffer, 39);
+    healPts = 0;
+    crithitm = false;
+    swingCount = 0;
+    hpdamrc = new Dice (0, 0, 0);
+    awards = "???";
+
+    for (int i = 0; i < possessionsCount; i++)
+    {
+      int itemNo = Utility.getShort (buffer, 67 + i * 8);
+      Possession p = new Possession (itemNo, true, false, true);
+      possessions.add (p);
+    }
+
+    int idd = Utility.getShort (buffer, 53);
+    //    System.out.println (idd);
+  }
+
+  // ---------------------------------------------------------------------------------//
   public Character (int id, DataBlock dataBlock, int scenarioId) throws InvalidCharacterException
   // ---------------------------------------------------------------------------------//
   {

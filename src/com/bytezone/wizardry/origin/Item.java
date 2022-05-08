@@ -9,7 +9,7 @@ public class Item
 {
   public final int id;
   public final String name;
-  public final String nameUnknown;
+  public final String nameGeneric;
   public final ObjectType type;
   public final Alignment alignment;
   public final boolean cursed;
@@ -37,7 +37,7 @@ public class Item
   {
     this.id = id;
     this.name = name;
-    this.nameUnknown = nameGeneric;
+    this.nameGeneric = nameGeneric;
 
     Dice noDice = new Dice (1, 1, 0);
 
@@ -72,7 +72,7 @@ public class Item
     int offset = dataBlock.offset;
 
     name = Utility.getPascalString (buffer, offset);
-    nameUnknown = Utility.getPascalString (buffer, offset + 16);
+    nameGeneric = Utility.getPascalString (buffer, offset + 16);
     type = ObjectType.values ()[buffer[offset + 32]];
     alignment = Alignment.values ()[buffer[offset + 34]];
     cursed = Utility.getSignedShort (buffer, offset + 36) == -1;
@@ -100,10 +100,6 @@ public class Item
   public String toString ()
   // ---------------------------------------------------------------------------------//
   {
-    StringBuilder text = new StringBuilder ();
-
-    text.append (name);
-
-    return text.toString ();
+    return name;
   }
 }
