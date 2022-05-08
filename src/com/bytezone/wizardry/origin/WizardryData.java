@@ -35,8 +35,6 @@ public class WizardryData
       "Badialma", "Litokan", "Kandi", "Di", "Badi", "Lorto", "Madi", "Mabadi", "Loktofeit",
       "Malikto", "Kadorto" };
 
-  //  public static final String[] race = { "No race", "Human", "Elf", "Dwarf", "Gnome", "Hobbit" };
-
   static final int HEADER_AREA = 0;
   static final int MAZE_AREA = 1;
   static final int MONSTER_AREA = 2;
@@ -122,166 +120,175 @@ public class WizardryData
     byte[] buffer = disk.getFileData ("SCENARIO.DATA");
     header = new Header (buffer);
 
-    if (getScenarioId () <= 3)
+    switch (getScenarioId ())
     {
-      // create message lines (must happen before maze levels are added)
-      byte[] messageBuffer = disk.getFileData ("SCENARIO.MESGS");
-      messages = new MessagesV1 (messageBuffer, getScenarioId ());
+      case 1:
+      case 2:
+      case 3:
+        // create message lines (must happen before maze levels are added)
+        byte[] messageBuffer = disk.getFileData ("SCENARIO.MESGS");
+        messages = new MessagesV1 (messageBuffer, getScenarioId ());
 
-      // add maze levels
-      ScenarioData sd = header.get (MAZE_AREA);
-      mazeLevels = new ArrayList<> (sd.totalUnits);
+        // add maze levels
+        ScenarioData sd = header.get (MAZE_AREA);
+        mazeLevels = new ArrayList<> (sd.totalUnits);
 
-      int id = 0;
-      for (DataBlock dataBlock : sd.dataBlocks)
-      {
-        MazeLevel mazeLevel = new MazeLevel (this, ++id, dataBlock);
-        mazeLevels.add (mazeLevel);
-
-        for (Special special : mazeLevel.getSpecials ())
-          if (special.square == Square.SCNMSG && special.aux[2] <= 13)
-            getMessage (special.aux[1]).addLocations (special.locations); // force message creation
-      }
-
-      // add characters
-      sd = header.get (CHARACTER_AREA);
-      characters = new ArrayList<> (sd.totalUnits);
-
-      id = 0;
-      for (DataBlock dataBlock : sd.dataBlocks)
-        try
+        int id = 0;
+        for (DataBlock dataBlock : sd.dataBlocks)
         {
-          characters.add (new Character (id++, dataBlock, getScenarioId ()));
-        }
-        catch (InvalidCharacterException e)
-        {
-          continue;
+          MazeLevel mazeLevel = new MazeLevel (this, ++id, dataBlock);
+          mazeLevels.add (mazeLevel);
+
+          for (Special special : mazeLevel.getSpecials ())
+            if (special.square == Square.SCNMSG && special.aux[2] <= 13)
+              getMessage (special.aux[1]).addLocations (special.locations); // force message creation
         }
 
-      // add monsters
-      sd = header.get (MONSTER_AREA);
-      monsters = new ArrayList<> (sd.totalUnits);
+        // add characters
+        sd = header.get (CHARACTER_AREA);
+        characters = new ArrayList<> (sd.totalUnits);
 
-      id = 0;
-      for (DataBlock dataBlock : sd.dataBlocks)
-        monsters.add (new Monster (id++, dataBlock));
+        id = 0;
+        for (DataBlock dataBlock : sd.dataBlocks)
+          try
+          {
+            characters.add (new Character (id++, dataBlock, getScenarioId ()));
+          }
+          catch (InvalidCharacterException e)
+          {
+            continue;
+          }
 
-      // add items
-      sd = header.get (ITEM_AREA);
-      items = new TreeMap<> ();
+        // add monsters
+        sd = header.get (MONSTER_AREA);
+        monsters = new ArrayList<> (sd.totalUnits);
 
-      id = 0;
-      for (DataBlock dataBlock : sd.dataBlocks)
-        items.put (id, new Item (id++, dataBlock));
+        id = 0;
+        for (DataBlock dataBlock : sd.dataBlocks)
+          monsters.add (new Monster (id++, dataBlock));
 
-      // add rewards
-      sd = header.get (TREASURE_TABLE_AREA);
-      rewards = new ArrayList<> (sd.totalUnits);
+        // add items
+        sd = header.get (ITEM_AREA);
+        items = new TreeMap<> ();
 
-      id = 0;
-      for (DataBlock dataBlock : sd.dataBlocks)
-        rewards.add (new Reward (id++, dataBlock));
+        id = 0;
+        for (DataBlock dataBlock : sd.dataBlocks)
+          items.put (id, new Item (id++, dataBlock));
 
-      // add images
-      sd = header.get (IMAGE_AREA);
-      images = new ArrayList<> (sd.totalUnits);
+        // add rewards
+        sd = header.get (TREASURE_TABLE_AREA);
+        rewards = new ArrayList<> (sd.totalUnits);
 
-      id = 0;
-      for (DataBlock dataBlock : sd.dataBlocks)
-        images.add (new WizardryImage (id++, dataBlock, getScenarioId ()));
+        id = 0;
+        for (DataBlock dataBlock : sd.dataBlocks)
+          rewards.add (new Reward (id++, dataBlock));
 
-      if (false)
-      {
-        int[] imageTotals = new int[images.size ()];
-        for (Monster monster : monsters)
-          imageTotals[monster.image]++;
+        // add images
+        sd = header.get (IMAGE_AREA);
+        images = new ArrayList<> (sd.totalUnits);
 
-        for (int i = 0; i < imageTotals.length; i++)
-          System.out.printf ("%2d  %2d%n", i, imageTotals[i]);
-      }
+        id = 0;
+        for (DataBlock dataBlock : sd.dataBlocks)
+          images.add (new WizardryImage (id++, dataBlock, getScenarioId ()));
 
-      if (false)
-        for (int i = 0; i < 10; i++)
-          histogram (i);
+        if (false)
+        {
+          int[] imageTotals = new int[images.size ()];
+          for (Monster monster : monsters)
+            imageTotals[monster.image]++;
 
-      if (false)
-        for (int i = 0; i < mazeLevels.size (); i++)
-          mazeLevels.get (i).showOdds ();
-    }
-    else
-    {
-      // create message lines (must happen before maze levels are added)
-      messages = new MessagesV2 (disk.messageBlock);
-      MessagesV2 messagesV2 = ((MessagesV2) messages);
+          for (int i = 0; i < imageTotals.length; i++)
+            System.out.printf ("%2d  %2d%n", i, imageTotals[i]);
+        }
 
-      // add spell names
-      String[] spellNames = new String[51];
-      for (int i = 0; i < spellNames.length; i++)
-      {
-        String line = messagesV2.getMessageLine (i + 5000);
-        spellNames[i] = line.startsWith ("*") ? line.substring (1) : line;
-      }
-      header.addSpellNames (spellNames);
+        if (false)
+          for (int i = 0; i < 10; i++)
+            histogram (i);
 
-      // add maze levels
-      ScenarioData sd = header.get (MAZE_AREA);
-      mazeLevels = new ArrayList<> (sd.totalUnits);
+        if (false)
+          for (int i = 0; i < mazeLevels.size (); i++)
+            mazeLevels.get (i).showOdds ();
 
-      int id = 0;
-      for (DataBlock dataBlock : sd.dataBlocks)
-      {
-        MazeLevel mazeLevel = new MazeLevel (this, ++id, dataBlock);
-        mazeLevels.add (mazeLevel);
+        break;
 
-        for (Special special : mazeLevel.getSpecials ())
-          if (special.square == Square.SCNMSG && special.aux[2] <= 13)
-            getMessage (special.aux[1]).addLocations (special.locations);
-      }
+      case 4:
+      case 5:
+        // create message lines (must happen before maze levels are added)
+        messages = new MessagesV2 (disk.messageBlock);
+        MessagesV2 messagesV2 = ((MessagesV2) messages);
 
-      // add monster names
-      sd = header.get (MONSTER_AREA);
-      monsters = new ArrayList<> (sd.totalUnits);
-      String[] monsterNames = new String[4];
-      for (int i = 0; i < 120; i++)
-      {
-        for (int j = 0; j < 4; j++)
-          monsterNames[j] = messagesV2.getMessageLine (i * 4 + 13000 + j);
+        // add spell names
+        String[] spellNames = new String[51];
+        for (int i = 0; i < spellNames.length; i++)
+        {
+          String line = messagesV2.getMessageLine (i + 5000);
+          spellNames[i] = line.startsWith ("*") ? line.substring (1) : line;
+        }
+        header.addSpellNames (spellNames);
 
-        if (monsterNames[0] != null)
-          monsters.add (new Monster (i, monsterNames));
-      }
+        // add maze levels
+        sd = header.get (MAZE_AREA);
+        mazeLevels = new ArrayList<> (sd.totalUnits);
 
-      // add item names
-      items = new TreeMap<> ();
+        id = 0;
+        for (DataBlock dataBlock : sd.dataBlocks)
+        {
+          MazeLevel mazeLevel = new MazeLevel (this, ++id, dataBlock);
+          mazeLevels.add (mazeLevel);
 
-      for (int i = 0; i < 120; i++)
-      {
-        String itemNameGeneric = messagesV2.getMessageLine (i * 2 + 14000);
-        String itemName = messagesV2.getMessageLine (i * 2 + 14000 + 1);
+          for (Special special : mazeLevel.getSpecials ())
+            if (special.square == Square.SCNMSG && special.aux[2] <= 13)
+              getMessage (special.aux[1]).addLocations (special.locations);
+        }
 
-        if (itemName != null)
-          items.put (i, new Item (i, itemName, itemNameGeneric));
-      }
+        // add monster names
+        sd = header.get (MONSTER_AREA);
+        monsters = new ArrayList<> (sd.totalUnits);
+        String[] monsterNames = new String[4];
+        for (int i = 0; i < 120; i++)
+        {
+          for (int j = 0; j < 4; j++)
+            monsterNames[j] = messagesV2.getMessageLine (i * 4 + 13000 + j);
 
-      // add characters
-      characters = new ArrayList<> ();
-      int ptr = 1024;
+          if (monsterNames[0] != null)
+            monsters.add (new Monster (i, monsterNames));
+        }
 
-      for (int i = 0; i < 500; i++)       // max length 247
-      {
-        byte[] out = disk.huffman.decodeMessage (buffer, ptr, CHARACTER_RECORD_LENGTH);
-        ptr += CHARACTER_RECORD_LENGTH;
+        // add item names
+        items = new TreeMap<> ();
 
-        if (out[1] > 0)       // name length
-          characters.add (new Character (i, out));
-      }
+        for (int i = 0; i < 120; i++)
+        {
+          String itemNameGeneric = messagesV2.getMessageLine (i * 2 + 14000);
+          String itemName = messagesV2.getMessageLine (i * 2 + 14000 + 1);
 
-      rewards = new ArrayList<> ();
+          if (itemName != null)
+            items.put (i, new Item (i, itemName, itemNameGeneric));
+        }
 
-      buffer = disk.getFileData ("200.MONSTERS");
-      images = new ArrayList<> ();
+        // add characters
+        characters = new ArrayList<> ();
+        int ptr = 1024;
 
-      buffer = disk.getFileData ("WERDNA.DATA");
+        for (int i = 0; i < 500; i++)
+        {
+          byte[] out = disk.decode (buffer, ptr, CHARACTER_RECORD_LENGTH);
+          ptr += CHARACTER_RECORD_LENGTH;
+
+          if (out[1] > 0)       // name length
+            characters.add (new Character (i, out));
+        }
+
+        rewards = new ArrayList<> ();
+
+        buffer = disk.getFileData ("200.MONSTERS");
+        images = new ArrayList<> ();
+
+        buffer = disk.getFileData ("WERDNA.DATA");
+        break;
+
+      default:
+        System.out.println ("Unknown scenario id");
     }
   }
 
@@ -324,8 +331,8 @@ public class WizardryData
 
     float percentTotal = 0;
     int grandTotal = 0;
+
     for (int i = 0; i < totals.length; i++)
-    {
       if (totals[i] > 0)
       {
         float percent = totals[i] * 100 / (float) tests;
@@ -334,7 +341,7 @@ public class WizardryData
         percentTotal += percent;
         grandTotal += totals[i];
       }
-    }
+
     System.out.println ("                           ------   ---------");
     System.out.printf ("                           %6.2f %,11d%n%n", percentTotal, grandTotal);
   }
@@ -480,6 +487,7 @@ public class WizardryData
       System.out.println ("Message out of range: " + id);
       return null;
     }
+
     return messages.getMessage (id).getText ();
   }
 
@@ -501,6 +509,5 @@ public class WizardryData
   public record Trade (int item1, int item2)
   // ---------------------------------------------------------------------------------//
   {
-
   }
 }
