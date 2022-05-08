@@ -65,27 +65,34 @@ public class Character
     name = Utility.getPascalString (buffer, 1);
     password = Utility.getPascalString (buffer, 17);        // slogan of some kind
 
-    inMaze = false;
-    race = Race.NORACE;
-    characterClass = CharacterClass.BISHOP;
+    inMaze = Utility.getShort (buffer, 33) != 0;
+    race = WizardryData.Race.values ()[Utility.getShort (buffer, 35)];
+    characterClass = WizardryData.CharacterClass.values ()[Utility.getShort (buffer, 37)];
     age = 0;
-    status = CharacterStatus.OK;
-    alignment = Alignment.UNALIGN;
+    armourClass = Utility.getSignedShort (buffer, 39);
+    status = WizardryData.CharacterStatus.values ()[Utility.getShort (buffer, 41)];
+    alignment = WizardryData.Alignment.values ()[Utility.getShort (buffer, 43)];
     gold = 0;
     possessionsCount = Utility.getShort (buffer, 59);
     experience = 0;
-    maxlevac = 0;
-    charlev = 0;
+    maxlevac = Utility.getShort (buffer, 131);
+    charlev = Utility.getShort (buffer, 133);
     hpLeft = Utility.getShort (buffer, 135);
     hpMax = Utility.getShort (buffer, 137);
-    mysteryBit = false;
+    //    mysteryBit = false;
     hpCalCmd = 0;
-    armourClass = Utility.getSignedShort (buffer, 39);
     healPts = 0;
     crithitm = false;
     swingCount = 0;
     hpdamrc = new Dice (0, 0, 0);
     awards = "???";
+
+    long attr = Utility.getLong (buffer, 45);
+    for (int i = 0; i < 6; i++)
+    {
+      attributes[i] = (int) (attr & 0x1F);
+      attr >>>= i == 2 ? 6 : 5;
+    }
 
     for (int i = 0; i < possessionsCount; i++)
     {
@@ -94,7 +101,26 @@ public class Character
       possessions.add (p);
     }
 
-    int idd = Utility.getShort (buffer, 53);
+    mysteryBit = (buffer[139] & 0x01) == 1;
+    int index = -1;                         // skip mystery bit
+    for (int i = 139; i < 146; i++)
+      for (int bit = 0; bit < 8; bit++)
+      {
+        if (((buffer[i] >>> bit) & 0x01) != 0)
+          if (index >= 0)
+            spellsKnown[index] = true;
+
+        if (++index >= WizardryData.spells.length)
+          break;
+      }
+
+    for (int i = 0; i < 7; i++)
+    {
+      mageSpells[i] = Utility.getShort (buffer, 147 + i * 2);
+      priestSpells[i] = Utility.getShort (buffer, 161 + i * 2);
+    }
+
+    //    int idd = Utility.getShort (buffer, 53);
     //    System.out.println (idd);
   }
 

@@ -273,10 +273,16 @@ public class WizardryData
         for (int i = 0; i < 500; i++)
         {
           byte[] out = disk.decode (buffer, ptr, CHARACTER_RECORD_LENGTH);
-          ptr += CHARACTER_RECORD_LENGTH;
+          int len = out[0] & 0xFF;
 
           if (out[1] > 0)       // name length
-            characters.add (new Character (i, out));
+          {
+            Character c = new Character (i, out);
+            characters.add (c);
+            //            System.out.println (c.name);
+            //            System.out.println (HexFormatter.formatNoHeader (out, 33, len - 33));
+          }
+          ptr += CHARACTER_RECORD_LENGTH;
         }
 
         rewards = new ArrayList<> ();
