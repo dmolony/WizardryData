@@ -57,6 +57,7 @@ public class Utility
     catch (ArrayIndexOutOfBoundsException e)
     {
       System.out.printf ("Index out of range (getShort): %04X  %<d%n", ptr);
+      System.out.printf ("Buffer length: %d%n", buffer.length);
       return 0;
     }
   }

@@ -46,8 +46,9 @@ class Huffman
       decoded.add (getChar ());
 
     byte[] returnBuffer = new byte[decoded.size ()];
-    for (Byte b : decoded)
+    for (byte b : decoded)
       returnBuffer[retPtr++] = b;
+
     return returnBuffer;
   }
 
@@ -71,7 +72,7 @@ class Huffman
         case 0x09 -> " OF ";
         case 0x0A -> "POTION";
         case 0x0B -> "STAFF";
-        default -> (char) c;
+        default -> c < 32 ? '?' : (char) c;
       });
     }
 

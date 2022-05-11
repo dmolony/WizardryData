@@ -1,18 +1,12 @@
 package com.bytezone.wizardry.origin;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 // -----------------------------------------------------------------------------------//
-public class WizardryData
+public abstract class WizardryData
 // -----------------------------------------------------------------------------------//
 {
-  private static final int CHARACTER_RECORD_LENGTH = 0x63;
-
   public static final String[] monsterClass = { "Fighter", "Mage", "Priest", "Thief", "Midget",
       "Giant", "Mythical", "Dragon", "Animal", "Were", "Undead", "Demon", "Insect", "Enchanted" };
   public static final String[] resistance =
@@ -44,16 +38,16 @@ public class WizardryData
   static final int IMAGE_AREA = 6;
   static final int EXPERIENCE_AREA = 7;
 
-  private Messages messages;
-  private Header header;
-  private String fileName;
+  protected Messages messages;
+  protected Header header;
+  private WizardryDisk disk;
 
-  private List<Monster> monsters;
-  private Map<Integer, Item> items;
-  private List<MazeLevel> mazeLevels;
-  private List<Reward> rewards;
-  private List<WizardryImage> images;
-  private List<Character> characters;
+  protected List<Monster> monsters;
+  protected Map<Integer, Item> items;
+  protected List<MazeLevel> mazeLevels;
+  protected List<Reward> rewards;
+  protected List<WizardryImage> images;
+  protected List<Character> characters;
 
   public enum Square
   {
@@ -102,207 +96,17 @@ public class WizardryData
   }
 
   // ---------------------------------------------------------------------------------//
-  public WizardryData (String diskFileName) throws DiskFormatException, FileNotFoundException
+  public WizardryData (WizardryDisk disk) throws DiskFormatException
   // ---------------------------------------------------------------------------------//
   {
-    File file = new File (diskFileName);
-    if (!file.exists () || !file.isFile ())
-    {
-      System.out.println ("File does not exist: " + diskFileName);
-      return;
-    }
-
-    WizardryDisk disk = new WizardryDisk (diskFileName);
-    if (disk == null)
-      throw new DiskFormatException ("Not a Wizardry disk: " + diskFileName);
-
-    this.fileName = diskFileName;
-    byte[] buffer = disk.getFileData ("SCENARIO.DATA");
-    header = new Header (buffer);
-
-    switch (getScenarioId ())
-    {
-      case 1:
-      case 2:
-      case 3:
-        // create message lines (must happen before maze levels are added)
-        byte[] messageBuffer = disk.getFileData ("SCENARIO.MESGS");
-        messages = new MessagesV1 (messageBuffer, getScenarioId ());
-
-        // add maze levels
-        ScenarioData sd = header.get (MAZE_AREA);
-        mazeLevels = new ArrayList<> (sd.totalUnits);
-
-        int id = 0;
-        for (DataBlock dataBlock : sd.dataBlocks)
-        {
-          MazeLevel mazeLevel = new MazeLevel (this, ++id, dataBlock);
-          mazeLevels.add (mazeLevel);
-
-          for (Special special : mazeLevel.getSpecials ())
-            if (special.square == Square.SCNMSG && special.aux[2] <= 13)
-              getMessage (special.aux[1]).addLocations (special.locations); // force message creation
-        }
-
-        // add characters
-        sd = header.get (CHARACTER_AREA);
-        characters = new ArrayList<> (sd.totalUnits);
-
-        id = 0;
-        for (DataBlock dataBlock : sd.dataBlocks)
-          try
-          {
-            characters.add (new Character (id++, dataBlock, getScenarioId ()));
-          }
-          catch (InvalidCharacterException e)
-          {
-            continue;
-          }
-
-        // add monsters
-        sd = header.get (MONSTER_AREA);
-        monsters = new ArrayList<> (sd.totalUnits);
-
-        id = 0;
-        for (DataBlock dataBlock : sd.dataBlocks)
-          monsters.add (new Monster (id++, dataBlock));
-
-        // add items
-        sd = header.get (ITEM_AREA);
-        items = new TreeMap<> ();
-
-        id = 0;
-        for (DataBlock dataBlock : sd.dataBlocks)
-          items.put (id, new Item (id++, dataBlock));
-
-        // add rewards
-        sd = header.get (TREASURE_TABLE_AREA);
-        rewards = new ArrayList<> (sd.totalUnits);
-
-        id = 0;
-        for (DataBlock dataBlock : sd.dataBlocks)
-          rewards.add (new Reward (id++, dataBlock));
-
-        // add images
-        sd = header.get (IMAGE_AREA);
-        images = new ArrayList<> (sd.totalUnits);
-
-        id = 0;
-        for (DataBlock dataBlock : sd.dataBlocks)
-          images.add (new WizardryImage (id++, dataBlock, getScenarioId ()));
-
-        if (false)
-        {
-          int[] imageTotals = new int[images.size ()];
-          for (Monster monster : monsters)
-            imageTotals[monster.image]++;
-
-          for (int i = 0; i < imageTotals.length; i++)
-            System.out.printf ("%2d  %2d%n", i, imageTotals[i]);
-        }
-
-        if (false)
-          for (int i = 0; i < 10; i++)
-            histogram (i);
-
-        if (false)
-          for (int i = 0; i < mazeLevels.size (); i++)
-            mazeLevels.get (i).showOdds ();
-
-        break;
-
-      case 4:
-      case 5:
-        // create message lines (must happen before maze levels are added)
-        messages = new MessagesV2 (disk.messageBlock);
-        MessagesV2 messagesV2 = ((MessagesV2) messages);
-
-        // add spell names
-        String[] spellNames = new String[51];
-        for (int i = 0; i < spellNames.length; i++)
-        {
-          String line = messagesV2.getMessageLine (i + 5000);
-          spellNames[i] = line.startsWith ("*") ? line.substring (1) : line;
-        }
-        header.addSpellNames (spellNames);
-
-        // add maze levels
-        sd = header.get (MAZE_AREA);
-        mazeLevels = new ArrayList<> (sd.totalUnits);
-
-        id = 0;
-        for (DataBlock dataBlock : sd.dataBlocks)
-        {
-          MazeLevel mazeLevel = new MazeLevel (this, ++id, dataBlock);
-          mazeLevels.add (mazeLevel);
-
-          for (Special special : mazeLevel.getSpecials ())
-            if (special.square == Square.SCNMSG && special.aux[2] <= 13)
-              getMessage (special.aux[1]).addLocations (special.locations);
-        }
-
-        // add monster names
-        sd = header.get (MONSTER_AREA);
-        monsters = new ArrayList<> (sd.totalUnits);
-        String[] monsterNames = new String[4];
-        for (int i = 0; i < 120; i++)
-        {
-          for (int j = 0; j < 4; j++)
-            monsterNames[j] = messagesV2.getMessageLine (i * 4 + 13000 + j);
-
-          if (monsterNames[0] != null)
-            monsters.add (new Monster (i, monsterNames));
-        }
-
-        // add item names
-        items = new TreeMap<> ();
-
-        for (int i = 0; i < 120; i++)
-        {
-          String itemNameGeneric = messagesV2.getMessageLine (i * 2 + 14000);
-          String itemName = messagesV2.getMessageLine (i * 2 + 14000 + 1);
-
-          if (itemName != null)
-            items.put (i, new Item (i, itemName, itemNameGeneric));
-        }
-
-        // add characters
-        characters = new ArrayList<> ();
-        int ptr = 1024;
-
-        for (int i = 0; i < 500; i++)
-        {
-          byte[] out = disk.decode (buffer, ptr, CHARACTER_RECORD_LENGTH);
-          int len = out[0] & 0xFF;
-
-          if (out[1] > 0)       // name length
-          {
-            Character c = new Character (i, out);
-            characters.add (c);
-            //            System.out.println (c.name);
-            //            System.out.println (HexFormatter.formatNoHeader (out, 33, len - 33));
-          }
-          ptr += CHARACTER_RECORD_LENGTH;
-        }
-
-        rewards = new ArrayList<> ();
-
-        buffer = disk.getFileData ("200.MONSTERS");
-        images = new ArrayList<> ();
-
-        buffer = disk.getFileData ("WERDNA.DATA");
-        break;
-
-      default:
-        System.out.println ("Unknown scenario id");
-    }
+    this.disk = disk;
   }
 
   // ---------------------------------------------------------------------------------//
   public String getFileName ()
   // ---------------------------------------------------------------------------------//
   {
-    return fileName;
+    return disk.getFileName ();
   }
 
   // ---------------------------------------------------------------------------------//
@@ -321,7 +125,7 @@ public class WizardryData
   }
 
   // ---------------------------------------------------------------------------------//
-  private void histogram (int level)
+  protected void histogram (int level)
   // ---------------------------------------------------------------------------------//
   {
     System.out.println ("+--------------------------------------------+");
@@ -425,19 +229,16 @@ public class WizardryData
   public Item getItem (int id)
   // ---------------------------------------------------------------------------------//
   {
-    if (id >= 0 && id < items.size ())
-      return items.get (id);
-
-    System.out.printf ("Item %d out of range%n", id);
-    return null;
+    return items.get (id);
   }
 
   // ---------------------------------------------------------------------------------//
   public String getItemName (int id)
   // ---------------------------------------------------------------------------------//
   {
-    if (id >= 0 && id < items.size ())
-      return items.get (id).name;
+    Item item = items.get (id);
+    if (item != null)
+      return item.name;
 
     return "** No such item **";
   }

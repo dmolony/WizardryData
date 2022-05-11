@@ -18,11 +18,14 @@ public class WizardryDisk
   FsPascal fs;
   MessageBlock messageBlock;          // Wiz 4/5
   Huffman huffman;
+  String fileName;
 
   // ---------------------------------------------------------------------------------//
   public WizardryDisk (String fileName) throws DiskFormatException, FileNotFoundException
   // ---------------------------------------------------------------------------------//
   {
+    this.fileName = fileName;
+
     File file = new File (fileName);
     if (!file.exists () || !file.isFile ())
       throw new FileNotFoundException ("File does not exist: " + fileName);
@@ -115,9 +118,12 @@ public class WizardryDisk
   }
 
   // ---------------------------------------------------------------------------------//
-  private boolean isWizardryIVorV ()
+  boolean isWizardryIVorV ()
   // ---------------------------------------------------------------------------------//
   {
+    if (messageBlock != null)
+      return true;
+
     // Wizardry IV or V boot code
     byte[] header = { 0x00, (byte) 0xEA, (byte) 0xA9, 0x60, (byte) 0x8D, 0x01, 0x08 };
     byte[] buffer = fs.readBlock (fs.getBlock (0));
@@ -157,5 +163,12 @@ public class WizardryDisk
       throw new DiskFormatException (fileName + " not found");
 
     return appleFile.read ();
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public String getFileName ()
+  // ---------------------------------------------------------------------------------//
+  {
+    return fileName;
   }
 }

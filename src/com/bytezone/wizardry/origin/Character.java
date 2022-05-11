@@ -15,6 +15,8 @@ public class Character
   private static int MAX_POSSESSIONS = 8;
   private static char[] awardsText = ">!$#&*<?BCPKODG@".toCharArray ();
 
+  public int id;
+
   public final String name;
   public final String password;
   public final boolean inMaze;
@@ -58,10 +60,18 @@ public class Character
 
   public final String awards;
 
+  int unknown1;
+  int unknown2;
+  int unknown3;
+  int unknown4;
+  int unknown5;
+
   // ---------------------------------------------------------------------------------//
   public Character (int id, byte[] buffer)
   // ---------------------------------------------------------------------------------//
   {
+    this.id = id;
+
     name = Utility.getPascalString (buffer, 1);
     password = Utility.getPascalString (buffer, 17);        // slogan of some kind
 
@@ -70,36 +80,52 @@ public class Character
     characterClass = WizardryData.CharacterClass.values ()[Utility.getShort (buffer, 37)];
     age = 0;
     armourClass = Utility.getSignedShort (buffer, 39);
+
     status = WizardryData.CharacterStatus.values ()[Utility.getShort (buffer, 41)];
     alignment = WizardryData.Alignment.values ()[Utility.getShort (buffer, 43)];
+
+    //    long attr = Utility.getLong (buffer, 45);
+    //    for (int i = 0; i < 6; i++)
+    //    {
+    //      attributes[i] = (int) (attr & 0x1F);
+    //      attr >>>= i == 2 ? 6 : 5;
+    //    }
+    int attr1 = Utility.getShort (buffer, 45);
+    int attr2 = Utility.getShort (buffer, 47);
+
+    attributes[0] = attr1 & 0x001F;
+    attributes[1] = (attr1 & 0x03E0) >>> 5;
+    attributes[2] = attr1 & (0x7C00) >>> 10;
+    attributes[3] = attr2 & 0x001F;
+    attributes[4] = attr2 & (0x03E0) >>> 5;
+    attributes[5] = attr2 & (0x7C00) >>> 10;
+
     gold = 0;
+
+    unknown1 = Utility.getShort (buffer, 49);     // was luck/skill (4 bytes)
+    unknown2 = Utility.getShort (buffer, 51);
+    unknown3 = Utility.getShort (buffer, 53);     // was gold (6 bytes)
+    unknown4 = Utility.getShort (buffer, 55);
+    unknown5 = Utility.getShort (buffer, 57);
+
     possessionsCount = Utility.getShort (buffer, 59);
+
+    for (int i = 0; i < possessionsCount; i++)
+    {
+      //      boolean equipped = Utility.getShort (buffer, 61 + i * 8) == 1;
+      //      boolean cursed = Utility.getShort (buffer, 63 + i * 8) == 1;
+      //      boolean identified = Utility.getShort (buffer, 65 + i * 8) == 1;
+      int itemNo = Utility.getShort (buffer, 67 + i * 8);
+      Possession p = new Possession (itemNo, false, false, true);
+      //      Possession p = new Possession (itemNo, equipped, cursed, identified);
+      possessions.add (p);
+    }
+
     experience = 0;
     maxlevac = Utility.getShort (buffer, 131);
     charlev = Utility.getShort (buffer, 133);
     hpLeft = Utility.getShort (buffer, 135);
     hpMax = Utility.getShort (buffer, 137);
-    //    mysteryBit = false;
-    hpCalCmd = 0;
-    healPts = 0;
-    crithitm = false;
-    swingCount = 0;
-    hpdamrc = new Dice (0, 0, 0);
-    awards = "???";
-
-    long attr = Utility.getLong (buffer, 45);
-    for (int i = 0; i < 6; i++)
-    {
-      attributes[i] = (int) (attr & 0x1F);
-      attr >>>= i == 2 ? 6 : 5;
-    }
-
-    for (int i = 0; i < possessionsCount; i++)
-    {
-      int itemNo = Utility.getShort (buffer, 67 + i * 8);
-      Possession p = new Possession (itemNo, true, false, true);
-      possessions.add (p);
-    }
 
     mysteryBit = (buffer[139] & 0x01) == 1;
     int index = -1;                         // skip mystery bit
@@ -120,14 +146,23 @@ public class Character
       priestSpells[i] = Utility.getShort (buffer, 161 + i * 2);
     }
 
-    //    int idd = Utility.getShort (buffer, 53);
-    //    System.out.println (idd);
+    hpCalCmd = Utility.getSignedShort (buffer, 175);
+    //    armourClass = Utility.getSignedShort (buffer, 177);   // see offset 39
+    healPts = Utility.getShort (buffer, 179);
+
+    crithitm = Utility.getShort (buffer, 181) == 1;
+    swingCount = Utility.getShort (buffer, 183);
+    hpdamrc = new Dice (buffer, 185);
+
+    awards = "";        // buffer is too short
   }
 
   // ---------------------------------------------------------------------------------//
   public Character (int id, DataBlock dataBlock, int scenarioId) throws InvalidCharacterException
   // ---------------------------------------------------------------------------------//
   {
+    this.id = id;
+
     byte[] buffer = dataBlock.buffer;
     int offset = dataBlock.offset;
 
@@ -148,15 +183,32 @@ public class Character
     status = WizardryData.CharacterStatus.values ()[Utility.getShort (buffer, offset + 40)];
     alignment = WizardryData.Alignment.values ()[Utility.getShort (buffer, offset + 42)];
 
-    long attr = Utility.getLong (buffer, offset + 44);
-    for (int i = 0; i < 6; i++)
-    {
-      attributes[i] = (int) (attr & 0x1F);
-      attr >>>= i == 2 ? 6 : 5;
-    }
+    //    long attr = Utility.getLong (buffer, offset + 44);
+    //    for (int i = 0; i < 6; i++)
+    //    {
+    //      attributes[i] = (int) (attr & 0x1F);
+    //      attr >>>= i == 2 ? 6 : 5;
+    //    }
+    int attr1 = Utility.getShort (buffer, 44);
+    int attr2 = Utility.getShort (buffer, 46);
+
+    attributes[0] = attr1 & 0x001F;
+    attributes[1] = (attr1 & 0x03E0) >>> 5;
+    attributes[2] = attr1 & (0x7C00) >>> 10;
+    attributes[3] = attr2 & 0x001F;
+    attributes[4] = attr2 & (0x03E0) >>> 5;
+    attributes[5] = attr2 & (0x7C00) >>> 10;
 
     // luck/skill
     //    System.out.println (HexFormatter.formatNoHeader (buffer, offset + 48, 4));
+    attr1 = Utility.getShort (buffer, 44);
+    attr2 = Utility.getShort (buffer, 46);
+
+    luckSkill[0] = attr1 & 0x001F;
+    luckSkill[1] = (attr1 & 0x03E0) >>> 5;
+    luckSkill[2] = attr1 & (0x7C00) >>> 10;
+    luckSkill[3] = attr2 & 0x001F;
+    luckSkill[4] = attr2 & (0x03E0) >>> 5;
 
     gold = Utility.getWizLong (buffer, offset + 52);
     possessionsCount = Utility.getShort (buffer, offset + 58);      // 0-8
@@ -207,7 +259,7 @@ public class Character
     swingCount = Utility.getShort (buffer, offset + 182);
     hpdamrc = new Dice (buffer, offset + 184);
 
-    awards = getAwardString (buffer, offset);
+    awards = getAwardString (buffer, offset + 206);
   }
 
   // ---------------------------------------------------------------------------------//
@@ -216,7 +268,7 @@ public class Character
   {
     StringBuilder text = new StringBuilder ();
 
-    int awards = Utility.getShort (buffer, offset + 206);
+    int awards = Utility.getShort (buffer, offset);
 
     for (int i = 0; i < 16; i++)
     {
@@ -233,6 +285,18 @@ public class Character
   // ---------------------------------------------------------------------------------//
   {
     return healPts < 0 ? "-" : healPts == 0 ? " " : "+";
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public String getText ()
+  // ---------------------------------------------------------------------------------//
+  {
+    String type = String.format ("%1.1s-%3.3s", alignment, characterClass);
+    String attr = String.format ("%2d %2d %2d %2d %2d %2d", attributes[0], attributes[1],
+        attributes[2], attributes[3], attributes[4], attributes[5]);
+
+    return String.format ("%3d  %-15s  %-15s  %s %4d %4d  %5d %5d %4d %4d %4d  %s", id, name,
+        password, type, armourClass, hpMax, unknown1, unknown2, unknown3, unknown4, unknown5, attr);
   }
 
   // ---------------------------------------------------------------------------------//
