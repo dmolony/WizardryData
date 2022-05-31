@@ -51,7 +51,7 @@ public class Monster
   };
 
   // ---------------------------------------------------------------------------------//
-  public Monster (int id, String[] names)
+  public Monster (int id, String[] names, byte[] buffer)
   // ---------------------------------------------------------------------------------//
   {
     this.id = id;
@@ -61,29 +61,42 @@ public class Monster
     name = names[2];
     namePlural = names[3];
 
-    Dice noDice = new Dice (1, 1, 0);
-
     image = -1;
-    groupSize = noDice;
-    hitPoints = noDice;
-    monsterClass = 0;
-    armourClass = 0;
-    damageDiceSize = 0;
     experiencePoints = 0;
-    drain = 0;
-    regen = 0;
     rewardWandering = 0;
     rewardLair = 0;
     partnerId = 0;
     partnerOdds = 0;
-    mageSpells = 0;
-    priestSpells = 0;
     unique = 0;
-    breathe = 0;
-    unaffect = 0;
-    resistance = 0;
-    properties = 0;
-    damageDiceText = "";
+
+    groupSize = new Dice (buffer, 1);
+    hitPoints = new Dice (buffer, 7);
+    monsterClass = Utility.getShort (buffer, 13);
+    armourClass = Utility.getSignedShort (buffer, 15);
+
+    damageDiceSize = buffer[17];                               // number of dice
+    String dd = "";
+    for (int i = 0, ptr = 19; i < 7; i++, ptr += 6)
+    {
+      if (buffer[ptr] == 0)
+        break;
+      damageDice[i] = new Dice (buffer, ptr);
+      dd += damageDice[i] + ", ";
+    }
+    if (dd.length () > 0)
+      damageDiceText = dd.substring (0, dd.length () - 2);
+    else
+      damageDiceText = "";
+
+    drain = Utility.getShort (buffer, 61);
+    regen = Utility.getShort (buffer, 63);
+    mageSpells = Utility.getShort (buffer, 65);
+    priestSpells = Utility.getShort (buffer, 67);
+    breathe = Utility.getShort (buffer, 69);
+    unaffect = Utility.getShort (buffer, 71);
+
+    resistance = Utility.getShort (buffer, 73);     // bit flags
+    properties = Utility.getShort (buffer, 75);      // bit flags
   }
 
   // ---------------------------------------------------------------------------------//

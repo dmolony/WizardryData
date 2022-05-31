@@ -26,14 +26,16 @@ public class Character
   public final CharacterStatus status;
   public final Alignment alignment;
   public final int[] attributes = new int[6];      // 0:18
-  public final int[] luckSkill = new int[5];       // 0:31
+  public final int[] saveVs = new int[5];          // 0:31
 
   public final long gold;
 
   public final int possessionsCount;
   public final List<Possession> possessions = new ArrayList<> (MAX_POSSESSIONS);
 
+  public final int nextCharacter;
   public final long experience;
+
   public final int maxlevac;                       // max level armour class?
   public final int charlev;                        // character level?
   public final int hpLeft;
@@ -84,12 +86,6 @@ public class Character
     status = WizardryData.CharacterStatus.values ()[Utility.getShort (buffer, 41)];
     alignment = WizardryData.Alignment.values ()[Utility.getShort (buffer, 43)];
 
-    //    long attr = Utility.getLong (buffer, 45);
-    //    for (int i = 0; i < 6; i++)
-    //    {
-    //      attributes[i] = (int) (attr & 0x1F);
-    //      attr >>>= i == 2 ? 6 : 5;
-    //    }
     int attr1 = Utility.getShort (buffer, 45);
     int attr2 = Utility.getShort (buffer, 47);
 
@@ -121,7 +117,9 @@ public class Character
       possessions.add (p);
     }
 
-    experience = 0;
+    experience = 0;                                       // not used
+    nextCharacter = Utility.getShort (buffer, 125);
+
     maxlevac = Utility.getShort (buffer, 131);
     charlev = Utility.getShort (buffer, 133);
     hpLeft = Utility.getShort (buffer, 135);
@@ -183,14 +181,9 @@ public class Character
     status = WizardryData.CharacterStatus.values ()[Utility.getShort (buffer, offset + 40)];
     alignment = WizardryData.Alignment.values ()[Utility.getShort (buffer, offset + 42)];
 
-    //    long attr = Utility.getLong (buffer, offset + 44);
-    //    for (int i = 0; i < 6; i++)
-    //    {
-    //      attributes[i] = (int) (attr & 0x1F);
-    //      attr >>>= i == 2 ? 6 : 5;
-    //    }
-    int attr1 = Utility.getShort (buffer, 44);
-    int attr2 = Utility.getShort (buffer, 46);
+    // basic attributes
+    int attr1 = Utility.getShort (buffer, offset + 44);
+    int attr2 = Utility.getShort (buffer, offset + 46);
 
     attributes[0] = attr1 & 0x001F;
     attributes[1] = (attr1 & 0x03E0) >>> 5;
@@ -199,16 +192,15 @@ public class Character
     attributes[4] = attr2 & (0x03E0) >>> 5;
     attributes[5] = attr2 & (0x7C00) >>> 10;
 
-    // luck/skill
-    //    System.out.println (HexFormatter.formatNoHeader (buffer, offset + 48, 4));
-    attr1 = Utility.getShort (buffer, 44);
-    attr2 = Utility.getShort (buffer, 46);
+    // saving throws
+    attr1 = Utility.getShort (buffer, offset + 48);
+    attr2 = Utility.getShort (buffer, offset + 50);
 
-    luckSkill[0] = attr1 & 0x001F;
-    luckSkill[1] = (attr1 & 0x03E0) >>> 5;
-    luckSkill[2] = attr1 & (0x7C00) >>> 10;
-    luckSkill[3] = attr2 & 0x001F;
-    luckSkill[4] = attr2 & (0x03E0) >>> 5;
+    saveVs[0] = attr1 & 0x001F;
+    saveVs[1] = (attr1 & 0x03E0) >>> 5;
+    saveVs[2] = attr1 & (0x7C00) >>> 10;
+    saveVs[3] = attr2 & 0x001F;
+    saveVs[4] = attr2 & (0x03E0) >>> 5;
 
     gold = Utility.getWizLong (buffer, offset + 52);
     possessionsCount = Utility.getShort (buffer, offset + 58);      // 0-8
@@ -226,7 +218,9 @@ public class Character
       possessions.add (new Possession (itemId, equipped, cursed, identified));
     }
 
+    nextCharacter = -1;                                         // not used
     experience = Utility.getWizLong (buffer, offset + 124);
+
     maxlevac = Utility.getShort (buffer, offset + 130);
     charlev = Utility.getShort (buffer, offset + 132);
     hpLeft = Utility.getShort (buffer, offset + 134);

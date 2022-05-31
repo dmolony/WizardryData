@@ -3,6 +3,8 @@ package com.bytezone.wizardry.origin;
 import java.util.List;
 import java.util.Map;
 
+// Useful web sites:
+// https://datadrivengamer.blogspot.com/2019/08/the-not-so-basic-mechanics-of-wizardry.html
 // -----------------------------------------------------------------------------------//
 public abstract class WizardryData
 // -----------------------------------------------------------------------------------//

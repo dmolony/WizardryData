@@ -1,6 +1,5 @@
 package com.bytezone.wizardry.origin;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 
 // -----------------------------------------------------------------------------------//
@@ -18,13 +17,6 @@ public class Wizardry
       throws DiskFormatException, FileNotFoundException
   // ---------------------------------------------------------------------------------//
   {
-    File file = new File (fileName);
-    if (!file.exists () || !file.isFile ())
-    {
-      System.out.println ("File does not exist: " + fileName);
-      return null;
-    }
-
     WizardryDisk disk = new WizardryDisk (fileName);
 
     if (disk == null)

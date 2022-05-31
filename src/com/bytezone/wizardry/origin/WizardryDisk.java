@@ -15,10 +15,11 @@ import com.bytezone.filesystem.FsPascal;
 public class WizardryDisk
 // -----------------------------------------------------------------------------------//
 {
+  String fileName;
   FsPascal fs;
+
   MessageBlock messageBlock;          // Wiz 4/5
   Huffman huffman;
-  String fileName;
 
   // ---------------------------------------------------------------------------------//
   public WizardryDisk (String fileName) throws DiskFormatException, FileNotFoundException
@@ -51,7 +52,7 @@ public class WizardryDisk
     if (findFile ("SCENARIO.DATA") == null)
       throw new DiskFormatException ("Not a Wizardry scenario: " + fileName);
 
-    if (isWizardryIVorV ())
+    if (findFile ("ASCII.KRN") != null && checkWiz4 ())
     {
       createNewDisk (file, fs);
       huffman = new Huffman (getFileData ("ASCII.HUFF"));
@@ -66,7 +67,7 @@ public class WizardryDisk
     String fileName = file.getAbsolutePath ().toLowerCase ();
     int pos = file.getAbsolutePath ().indexOf ('.');
     char c = fileName.charAt (pos - 1);
-    int requiredDisks = c == '1' ? 6 : c == 'a' ? 10 : 0;
+    int requiredDisks = c == '1' ? 6 : c == 'a' ? 9 : 0;
 
     if (requiredDisks == 0)
       return;
@@ -80,15 +81,15 @@ public class WizardryDisk
     this.fs = new FsPascal ("Wiz4", buffer, fs.getBlockReader ());
     disks[0] = this.fs;
 
-    if (!collectDataDisks (file.getAbsolutePath (), pos, disks))
-      throw new DiskFormatException ("Couldn't collect extra disks required");
+    collectDataDisks (file.getAbsolutePath (), pos, disks);
 
     Relocator relocator = new Relocator (getFileData ("SYSTEM.RELOC"));
     relocator.createNewBuffer (disks);        // copies disks 1-6 or 1-10 into disk 0
   }
 
   // ---------------------------------------------------------------------------------//
-  private boolean collectDataDisks (String fileName, int dotPos, AppleFileSystem[] disks)
+  private void collectDataDisks (String fileName, int dotPos, AppleFileSystem[] disks)
+      throws DiskFormatException
   // ---------------------------------------------------------------------------------//
   {
     char c = fileName.charAt (dotPos - 1);
@@ -101,7 +102,7 @@ public class WizardryDisk
 
       File f = new File (fileName.replace (old, rep));
       if (!f.exists () || !f.isFile ())
-        return false;
+        throw new DiskFormatException ("Couldn't collect extra disks required");
 
       try
       {
@@ -110,20 +111,22 @@ public class WizardryDisk
       }
       catch (IOException e)
       {
-        e.printStackTrace ();
+        throw new DiskFormatException (e.getMessage ());
       }
     }
-
-    return true;
   }
 
   // ---------------------------------------------------------------------------------//
   boolean isWizardryIVorV ()
   // ---------------------------------------------------------------------------------//
   {
-    if (messageBlock != null)
-      return true;
+    return (messageBlock != null);
+  }
 
+  // ---------------------------------------------------------------------------------//
+  boolean checkWiz4 ()
+  // ---------------------------------------------------------------------------------//
+  {
     // Wizardry IV or V boot code
     byte[] header = { 0x00, (byte) 0xEA, (byte) 0xA9, 0x60, (byte) 0x8D, 0x01, 0x08 };
     byte[] buffer = fs.readBlock (fs.getBlock (0));
