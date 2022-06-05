@@ -30,7 +30,7 @@ class Huffman
   }
 
   // ---------------------------------------------------------------------------------//
-  byte[] decodeMessage (byte[] buffer, int offset, int length)
+  byte[] decodeMessageOld (byte[] buffer, int offset, int length)
   // ---------------------------------------------------------------------------------//
   {
     this.message = buffer;
@@ -48,6 +48,27 @@ class Huffman
     byte[] returnBuffer = new byte[decoded.size ()];
     for (byte b : decoded)
       returnBuffer[retPtr++] = b;
+
+    return returnBuffer;
+  }
+
+  // ---------------------------------------------------------------------------------//
+  byte[] decodeMessage (byte[] buffer, int offset)
+  // ---------------------------------------------------------------------------------//
+  {
+    this.message = buffer;
+
+    depth = 0;
+    msgPtr = offset;
+    currentByte = 0;
+
+    int size = (getChar () & 0xFF) + 1;
+    byte[] returnBuffer = new byte[size];
+    returnBuffer[0] = (byte) size;
+    int ptr = 1;
+
+    while (ptr < size)
+      returnBuffer[ptr++] = getChar ();
 
     return returnBuffer;
   }

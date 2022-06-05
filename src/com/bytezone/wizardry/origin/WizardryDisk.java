@@ -15,11 +15,11 @@ import com.bytezone.filesystem.FsPascal;
 public class WizardryDisk
 // -----------------------------------------------------------------------------------//
 {
-  String fileName;
-  FsPascal fs;
+  private String fileName;
+  private FsPascal fs;
 
   MessageBlock messageBlock;          // Wiz 4/5
-  Huffman huffman;
+  private Huffman huffman;
 
   // ---------------------------------------------------------------------------------//
   public WizardryDisk (String fileName) throws DiskFormatException, FileNotFoundException
@@ -140,10 +140,10 @@ public class WizardryDisk
   }
 
   // ---------------------------------------------------------------------------------//
-  byte[] decode (byte[] buffer, int offset, int length)
+  byte[] decode (byte[] buffer, int offset)
   // ---------------------------------------------------------------------------------//
   {
-    return huffman.decodeMessage (buffer, offset, length);
+    return huffman.decodeMessage (buffer, offset);
   }
 
   // ---------------------------------------------------------------------------------//

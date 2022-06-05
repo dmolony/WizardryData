@@ -32,12 +32,12 @@ public class Item
   public final int wepvstyFlags;
 
   // ---------------------------------------------------------------------------------//
-  public Item (int id, String name, String nameGeneric)
+  public Item (String[] names, byte[] buffer, int id)
   // ---------------------------------------------------------------------------------//
   {
     this.id = id;
-    this.name = name;
-    this.nameGeneric = nameGeneric;
+    this.name = names[1];
+    this.nameGeneric = names[0];
 
     Dice noDice = new Dice (1, 1, 0);
 

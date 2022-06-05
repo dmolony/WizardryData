@@ -2,7 +2,6 @@ package com.bytezone.wizardry.origin;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.TreeMap;
 
 // -----------------------------------------------------------------------------------//
@@ -46,59 +45,61 @@ public class WizardryData4 extends WizardryData
           getMessage (special.aux[1]).addLocations (special.locations);
     }
 
-    // add item names
+    // add items
+    sd = header.get (ITEM_AREA);
+    int ptr = sd.firstBlock * 512;
+
     items = new TreeMap<> ();
+    String[] itemNames = new String[2];
 
-    List<String> itemNames = new ArrayList<> ();
-    for (int i = 0; i < 120; i++)
+    for (int i = 0; i < sd.totalUnits; i++)
     {
-      String itemNameGeneric = messagesV2.getMessageLine (i * 2 + 14000);
-      String itemName = messagesV2.getMessageLine (i * 2 + 14000 + 1);
+      byte[] out = disk.decode (buffer, ptr);
 
-      if (itemName != null)
-        items.put (i, new Item (i, itemName, itemNameGeneric));
-      //      System.out.printf ("%3d  %s%n", i, itemName);
-      itemNames.add (itemName);
+      for (int j = 0; j < itemNames.length; j++)
+      {
+        itemNames[j] = messagesV2.getMessageLine (i * 2 + 14000 + j);
+        if (itemNames[j] == null)
+          itemNames[j] = "Broken Item";
+      }
+
+      items.put (i, new Item (itemNames, out, i));
+
+      ptr += sd.totalBlocks;      // uncompressed record length
     }
 
     // add characters
     sd = header.get (CHARACTER_AREA);
     characters = new ArrayList<> ();
-    int ptr = sd.firstBlock * 512;
+    ptr = sd.firstBlock * 512;
 
     for (int i = 0; i < 500; i++)
     {
-      byte[] out = disk.decode (buffer, ptr, sd.totalBlocks);
-      int len = out[0] & 0xFF;
-      if (len > out.length)
-        System.out.printf ("Decoded array too short: (#%3d)  %3d > %3d%n", i, len, out.length);
+      byte[] out = disk.decode (buffer, ptr);
 
       Character c = new Character (i, out);
       characters.add (c);
 
-      ptr += sd.totalBlocks;
+      ptr += sd.totalBlocks;      // uncompressed record length
     }
 
+    // add monsters
     sd = header.get (MONSTER_AREA);
     ptr = sd.firstBlock * 512;
 
-    // add monster names
-    sd = header.get (MONSTER_AREA);
     monsters = new ArrayList<> (sd.totalUnits);
     String[] monsterNames = new String[4];
 
     for (int i = 0; i < sd.totalUnits; i++)
     {
-      byte[] out = disk.decode (buffer, ptr, sd.totalBlocks);
+      byte[] out = disk.decode (buffer, ptr);
 
       for (int j = 0; j < 4; j++)
         monsterNames[j] = messagesV2.getMessageLine (i * 4 + 13000 + j);
 
       monsters.add (new Monster (i, monsterNames, out));
 
-      System.out.printf ("%3d  %s%n", i, monsters.get (i).name);
-
-      ptr += sd.totalBlocks;
+      ptr += sd.totalBlocks;      // uncompressed record length
     }
 
     rewards = new ArrayList<> ();
