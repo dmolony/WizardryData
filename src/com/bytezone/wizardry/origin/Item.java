@@ -39,27 +39,27 @@ public class Item
     this.name = names[1];
     this.nameGeneric = names[0];
 
-    Dice noDice = new Dice (1, 1, 0);
+    type = ObjectType.values ()[buffer[1]];
+    alignment = Alignment.values ()[buffer[3]];
+    cursed = Utility.getSignedShort (buffer, 5) == -1;
+    special = Utility.getSignedShort (buffer, 7);
+    changeTo = Utility.getShort (buffer, 9);            // decay #
+    changeChance = Utility.getShort (buffer, 11);
+    price = Utility.getWizLong (buffer, 13);
+    boltac = Utility.getSignedShort (buffer, 19);
+    spellPwr = Utility.getShort (buffer, 21);
+    classUseFlags = Utility.getShort (buffer, 23);       // 8 flags
 
-    type = null;
-    alignment = null;
-    cursed = false;
-    special = 0;
-    changeTo = 0;
-    changeChance = 0;
-    price = 0;
-    boltac = 0;
-    spellPwr = 0;
-    healPts = 0;
-    armourClass = 0;
-    wephitmd = 0;
-    wephpdam = noDice;
-    xtraSwing = 0;
-    crithitm = false;
-    classUseFlags = 0;
-    wepvsty2Flags = 0;
-    wepvsty3Flags = 0;
-    wepvstyFlags = 0;
+    healPts = Utility.getSignedShort (buffer, 25);
+    wepvsty2Flags = Utility.getShort (buffer, 27);       // 16 flags
+    wepvsty3Flags = Utility.getShort (buffer, 29);       // 16 flags
+    armourClass = Utility.getSignedShort (buffer, 31);
+    wephitmd = Utility.getSignedShort (buffer, 33);
+    wephpdam = new Dice (buffer, 35);
+
+    xtraSwing = Utility.getShort (buffer, 41);
+    crithitm = Utility.getShort (buffer, 43) == 1;       // boolean
+    wepvstyFlags = Utility.getShort (buffer, 45);        // 14 flags
   }
 
   // ---------------------------------------------------------------------------------//
