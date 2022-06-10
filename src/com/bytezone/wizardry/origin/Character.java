@@ -91,10 +91,10 @@ public class Character
 
     attributes[0] = attr1 & 0x001F;
     attributes[1] = (attr1 & 0x03E0) >>> 5;
-    attributes[2] = attr1 & (0x7C00) >>> 10;
+    attributes[2] = (attr1 & 0x7C00) >>> 10;
     attributes[3] = attr2 & 0x001F;
-    attributes[4] = attr2 & (0x03E0) >>> 5;
-    attributes[5] = attr2 & (0x7C00) >>> 10;
+    attributes[4] = (attr2 & 0x03E0) >>> 5;
+    attributes[5] = (attr2 & 0x7C00) >>> 10;
 
     gold = 0;
 
@@ -108,12 +108,8 @@ public class Character
 
     for (int i = 0; i < possessionsCount; i++)
     {
-      //      boolean equipped = Utility.getShort (buffer, 61 + i * 8) == 1;
-      //      boolean cursed = Utility.getShort (buffer, 63 + i * 8) == 1;
-      //      boolean identified = Utility.getShort (buffer, 65 + i * 8) == 1;
       int itemNo = Utility.getShort (buffer, 67 + i * 8);
       Possession p = new Possession (itemNo, false, false, true);
-      //      Possession p = new Possession (itemNo, equipped, cursed, identified);
       possessions.add (p);
     }
 
@@ -128,6 +124,7 @@ public class Character
     mysteryBit = (buffer[139] & 0x01) == 1;
     int index = -1;                         // skip mystery bit
     for (int i = 139; i < 146; i++)
+    {
       for (int bit = 0; bit < 8; bit++)
       {
         if (((buffer[i] >>> bit) & 0x01) != 0)
@@ -137,6 +134,7 @@ public class Character
         if (++index >= WizardryData.spells.length)
           break;
       }
+    }
 
     for (int i = 0; i < 7; i++)
     {
@@ -187,10 +185,10 @@ public class Character
 
     attributes[0] = attr1 & 0x001F;
     attributes[1] = (attr1 & 0x03E0) >>> 5;
-    attributes[2] = attr1 & (0x7C00) >>> 10;
+    attributes[2] = (attr1 & 0x7C00) >>> 10;
     attributes[3] = attr2 & 0x001F;
-    attributes[4] = attr2 & (0x03E0) >>> 5;
-    attributes[5] = attr2 & (0x7C00) >>> 10;
+    attributes[4] = (attr2 & 0x03E0) >>> 5;
+    attributes[5] = (attr2 & 0x7C00) >>> 10;
 
     // saving throws
     attr1 = Utility.getShort (buffer, offset + 48);
@@ -198,9 +196,9 @@ public class Character
 
     saveVs[0] = attr1 & 0x001F;
     saveVs[1] = (attr1 & 0x03E0) >>> 5;
-    saveVs[2] = attr1 & (0x7C00) >>> 10;
+    saveVs[2] = (attr1 & 0x7C00) >>> 10;
     saveVs[3] = attr2 & 0x001F;
-    saveVs[4] = attr2 & (0x03E0) >>> 5;
+    saveVs[4] = (attr2 & 0x03E0) >>> 5;
 
     gold = Utility.getWizLong (buffer, offset + 52);
     possessionsCount = Utility.getShort (buffer, offset + 58);      // 0-8
