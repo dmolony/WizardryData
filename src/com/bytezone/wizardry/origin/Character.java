@@ -13,6 +13,8 @@ public class Character
 // -----------------------------------------------------------------------------------//
 {
   private static int MAX_POSSESSIONS = 8;
+  static int MAGE_SPELLS = 0;
+  static int PRIEST_SPELLS = 1;
   private static char[] awardsText = ">!$#&*<?BCPKODG@".toCharArray ();
 
   public int id;
@@ -33,7 +35,7 @@ public class Character
   public final int possessionsCount;
   public final List<Possession> possessions = new ArrayList<> (MAX_POSSESSIONS);
 
-  public final int nextCharacter;
+  //  public final int nextCharacter;
   public final long experience;
 
   public final int maxlevac;                       // max level armour class?
@@ -43,8 +45,7 @@ public class Character
 
   public final boolean mysteryBit;                 // first bit in spellsKnown
   public final boolean[] spellsKnown = new boolean[50];
-  public final int[] mageSpells = new int[7];
-  public final int[] priestSpells = new int[7];
+  public final int[][] spellAllowance = new int[2][7];
 
   public final int hpCalCmd;
   public final int armourClass;
@@ -68,6 +69,10 @@ public class Character
   int unknown4;
   int unknown5;
 
+  int nextCharacterId;
+  CharacterParty party;
+  String partialSlogan;
+
   // ---------------------------------------------------------------------------------//
   public Character (int id, byte[] buffer)
   // ---------------------------------------------------------------------------------//
@@ -75,7 +80,9 @@ public class Character
     this.id = id;
 
     name = Utility.getPascalString (buffer, 1);
-    password = Utility.getPascalString (buffer, 17);        // slogan of some kind
+    //    password = Utility.getPascalString (buffer, 17);        // slogan of some kind
+    password = "";
+    partialSlogan = buffer[17] == 0 ? "" : HexFormatter.getPascalString (buffer, 17);
 
     inMaze = Utility.getShort (buffer, 33) != 0;
     race = WizardryData.Race.values ()[Utility.getShort (buffer, 35)];
@@ -98,7 +105,7 @@ public class Character
 
     gold = 0;
 
-    unknown1 = Utility.getShort (buffer, 49);     // was luck/skill (4 bytes)
+    unknown1 = Utility.getShort (buffer, 49);     // was saveVs (4 bytes)
     unknown2 = Utility.getShort (buffer, 51);
     unknown3 = Utility.getShort (buffer, 53);     // was gold (6 bytes)
     unknown4 = Utility.getShort (buffer, 55);
@@ -114,7 +121,7 @@ public class Character
     }
 
     experience = 0;                                       // not used
-    nextCharacter = Utility.getShort (buffer, 125);
+    nextCharacterId = Utility.getShort (buffer, 125);
 
     maxlevac = Utility.getShort (buffer, 131);
     charlev = Utility.getShort (buffer, 133);
@@ -136,10 +143,16 @@ public class Character
       }
     }
 
+    //    for (int i = 0; i < 7; i++)
+    //    {
+    //      mageSpells[i] = Utility.getShort (buffer, 147 + i * 2);
+    //      priestSpells[i] = Utility.getShort (buffer, 161 + i * 2);
+    //    }
+
     for (int i = 0; i < 7; i++)
     {
-      mageSpells[i] = Utility.getShort (buffer, 147 + i * 2);
-      priestSpells[i] = Utility.getShort (buffer, 161 + i * 2);
+      spellAllowance[MAGE_SPELLS][i] = Utility.getShort (buffer, 147 + i * 2);
+      spellAllowance[PRIEST_SPELLS][i] = Utility.getShort (buffer, 161 + i * 2);
     }
 
     hpCalCmd = Utility.getSignedShort (buffer, 175);
@@ -216,7 +229,7 @@ public class Character
       possessions.add (new Possession (itemId, equipped, cursed, identified));
     }
 
-    nextCharacter = -1;                                         // not used
+    nextCharacterId = -1;                                         // not used
     experience = Utility.getWizLong (buffer, offset + 124);
 
     maxlevac = Utility.getShort (buffer, offset + 130);
@@ -239,8 +252,8 @@ public class Character
 
     for (int i = 0; i < 7; i++)
     {
-      mageSpells[i] = Utility.getShort (buffer, offset + 146 + i * 2);
-      priestSpells[i] = Utility.getShort (buffer, offset + 160 + i * 2);
+      spellAllowance[MAGE_SPELLS][i] = Utility.getShort (buffer, 146 + i * 2);
+      spellAllowance[PRIEST_SPELLS][i] = Utility.getShort (buffer, 160 + i * 2);
     }
 
     hpCalCmd = Utility.getSignedShort (buffer, offset + 174);
@@ -280,15 +293,80 @@ public class Character
   }
 
   // ---------------------------------------------------------------------------------//
+  void setParty (CharacterParty party)
+  // ---------------------------------------------------------------------------------//
+  {
+    this.party = party;
+  }
+
+  // ---------------------------------------------------------------------------------//
+  boolean isInParty ()
+  // ---------------------------------------------------------------------------------//
+  {
+    return party != null;
+  }
+
+  // ---------------------------------------------------------------------------------//
+  String getPartialSlogan ()
+  // ---------------------------------------------------------------------------------//
+  {
+    return partialSlogan;
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public CharacterParty getParty ()
+  // ---------------------------------------------------------------------------------//
+  {
+    return party;
+  }
+
+  // ---------------------------------------------------------------------------------//
+  String getAttributeString ()
+  // ---------------------------------------------------------------------------------//
+  {
+    StringBuilder text = new StringBuilder ();
+
+    for (int i = 0; i < attributes.length; i++)
+      text.append (String.format ("%02d/", attributes[i]));
+    text.deleteCharAt (text.length () - 1);
+
+    return text.toString ();
+  }
+
+  // ---------------------------------------------------------------------------------//
+  String getSpellsString (int which)
+  // ---------------------------------------------------------------------------------//
+  {
+    StringBuilder text = new StringBuilder ();
+
+    int total = 0;
+    for (int i = 0; i < spellAllowance[which].length; i++)
+      total += spellAllowance[which][i];
+
+    if (total == 0)
+      return "";
+
+    for (int i = 0; i < spellAllowance[which].length; i++)
+      text.append (String.format ("%d/", spellAllowance[which][i]));
+    text.deleteCharAt (text.length () - 1);
+
+    return text.toString ();
+  }
+
+  // ---------------------------------------------------------------------------------//
+  String getTypeString ()
+  // ---------------------------------------------------------------------------------//
+  {
+    return String.format ("%1.1s-%3.3s", alignment, characterClass);
+  }
+
+  // ---------------------------------------------------------------------------------//
   public String getText ()
   // ---------------------------------------------------------------------------------//
   {
-    String type = String.format ("%1.1s-%3.3s", alignment, characterClass);
-    String attr = String.format ("%2d %2d %2d %2d %2d %2d", attributes[0], attributes[1],
-        attributes[2], attributes[3], attributes[4], attributes[5]);
-
     return String.format ("%3d  %-15s  %-15s  %s %4d %4d  %5d %5d %4d %4d %4d  %s", id, name,
-        password, type, armourClass, hpMax, unknown1, unknown2, unknown3, unknown4, unknown5, attr);
+        password, getTypeString (), armourClass, hpMax, unknown1, unknown2, unknown3, unknown4,
+        unknown5, getAttributeString ());
   }
 
   // ---------------------------------------------------------------------------------//

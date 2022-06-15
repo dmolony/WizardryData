@@ -2,12 +2,15 @@ package com.bytezone.wizardry.origin;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 // -----------------------------------------------------------------------------------//
 public class WizardryData4 extends WizardryData
 // -----------------------------------------------------------------------------------//
 {
+  private List<CharacterParty> parties = new ArrayList<> ();
+
   // ---------------------------------------------------------------------------------//
   public WizardryData4 (WizardryDisk disk) throws FileNotFoundException, DiskFormatException
   // ---------------------------------------------------------------------------------//
@@ -83,6 +86,8 @@ public class WizardryData4 extends WizardryData
       ptr += sd.totalBlocks;      // uncompressed record length
     }
 
+    linkParties ();
+
     // add monsters
     sd = header.get (MONSTER_AREA);
     ptr = sd.firstBlock * 512;
@@ -108,5 +113,33 @@ public class WizardryData4 extends WizardryData
     images = new ArrayList<> ();
 
     buffer = disk.getFileData ("WERDNA.DATA");
+  }
+
+  // ---------------------------------------------------------------------------------//
+  private void linkParties ()
+  // ---------------------------------------------------------------------------------//
+  {
+    for (Character character : characters)
+    {
+      if (character.isInParty () || character.name.isEmpty ())
+        continue;
+
+      CharacterParty party = new CharacterParty ();
+      parties.add (party);
+      link (character, party);
+    }
+  }
+
+  // ---------------------------------------------------------------------------------//
+  private void link (Character character, CharacterParty party)
+  // ---------------------------------------------------------------------------------//
+  {
+    if (character.isInParty ())
+      return;
+
+    party.add (character);
+
+    if (character.nextCharacterId > 0)
+      link (characters.get (character.nextCharacterId), party);
   }
 }
