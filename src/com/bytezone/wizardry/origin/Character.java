@@ -13,8 +13,8 @@ public class Character
 // -----------------------------------------------------------------------------------//
 {
   private static int MAX_POSSESSIONS = 8;
-  static int MAGE_SPELLS = 0;
-  static int PRIEST_SPELLS = 1;
+  public static int MAGE_SPELLS = 0;
+  public static int PRIEST_SPELLS = 1;
   private static char[] awardsText = ">!$#&*<?BCPKODG@".toCharArray ();
 
   public int id;
@@ -252,8 +252,8 @@ public class Character
 
     for (int i = 0; i < 7; i++)
     {
-      spellAllowance[MAGE_SPELLS][i] = Utility.getShort (buffer, 146 + i * 2);
-      spellAllowance[PRIEST_SPELLS][i] = Utility.getShort (buffer, 160 + i * 2);
+      spellAllowance[MAGE_SPELLS][i] = Utility.getShort (buffer, offset + 146 + i * 2);
+      spellAllowance[PRIEST_SPELLS][i] = Utility.getShort (buffer, offset + 160 + i * 2);
     }
 
     hpCalCmd = Utility.getSignedShort (buffer, offset + 174);
@@ -321,7 +321,7 @@ public class Character
   }
 
   // ---------------------------------------------------------------------------------//
-  String getAttributeString ()
+  public String getAttributeString ()
   // ---------------------------------------------------------------------------------//
   {
     StringBuilder text = new StringBuilder ();
@@ -334,7 +334,7 @@ public class Character
   }
 
   // ---------------------------------------------------------------------------------//
-  String getSpellsString (int which)
+  public String getSpellsString (int which)
   // ---------------------------------------------------------------------------------//
   {
     StringBuilder text = new StringBuilder ();
@@ -354,7 +354,7 @@ public class Character
   }
 
   // ---------------------------------------------------------------------------------//
-  String getTypeString ()
+  public String getTypeString ()
   // ---------------------------------------------------------------------------------//
   {
     return String.format ("%1.1s-%3.3s", alignment, characterClass);
