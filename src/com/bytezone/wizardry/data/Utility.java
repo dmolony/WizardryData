@@ -115,6 +115,40 @@ public class Utility
   }
 
   // ---------------------------------------------------------------------------------//
+  public static String getHexString (byte[] buffer, int offset, int length)
+  // ---------------------------------------------------------------------------------//
+  {
+    return getHexString (buffer, offset, length, true);
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public static String getHexString (byte[] buffer)
+  // ---------------------------------------------------------------------------------//
+  {
+    return getHexString (buffer, 0, buffer.length);
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public static String getHexString (byte[] buffer, int offset, int length, boolean space)
+  // ---------------------------------------------------------------------------------//
+  {
+    StringBuilder hex = new StringBuilder ();
+
+    int max = Math.min (offset + length, buffer.length);
+    for (int i = offset; i < max; i++)
+    {
+      hex.append (String.format ("%02X", buffer[i]));
+      if (space)
+        hex.append (' ');
+    }
+
+    if (length > 0 && space)
+      hex.deleteCharAt (hex.length () - 1);
+
+    return hex.toString ();
+  }
+
+  // ---------------------------------------------------------------------------------//
   public static String getBitString (int value, int bitLength)
   // ---------------------------------------------------------------------------------//
   {

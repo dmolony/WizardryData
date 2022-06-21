@@ -43,7 +43,7 @@ public class Character
   public final int hpLeft;
   public final int hpMax;
 
-  public final boolean mysteryBit;                 // first bit in spellsKnown
+  public boolean mysteryBit;                      // first bit in spellsKnown
   public final boolean[] spellsKnown = new boolean[50];
   public final int[][] spellAllowance = new int[2][7];
 
@@ -74,7 +74,7 @@ public class Character
   String partialSlogan;
 
   // ---------------------------------------------------------------------------------//
-  public Character (int id, byte[] buffer)
+  public Character (int id, byte[] buffer)          // Wizardry IV
   // ---------------------------------------------------------------------------------//
   {
     this.id = id;
@@ -128,26 +128,7 @@ public class Character
     hpLeft = Utility.getShort (buffer, 135);
     hpMax = Utility.getShort (buffer, 137);
 
-    mysteryBit = (buffer[139] & 0x01) == 1;
-    int index = -1;                         // skip mystery bit
-    for (int i = 139; i < 146; i++)
-    {
-      for (int bit = 0; bit < 8; bit++)
-      {
-        if (((buffer[i] >>> bit) & 0x01) != 0)
-          if (index >= 0)
-            spellsKnown[index] = true;
-
-        if (++index >= WizardryData.spells.length)
-          break;
-      }
-    }
-
-    //    for (int i = 0; i < 7; i++)
-    //    {
-    //      mageSpells[i] = Utility.getShort (buffer, 147 + i * 2);
-    //      priestSpells[i] = Utility.getShort (buffer, 161 + i * 2);
-    //    }
+    checkKnownSpells (buffer, 139);
 
     for (int i = 0; i < 7; i++)
     {
@@ -164,6 +145,13 @@ public class Character
     hpdamrc = new Dice (buffer, 185);
 
     awards = "";        // buffer is too short
+
+    //    System.out.printf ("%-16s %s%n", name, Utility.getHexString (buffer, 180, 45));
+    //    if (characterClass != CharacterClass.FIGHTER && characterClass != CharacterClass.NINJA
+    //        && characterClass != CharacterClass.THIEF)
+    //      System.out.printf ("%-16s %s %-8s %13.13s %13.13s%n", name,
+    //          Utility.getHexString (buffer, 139, 7), characterClass, getSpellsString (0),
+    //          getSpellsString (1));
   }
 
   // ---------------------------------------------------------------------------------//
@@ -237,18 +225,7 @@ public class Character
     hpLeft = Utility.getShort (buffer, offset + 134);
     hpMax = Utility.getShort (buffer, offset + 136);
 
-    mysteryBit = (buffer[offset + 138] & 0x01) == 1;
-    int index = -1;                         // skip mystery bit
-    for (int i = 138; i < 145; i++)
-      for (int bit = 0; bit < 8; bit++)
-      {
-        if (((buffer[offset + i] >>> bit) & 0x01) != 0)
-          if (index >= 0)
-            spellsKnown[index] = true;
-
-        if (++index >= WizardryData.spells.length)
-          break;
-      }
+    checkKnownSpells (buffer, offset + 138);
 
     for (int i = 0; i < 7; i++)
     {
@@ -265,6 +242,25 @@ public class Character
     hpdamrc = new Dice (buffer, offset + 184);
 
     awards = getAwardString (buffer, offset + 206);
+  }
+
+  // ---------------------------------------------------------------------------------//
+  private void checkKnownSpells (byte[] buffer, int ptr)
+  // ---------------------------------------------------------------------------------//
+  {
+    int bit = 1;                  // skip first bit
+    int val = buffer[ptr];
+    mysteryBit = (val & 0x01) == 1;
+
+    for (int i = 0; i < WizardryData.spells.length; i++)
+    {
+      if (bit == 8)
+      {
+        val = buffer[++ptr];
+        bit = 0;
+      }
+      spellsKnown[i] = ((val >>> bit++) & 0x01) != 0;
+    }
   }
 
   // ---------------------------------------------------------------------------------//
