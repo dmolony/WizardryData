@@ -63,13 +63,13 @@ public class Character
 
   public final String awards;
 
-  int unknown1;
-  int unknown2;
-  int unknown3;
-  int unknown4;
-  int unknown5;
+  public int unknown1;    // 35,939 if in party  0x8C63  - or 3,171
+  public int unknown2;    // 43,107 if in party  0xA863  - or    99
+  public int unknown3;    // if == id then character belongs to a party
+  public int unknown4;
+  public int unknown5;
 
-  int nextCharacterId;
+  public int nextCharacterId;    // if == id then character is in a party of one
   CharacterParty party;
   String partialSlogan;
 
@@ -80,7 +80,6 @@ public class Character
     this.id = id;
 
     name = Utility.getPascalString (buffer, 1);
-    //    password = Utility.getPascalString (buffer, 17);        // slogan of some kind
     password = "";
     partialSlogan = buffer[17] == 0 ? "" : HexFormatter.getPascalString (buffer, 17);
 
@@ -130,12 +129,6 @@ public class Character
 
     checkKnownSpells (buffer, 139);
 
-    for (int i = 0; i < 7; i++)
-    {
-      spellAllowance[MAGE_SPELLS][i] = Utility.getShort (buffer, 147 + i * 2);
-      spellAllowance[PRIEST_SPELLS][i] = Utility.getShort (buffer, 161 + i * 2);
-    }
-
     hpCalCmd = Utility.getSignedShort (buffer, 175);
     //    armourClass = Utility.getSignedShort (buffer, 177);   // see offset 39
     healPts = Utility.getShort (buffer, 179);
@@ -145,13 +138,6 @@ public class Character
     hpdamrc = new Dice (buffer, 185);
 
     awards = "";        // buffer is too short
-
-    //    System.out.printf ("%-16s %s%n", name, Utility.getHexString (buffer, 180, 45));
-    //    if (characterClass != CharacterClass.FIGHTER && characterClass != CharacterClass.NINJA
-    //        && characterClass != CharacterClass.THIEF)
-    //      System.out.printf ("%-16s %s %-8s %13.13s %13.13s%n", name,
-    //          Utility.getHexString (buffer, 139, 7), characterClass, getSpellsString (0),
-    //          getSpellsString (1));
   }
 
   // ---------------------------------------------------------------------------------//
@@ -227,12 +213,6 @@ public class Character
 
     checkKnownSpells (buffer, offset + 138);
 
-    for (int i = 0; i < 7; i++)
-    {
-      spellAllowance[MAGE_SPELLS][i] = Utility.getShort (buffer, offset + 146 + i * 2);
-      spellAllowance[PRIEST_SPELLS][i] = Utility.getShort (buffer, offset + 160 + i * 2);
-    }
-
     hpCalCmd = Utility.getSignedShort (buffer, offset + 174);
     armourClass = Utility.getSignedShort (buffer, offset + 176);
     healPts = Utility.getShort (buffer, offset + 178);
@@ -248,6 +228,12 @@ public class Character
   private void checkKnownSpells (byte[] buffer, int ptr)
   // ---------------------------------------------------------------------------------//
   {
+    for (int i = 0; i < 7; i++)
+    {
+      spellAllowance[MAGE_SPELLS][i] = Utility.getShort (buffer, ptr + 8 + i * 2);
+      spellAllowance[PRIEST_SPELLS][i] = Utility.getShort (buffer, ptr + 22 + i * 2);
+    }
+
     int bit = 1;                  // skip first bit
     int val = buffer[ptr];
     mysteryBit = (val & 0x01) == 1;
@@ -357,13 +343,13 @@ public class Character
   }
 
   // ---------------------------------------------------------------------------------//
-  public String getText ()
-  // ---------------------------------------------------------------------------------//
-  {
-    return String.format ("%3d  %-15s  %-15s  %s %4d %4d  %5d %5d %4d %4d %4d  %s", id, name,
-        password, getTypeString (), armourClass, hpMax, unknown1, unknown2, unknown3, unknown4,
-        unknown5, getAttributeString ());
-  }
+  //  public String getText ()
+  //  // ---------------------------------------------------------------------------------//
+  //  {
+  //    return String.format ("%3d  %-15s  %-15s  %s %4d %4d  %5d %5d %4d %4d %4d  %s", id, name,
+  //        password, getTypeString (), armourClass, hpMax, unknown1, unknown2, unknown3, unknown4,
+  //        unknown5, getAttributeString ());
+  //  }
 
   // ---------------------------------------------------------------------------------//
   @Override
