@@ -65,11 +65,11 @@ public class Character
 
   public int unknown1;    // 35,939 if in party  0x8C63  - or 3,171
   public int unknown2;    // 43,107 if in party  0xA863  - or    99
-  public int unknown3;    // if == id then character belongs to a party
+  public int unknown3;    // if == id then character belongs to a party (or == 0?)
   public int unknown4;
   public int unknown5;
 
-  public int nextCharacterId;    // if == id then character is in a party of one
+  public int nextCharacterId;    // if == id then character has a party name only
   CharacterParty party;
   String partialSlogan;
 
