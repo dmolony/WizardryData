@@ -21,6 +21,8 @@ public class WizardryDisk
   MessageBlock messageBlock;          // Wiz 4/5
   private Huffman huffman;
 
+  private FileSystemFactory factory = new FileSystemFactory ();
+
   // ---------------------------------------------------------------------------------//
   public WizardryDisk (String fileName) throws DiskFormatException, FileNotFoundException
   // ---------------------------------------------------------------------------------//
@@ -34,7 +36,7 @@ public class WizardryDisk
     try
     {
       byte[] diskBuffer = Files.readAllBytes (file.toPath ());
-      for (AppleFileSystem fs : FileSystemFactory.getFileSystems ("Wizardry", diskBuffer))
+      for (AppleFileSystem fs : factory.getFileSystems ("Wizardry", diskBuffer))
         if (fs instanceof FsPascal pascal)
         {
           this.fs = pascal;

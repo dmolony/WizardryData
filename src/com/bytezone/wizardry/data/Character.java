@@ -74,73 +74,6 @@ public class Character
   String partialSlogan;
 
   // ---------------------------------------------------------------------------------//
-  public Character (int id, byte[] buffer)          // Wizardry IV
-  // ---------------------------------------------------------------------------------//
-  {
-    this.id = id;
-
-    name = Utility.getPascalString (buffer, 1);
-    password = "";
-    partialSlogan = buffer[17] == 0 ? "" : HexFormatter.getPascalString (buffer, 17);
-
-    inMaze = Utility.getShort (buffer, 33) != 0;
-    race = WizardryData.Race.values ()[Utility.getShort (buffer, 35)];
-    characterClass = WizardryData.CharacterClass.values ()[Utility.getShort (buffer, 37)];
-    age = 0;
-    armourClass = Utility.getSignedShort (buffer, 39);
-
-    status = WizardryData.CharacterStatus.values ()[Utility.getShort (buffer, 41)];
-    alignment = WizardryData.Alignment.values ()[Utility.getShort (buffer, 43)];
-
-    int attr1 = Utility.getShort (buffer, 45);
-    int attr2 = Utility.getShort (buffer, 47);
-
-    attributes[0] = attr1 & 0x001F;
-    attributes[1] = (attr1 & 0x03E0) >>> 5;
-    attributes[2] = (attr1 & 0x7C00) >>> 10;
-    attributes[3] = attr2 & 0x001F;
-    attributes[4] = (attr2 & 0x03E0) >>> 5;
-    attributes[5] = (attr2 & 0x7C00) >>> 10;
-
-    gold = 0;
-
-    unknown1 = Utility.getShort (buffer, 49);     // was saveVs (4 bytes)
-    unknown2 = Utility.getShort (buffer, 51);
-    unknown3 = Utility.getShort (buffer, 53);     // was gold (6 bytes)
-    unknown4 = Utility.getShort (buffer, 55);
-    unknown5 = Utility.getShort (buffer, 57);
-
-    possessionsCount = Utility.getShort (buffer, 59);
-
-    for (int i = 0; i < possessionsCount; i++)
-    {
-      int itemNo = Utility.getShort (buffer, 67 + i * 8);
-      Possession p = new Possession (itemNo, false, false, true);
-      possessions.add (p);
-    }
-
-    experience = 0;                                       // not used
-    nextCharacterId = Utility.getShort (buffer, 125);
-
-    maxlevac = Utility.getShort (buffer, 131);
-    charlev = Utility.getShort (buffer, 133);
-    hpLeft = Utility.getShort (buffer, 135);
-    hpMax = Utility.getShort (buffer, 137);
-
-    checkKnownSpells (buffer, 139);
-
-    hpCalCmd = Utility.getSignedShort (buffer, 175);
-    //    armourClass = Utility.getSignedShort (buffer, 177);   // see offset 39
-    healPts = Utility.getShort (buffer, 179);
-
-    crithitm = Utility.getShort (buffer, 181) == 1;
-    swingCount = Utility.getShort (buffer, 183);
-    hpdamrc = new Dice (buffer, 185);
-
-    awards = "";        // buffer is too short
-  }
-
-  // ---------------------------------------------------------------------------------//
   public Character (int id, DataBlock dataBlock, int scenarioId) throws InvalidCharacterException
   // ---------------------------------------------------------------------------------//
   {
@@ -225,6 +158,73 @@ public class Character
   }
 
   // ---------------------------------------------------------------------------------//
+  public Character (int id, byte[] buffer)          // Wizardry IV
+  // ---------------------------------------------------------------------------------//
+  {
+    this.id = id;
+
+    name = Utility.getPascalString (buffer, 1);
+    password = "";
+    partialSlogan = buffer[17] == 0 ? "" : HexFormatter.getPascalString (buffer, 17);
+
+    inMaze = Utility.getShort (buffer, 33) != 0;
+    race = WizardryData.Race.values ()[Utility.getShort (buffer, 35)];
+    characterClass = WizardryData.CharacterClass.values ()[Utility.getShort (buffer, 37)];
+    age = 0;
+    armourClass = Utility.getSignedShort (buffer, 39);
+
+    status = WizardryData.CharacterStatus.values ()[Utility.getShort (buffer, 41)];
+    alignment = WizardryData.Alignment.values ()[Utility.getShort (buffer, 43)];
+
+    int attr1 = Utility.getShort (buffer, 45);
+    int attr2 = Utility.getShort (buffer, 47);
+
+    attributes[0] = attr1 & 0x001F;
+    attributes[1] = (attr1 & 0x03E0) >>> 5;
+    attributes[2] = (attr1 & 0x7C00) >>> 10;
+    attributes[3] = attr2 & 0x001F;
+    attributes[4] = (attr2 & 0x03E0) >>> 5;
+    attributes[5] = (attr2 & 0x7C00) >>> 10;
+
+    gold = 0;
+
+    unknown1 = Utility.getShort (buffer, 49);     // was saveVs (4 bytes)
+    unknown2 = Utility.getShort (buffer, 51);
+    unknown3 = Utility.getShort (buffer, 53);     // was gold (6 bytes)
+    unknown4 = Utility.getShort (buffer, 55);
+    unknown5 = Utility.getShort (buffer, 57);
+
+    possessionsCount = Utility.getShort (buffer, 59);
+
+    for (int i = 0; i < possessionsCount; i++)
+    {
+      int itemNo = Utility.getShort (buffer, 67 + i * 8);
+      Possession p = new Possession (itemNo, false, false, true);
+      possessions.add (p);
+    }
+
+    experience = 0;                                       // not used
+    nextCharacterId = Utility.getShort (buffer, 125);
+
+    maxlevac = Utility.getShort (buffer, 131);
+    charlev = Utility.getShort (buffer, 133);
+    hpLeft = Utility.getShort (buffer, 135);
+    hpMax = Utility.getShort (buffer, 137);
+
+    checkKnownSpells (buffer, 139);
+
+    hpCalCmd = Utility.getSignedShort (buffer, 175);
+    //    armourClass = Utility.getSignedShort (buffer, 177);   // see offset 39
+    healPts = Utility.getShort (buffer, 179);
+
+    crithitm = Utility.getShort (buffer, 181) == 1;
+    swingCount = Utility.getShort (buffer, 183);
+    hpdamrc = new Dice (buffer, 185);
+
+    awards = "";        // buffer is too short
+  }
+
+  // ---------------------------------------------------------------------------------//
   private void checkKnownSpells (byte[] buffer, int ptr)
   // ---------------------------------------------------------------------------------//
   {
@@ -234,9 +234,9 @@ public class Character
       spellAllowance[PRIEST_SPELLS][i] = Utility.getShort (buffer, ptr + 22 + i * 2);
     }
 
-    int bit = 1;                  // skip first bit
     int val = buffer[ptr];
-    mysteryBit = (val & 0x01) == 1;
+    int bit = 0;
+    mysteryBit = ((val >>> bit++) & 0x01) == 1;           // knows all spells?
 
     for (int i = 0; i < WizardryData.spells.length; i++)
     {
@@ -245,7 +245,7 @@ public class Character
         val = buffer[++ptr];
         bit = 0;
       }
-      spellsKnown[i] = ((val >>> bit++) & 0x01) != 0;
+      spellsKnown[i] = ((val >>> bit++) & 0x01) == 1;
     }
   }
 
@@ -341,15 +341,6 @@ public class Character
   {
     return String.format ("%1.1s-%3.3s", alignment, characterClass);
   }
-
-  // ---------------------------------------------------------------------------------//
-  //  public String getText ()
-  //  // ---------------------------------------------------------------------------------//
-  //  {
-  //    return String.format ("%3d  %-15s  %-15s  %s %4d %4d  %5d %5d %4d %4d %4d  %s", id, name,
-  //        password, getTypeString (), armourClass, hpMax, unknown1, unknown2, unknown3, unknown4,
-  //        unknown5, getAttributeString ());
-  //  }
 
   // ---------------------------------------------------------------------------------//
   @Override
