@@ -36,12 +36,9 @@ public class WizardryDisk
     try
     {
       byte[] diskBuffer = Files.readAllBytes (file.toPath ());
-      for (AppleFileSystem fs : factory.getFileSystems ("Wizardry", diskBuffer))
-        if (fs instanceof FsPascal pascal)
-        {
-          this.fs = pascal;
-          break;
-        }
+      AppleFileSystem fs = factory.getFileSystem ("Wizardry", diskBuffer);
+      if (fs instanceof FsPascal pascal)
+        this.fs = pascal;
     }
     catch (IOException e)
     {
