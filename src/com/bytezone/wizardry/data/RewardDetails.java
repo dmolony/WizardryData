@@ -36,6 +36,7 @@ public class RewardDetails
 
       itemReward = new ItemReward (itemNo, cSize, cMax, element, odds);
       goldReward = null;
+      System.out.println (itemReward);
     }
   }
 
@@ -97,3 +98,24 @@ public class RewardDetails
     }
   }
 }
+
+//  FUNCTION CALCULAT( TRIES:  INTEGER;  (* P010D1B *)
+//                     AVEAMT: INTEGER;
+//                     MINADD: INTEGER) : INTEGER;
+//
+//  VAR
+//       TOTAL : INTEGER;
+//     
+//  BEGIN
+//    TOTAL := MINADD;
+//    WHILE TRIES > 0 DO
+//      BEGIN
+//        TOTAL := TOTAL + (RANDOM MOD AVEAMT) + 1;
+//        TRIES := TRIES - 1
+//      END;
+//    CALCULAT := TOTAL
+// END;  (* CALCULAT *)
+
+//  ITEMINDX := REWARDM.REWDCALC.ITEM.MININDX +
+//     (CALCULATE( 1, REWARDM.REWDCALC.ITEM.RANGE, 1)) +
+//     (REWARDM.REWDCALC.ITEM.MFACTOR * CHARIIII);
