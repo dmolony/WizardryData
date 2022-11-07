@@ -6,14 +6,16 @@ public class RewardDetails
 {
   public final int rewardPct;
   public final int type;
+  public final int scenarioId;
 
   public final GoldReward goldReward;       // if type == 0
   public final ItemReward itemReward;       // if type == 1
 
   // ---------------------------------------------------------------------------------//
-  public RewardDetails (byte[] buffer, int offset)
+  public RewardDetails (byte[] buffer, int offset, int scenarioId)
   // ---------------------------------------------------------------------------------//
   {
+    this.scenarioId = scenarioId;
     rewardPct = Utility.getShort (buffer, offset);
     type = Utility.getShort (buffer, offset + 2);
 
@@ -34,7 +36,7 @@ public class RewardDetails
       int element = Utility.getShort (buffer, offset + 10);
       int odds = Utility.getSignedShort (buffer, offset + 12);
 
-      itemReward = new ItemReward (itemNo, cSize, cMax, element, odds);
+      itemReward = new ItemReward (itemNo, cSize, cMax, element, odds, scenarioId);
       goldReward = null;
     }
   }
@@ -55,8 +57,8 @@ public class RewardDetails
     }
     else
     {
-      text.append (String.format ("%3d %3d %3d %3d %3d%%  max %d", itemReward.item, itemReward.size,
-          itemReward.max, itemReward.element, itemReward.odds, itemReward.getMax ()));
+      text.append (String.format ("%3d %3d %3d %3d %3d%%  max %d", itemReward.min, itemReward.size,
+          itemReward.max, itemReward.range, itemReward.odds, itemReward.getMax ()));
     }
 
     return text.toString ();
@@ -83,17 +85,23 @@ public class RewardDetails
   }
 
   // ---------------------------------------------------------------------------------//
-  public record ItemReward (int item, int size, int max, int element, int odds)
+  public record ItemReward (int min, int size, int max, int range, int odds, int scenarioId)
   // ---------------------------------------------------------------------------------//
   {
     public int getMin ()
     {
-      return item;
+      if (scenarioId == 1)
+        return range == 0 ? min : min + 2;
+
+      return min;
     }
 
     public int getMax ()
     {
-      return item + size * max + element;         // should this be -1?
+      if (scenarioId == 1)
+        return range == 0 ? min : min + range + 1;
+
+      return min + size * max + range;
     }
   }
 }

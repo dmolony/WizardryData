@@ -5,6 +5,7 @@ public class Reward
 // -----------------------------------------------------------------------------------//
 {
   private final int id;
+  private final int scenarioId;
 
   public final boolean isChest;
   public final int trapTypeFlags;
@@ -12,10 +13,11 @@ public class Reward
   public final RewardDetails[] rewardDetails = new RewardDetails[9];
 
   // ---------------------------------------------------------------------------------//
-  public Reward (int id, DataBlock dataBlock)
+  public Reward (int id, DataBlock dataBlock, int scenarioId)
   // ---------------------------------------------------------------------------------//
   {
     this.id = id;
+    this.scenarioId = scenarioId;
 
     byte[] buffer = dataBlock.buffer;
     int offset = dataBlock.offset;
@@ -25,7 +27,7 @@ public class Reward
     total = Utility.getShort (buffer, offset + 4);
 
     for (int i = 0; i < total; i++)
-      rewardDetails[i] = new RewardDetails (buffer, offset + 6 + 18 * i);
+      rewardDetails[i] = new RewardDetails (buffer, offset + 6 + 18 * i, scenarioId);
   }
 
   // ---------------------------------------------------------------------------------//

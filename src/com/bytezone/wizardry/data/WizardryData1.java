@@ -73,7 +73,7 @@ public class WizardryData1 extends WizardryData
 
     id = 0;
     for (DataBlock dataBlock : sd.dataBlocks)
-      rewards.add (new Reward (id++, dataBlock));
+      rewards.add (new Reward (id++, dataBlock, getScenarioId ()));
 
     // add images
     sd = header.get (IMAGE_AREA);
