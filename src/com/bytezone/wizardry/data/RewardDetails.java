@@ -36,7 +36,6 @@ public class RewardDetails
 
       itemReward = new ItemReward (itemNo, cSize, cMax, element, odds);
       goldReward = null;
-      System.out.println (itemReward);
     }
   }
 
