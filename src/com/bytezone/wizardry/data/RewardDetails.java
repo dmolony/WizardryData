@@ -30,7 +30,7 @@ public class RewardDetails
     }
     else
     {
-      int itemNo = Utility.getShort (buffer, offset + 4);
+      int itemNo = Utility.getSignedShort (buffer, offset + 4);
       int cSize = Utility.getShort (buffer, offset + 6);
       int cMax = Utility.getShort (buffer, offset + 8);
       int element = Utility.getShort (buffer, offset + 10);
