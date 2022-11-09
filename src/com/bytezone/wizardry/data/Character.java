@@ -128,8 +128,8 @@ public class Character
       boolean equipped = Utility.getShort (buffer, offset + 60 + i * 8) == 1;
       boolean cursed = Utility.getShort (buffer, offset + 62 + i * 8) == 1;
       boolean identified = Utility.getShort (buffer, offset + 64 + i * 8) == 1;
-
       int itemId = Utility.getShort (buffer, offset + 66 + i * 8);
+
       if (scenarioId == 3 && itemId >= 1000)
         itemId -= 1000;             // why?
 
