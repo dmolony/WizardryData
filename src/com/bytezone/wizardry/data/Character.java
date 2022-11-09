@@ -59,7 +59,7 @@ public class Character
   boolean[][] wepvsty3 = new boolean[2][7];         //           2 bytes?
   boolean[] wepvstyp = new boolean[14];             //           2 bytes?
 
-  LostXYL lostXYL;                                  // + 206      awards?
+  public LostXYL lostXYL;                           // + 206      location/poison/awards
 
   public final String awards;
 
@@ -155,6 +155,7 @@ public class Character
     hpdamrc = new Dice (buffer, offset + 184);
 
     awards = getAwardString (buffer, offset + 206);
+    lostXYL = new LostXYL (buffer, offset + 206);
   }
 
   // ---------------------------------------------------------------------------------//

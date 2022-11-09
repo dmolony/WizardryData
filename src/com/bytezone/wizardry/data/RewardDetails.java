@@ -31,12 +31,12 @@ public class RewardDetails
     else
     {
       int itemNo = Utility.getSignedShort (buffer, offset + 4);
-      int cSize = Utility.getShort (buffer, offset + 6);
-      int cMax = Utility.getShort (buffer, offset + 8);
-      int element = Utility.getShort (buffer, offset + 10);
+      int size = Utility.getShort (buffer, offset + 6);
+      int max = Utility.getShort (buffer, offset + 8);
+      int range = Utility.getShort (buffer, offset + 10);
       int odds = Utility.getSignedShort (buffer, offset + 12);
 
-      itemReward = new ItemReward (itemNo, cSize, cMax, element, odds, scenarioId);
+      itemReward = new ItemReward (itemNo, size, max, range, odds, scenarioId);
       goldReward = null;
     }
   }
@@ -51,15 +51,11 @@ public class RewardDetails
     text.append (String.format ("%3d%%  %d  ", rewardPct, type));
 
     if (type == 0)
-    {
       text.append (String.format ("%s %3d %s  min %d  max %d", goldReward.dice1, goldReward.base,
           goldReward.dice2, goldReward.getMin (), goldReward.getMax ()));
-    }
     else
-    {
       text.append (String.format ("%3d %3d %3d %3d %3d%%  max %d", itemReward.min, itemReward.size,
           itemReward.max, itemReward.range, itemReward.odds, itemReward.getMax ()));
-    }
 
     return text.toString ();
   }

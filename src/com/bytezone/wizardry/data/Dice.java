@@ -8,9 +8,9 @@ public class Dice
 {
   private static final Random random = new Random ();
 
-  public final int level;
-  public final int faces;
-  public final int minAdd;
+  public final int level;       // how many dice
+  public final int faces;       // faces per die
+  public final int minAdd;      // plus
 
   // ---------------------------------------------------------------------------------//
   public Dice (byte[] buffer, int offset)
@@ -22,26 +22,26 @@ public class Dice
   }
 
   // ---------------------------------------------------------------------------------//
-  public Dice (int level, int hpfac, int hpminad)
+  public Dice (int level, int faces, int minAdd)
   // ---------------------------------------------------------------------------------//
   {
     this.level = level;
-    this.faces = hpfac;
-    this.minAdd = hpminad;
+    this.faces = faces;
+    this.minAdd = minAdd;
   }
 
   // ---------------------------------------------------------------------------------//
   public int max ()
   // ---------------------------------------------------------------------------------//
   {
-    return level * faces + minAdd;
+    return level * faces + minAdd;      // each die rolls the maximum
   }
 
   // ---------------------------------------------------------------------------------//
   public int min ()
   // ---------------------------------------------------------------------------------//
   {
-    return level + minAdd;
+    return level + minAdd;              // each die rolls 1
   }
 
   // ---------------------------------------------------------------------------------//
