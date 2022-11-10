@@ -154,8 +154,12 @@ public class Character
     swingCount = Utility.getShort (buffer, offset + 182);
     hpdamrc = new Dice (buffer, offset + 184);
 
-    awards = getAwardString (buffer, offset + 206);
+    // 190 - 193 = wepvsty2 PACKED ARRAY[ 0..1, 0..13] OF BOOLEAN
+    // 194 - 197 = wepvsty3 PACKED ARRAY[ 0..1, 0..6] OF BOOLEAN
+    // 197 - 199 = wepvstyp PACKED ARRAY[ 0..13] OF BOOLEAN
+
     lostXYL = new LostXYL (buffer, offset + 200);
+    awards = getAwardString (buffer, offset + 206);
   }
 
   // ---------------------------------------------------------------------------------//
