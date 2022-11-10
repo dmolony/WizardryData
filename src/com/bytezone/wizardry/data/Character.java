@@ -155,7 +155,7 @@ public class Character
     hpdamrc = new Dice (buffer, offset + 184);
 
     awards = getAwardString (buffer, offset + 206);
-    lostXYL = new LostXYL (buffer, offset + 206);
+    lostXYL = new LostXYL (buffer, offset + 200);
   }
 
   // ---------------------------------------------------------------------------------//

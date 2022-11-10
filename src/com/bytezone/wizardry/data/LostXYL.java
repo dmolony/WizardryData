@@ -25,7 +25,7 @@ public class LostXYL
   // ---------------------------------------------------------------------------------//
   {
     StringBuilder text = new StringBuilder ();
-    for (int i = 2; i < 8; i++)
+    for (int i = 0; i < 8; i++)
     {
       text.append (String.format ("%02X ", buffer[offset + i]));
     }
