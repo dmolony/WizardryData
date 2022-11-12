@@ -1,10 +1,12 @@
 package com.bytezone.wizardry.data;
 
+import static com.bytezone.wizardry.data.Utility.getSignedShort;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import com.bytezone.wizardry.data.WizardryData.Square;
-import com.bytezone.wizardry.data.WizardryData.Trade;
+import com.bytezone.wizardry.data.WizardryData.Trade;;
 
 // -----------------------------------------------------------------------------------//
 public class Special
@@ -31,9 +33,9 @@ public class Special
 
     square = WizardryData.Square.values ()[val];
 
-    aux[0] = Utility.getSignedShort (buffer, offset + 8 + index * 2);
-    aux[1] = Utility.getSignedShort (buffer, offset + 40 + index * 2);
-    aux[2] = Utility.getSignedShort (buffer, offset + 72 + index * 2);
+    aux[0] = getSignedShort (buffer, offset + 8 + index * 2);
+    aux[1] = getSignedShort (buffer, offset + 40 + index * 2);
+    aux[2] = getSignedShort (buffer, offset + 72 + index * 2);
   }
 
   // ---------------------------------------------------------------------------------//

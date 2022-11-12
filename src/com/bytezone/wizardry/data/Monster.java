@@ -1,5 +1,11 @@
 package com.bytezone.wizardry.data;
 
+import static com.bytezone.wizardry.data.Utility.getPascalString;
+import static com.bytezone.wizardry.data.Utility.getShort;
+import static com.bytezone.wizardry.data.Utility.getSignedShort;
+import static com.bytezone.wizardry.data.Utility.getWizLong;
+import static com.bytezone.wizardry.data.Utility.trimComma;;
+
 // -----------------------------------------------------------------------------------//
 public class Monster
 // -----------------------------------------------------------------------------------//
@@ -71,8 +77,8 @@ public class Monster
 
     groupSize = new Dice (buffer, 1);
     hitPoints = new Dice (buffer, 7);
-    monsterClass = Utility.getShort (buffer, 13);
-    armourClass = Utility.getSignedShort (buffer, 15);
+    monsterClass = getShort (buffer, 13);
+    armourClass = getSignedShort (buffer, 15);
 
     damageDiceSize = buffer[17];                               // number of dice
     String dd = "";
@@ -88,15 +94,15 @@ public class Monster
     else
       damageDiceText = "";
 
-    drain = Utility.getShort (buffer, 61);
-    regen = Utility.getShort (buffer, 63);
-    mageSpells = Utility.getShort (buffer, 65);
-    priestSpells = Utility.getShort (buffer, 67);
-    breathe = Utility.getShort (buffer, 69);
-    unaffect = Utility.getShort (buffer, 71);
+    drain = getShort (buffer, 61);
+    regen = getShort (buffer, 63);
+    mageSpells = getShort (buffer, 65);
+    priestSpells = getShort (buffer, 67);
+    breathe = getShort (buffer, 69);
+    unaffect = getShort (buffer, 71);
 
-    resistance = Utility.getShort (buffer, 73);     // bit flags
-    properties = Utility.getShort (buffer, 75);      // bit flags
+    resistance = getShort (buffer, 73);     // bit flags
+    properties = getShort (buffer, 75);      // bit flags
   }
 
   // ---------------------------------------------------------------------------------//
@@ -108,49 +114,49 @@ public class Monster
     byte[] buffer = dataBlock.buffer;
     int offset = dataBlock.offset;
 
-    genericName = Utility.getPascalString (buffer, offset);
-    genericNamePlural = Utility.getPascalString (buffer, offset + 16);
-    name = Utility.getPascalString (buffer, offset + 32);
-    namePlural = Utility.getPascalString (buffer, offset + 48);
+    genericName = getPascalString (buffer, offset);
+    genericNamePlural = getPascalString (buffer, offset + 16);
+    name = getPascalString (buffer, offset + 32);
+    namePlural = getPascalString (buffer, offset + 48);
 
-    image = Utility.getShort (buffer, offset + 64);
+    image = getShort (buffer, offset + 64);
     groupSize = new Dice (buffer, offset + 66);
     hitPoints = new Dice (buffer, offset + 72);
 
-    monsterClass = Utility.getShort (buffer, offset + 78);
-    armourClass = Utility.getSignedShort (buffer, offset + 80);
+    monsterClass = getShort (buffer, offset + 78);
+    armourClass = getSignedShort (buffer, offset + 80);
 
-    damageDiceSize = Utility.getShort (buffer, offset + 82);       // 0-7
+    damageDiceSize = getShort (buffer, offset + 82);       // 0-7
     StringBuilder dd = new StringBuilder ();
     for (int i = 0; i < damageDiceSize; i++)
     {
       damageDice[i] = new Dice (buffer, offset + 84 + i * 6);
       dd.append (damageDice[i].toString () + ", ");
     }
-    Utility.trimComma (dd);
+    trimComma (dd);
     damageDiceText = dd.toString ();
 
-    long exp = Utility.getWizLong (buffer, offset + 126);
+    long exp = getWizLong (buffer, offset + 126);
     experiencePoints = exp == 0 ? experience[id] : exp;
 
-    drain = Utility.getShort (buffer, offset + 132);
-    regen = Utility.getShort (buffer, offset + 134);
+    drain = getShort (buffer, offset + 132);
+    regen = getShort (buffer, offset + 134);
 
-    rewardWandering = Utility.getShort (buffer, offset + 136);    // gold rewards index
-    rewardLair = Utility.getShort (buffer, offset + 138);         // chest rewards index
+    rewardWandering = getShort (buffer, offset + 136);    // gold rewards index
+    rewardLair = getShort (buffer, offset + 138);         // chest rewards index
 
-    partnerId = Utility.getShort (buffer, offset + 140);
-    partnerOdds = Utility.getShort (buffer, offset + 142);
+    partnerId = getShort (buffer, offset + 140);
+    partnerOdds = getShort (buffer, offset + 142);
 
-    mageSpells = Utility.getShort (buffer, offset + 144);         // spell level
-    priestSpells = Utility.getShort (buffer, offset + 146);       // spell level
+    mageSpells = getShort (buffer, offset + 144);         // spell level
+    priestSpells = getShort (buffer, offset + 146);       // spell level
 
-    unique = Utility.getSignedShort (buffer, offset + 148);
-    breathe = Utility.getShort (buffer, offset + 150);
-    unaffect = Utility.getShort (buffer, offset + 152);
+    unique = getSignedShort (buffer, offset + 148);
+    breathe = getShort (buffer, offset + 150);
+    unaffect = getShort (buffer, offset + 152);
 
-    resistance = Utility.getShort (buffer, offset + 154);         // flags
-    properties = Utility.getShort (buffer, offset + 156);         // flags
+    resistance = getShort (buffer, offset + 154);         // flags
+    properties = getShort (buffer, offset + 156);         // flags
   }
 
   // ---------------------------------------------------------------------------------//

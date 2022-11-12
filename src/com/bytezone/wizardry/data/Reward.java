@@ -1,11 +1,13 @@
 package com.bytezone.wizardry.data;
 
+import static com.bytezone.wizardry.data.Utility.getShort;
+import static com.bytezone.wizardry.data.Utility.getSignedShort;;
+
 // -----------------------------------------------------------------------------------//
 public class Reward
 // -----------------------------------------------------------------------------------//
 {
   private final int id;
-  private final int scenarioId;
 
   public final boolean isChest;
   public final int trapTypeFlags;
@@ -17,14 +19,13 @@ public class Reward
   // ---------------------------------------------------------------------------------//
   {
     this.id = id;
-    this.scenarioId = scenarioId;
 
     byte[] buffer = dataBlock.buffer;
     int offset = dataBlock.offset;
 
-    isChest = Utility.getSignedShort (buffer, offset) != 0;
-    trapTypeFlags = Utility.getShort (buffer, offset + 2);
-    total = Utility.getShort (buffer, offset + 4);
+    isChest = getSignedShort (buffer, offset) != 0;
+    trapTypeFlags = getShort (buffer, offset + 2);
+    total = getShort (buffer, offset + 4);
 
     for (int i = 0; i < total; i++)
       rewardDetails[i] = new RewardDetails (buffer, offset + 6 + 18 * i, scenarioId);
