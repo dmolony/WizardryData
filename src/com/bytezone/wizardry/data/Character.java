@@ -65,6 +65,10 @@ public class Character
   boolean[][] wepvsty3 = new boolean[2][7];         // +194      4 bytes
   boolean[] wepvstyp = new boolean[14];             // +198      2 bytes
 
+  public final String wepVs1;
+  public final String wepVs2;
+  public final String wepVs3;
+
   public LostXYL lostXYL;                           // +200      location
 
   public final String awards;                       // +206
@@ -163,10 +167,14 @@ public class Character
     // 190 - 193 = wepvsty2 PACKED ARRAY[ 0..1, 0..13] OF BOOLEAN
     // 194 - 197 = wepvsty3 PACKED ARRAY[ 0..1, 0..6] OF BOOLEAN
     // 197 - 199 = wepvstyp PACKED ARRAY[ 0..13] OF BOOLEAN
+
     int wep2 = getLong (buffer, offset + 190);
     int wep3 = getLong (buffer, offset + 194);
     int wep1 = getShort (buffer, offset + 196);
-    System.out.printf ("%-15s %08X %08X %04X%n", name, wep2, wep3, wep1);
+
+    wepVs1 = String.format ("%04X", wep1);
+    wepVs2 = String.format ("%08X", wep2);
+    wepVs3 = String.format ("%08X", wep3);
 
     lostXYL = new LostXYL (buffer, offset + 200);
     awards = getAwardString (buffer, offset + 206);
@@ -237,6 +245,10 @@ public class Character
     hpdamrc = new Dice (buffer, 185);
 
     awards = "";        // buffer is too short
+
+    wepVs1 = "";
+    wepVs2 = "";
+    wepVs3 = "";
   }
 
   // ---------------------------------------------------------------------------------//
