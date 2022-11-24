@@ -1,6 +1,5 @@
 package com.bytezone.wizardry.data;
 
-import static com.bytezone.wizardry.data.Utility.getLong;
 import static com.bytezone.wizardry.data.Utility.getPascalString;
 import static com.bytezone.wizardry.data.Utility.getShort;
 import static com.bytezone.wizardry.data.Utility.getSignedShort;
@@ -65,19 +64,23 @@ public class Character
   boolean[][] wepvsty3 = new boolean[2][7];         // +194      4 bytes
   boolean[] wepvstyp = new boolean[14];             // +198      2 bytes
 
-  public final String wepVs1;
+  public final int[] wep2 = new int[2];
+  public final int[] wep3 = new int[2];
+  public final int wep1;
+
   public final String wepVs2;
   public final String wepVs3;
+  public final String wepVs1;
 
   public LostXYL lostXYL;                           // +200      location
 
   public final String awards;                       // +206
 
-  public int unknown1;    // 35,939 if in party  0x8C63  - or 3,171
-  public int unknown2;    // 43,107 if in party  0xA863  - or    99
-  public int unknown3;    // if == id then character belongs to a party (or == 0?)
-  public int unknown4;
-  public int unknown5;
+  //  public int unknown1;    // 35,939 if in party  0x8C63  - or 3,171
+  //  public int unknown2;    // 43,107 if in party  0xA863  - or    99
+  //  public int unknown3;    // if == id then character belongs to a party (or == 0?)
+  //  public int unknown4;
+  //  public int unknown5;
 
   public int nextCharacterId;    // if == id then character has a party name only
   CharacterParty party;
@@ -168,13 +171,15 @@ public class Character
     // 194 - 197 = wepvsty3 PACKED ARRAY[ 0..1, 0..6] OF BOOLEAN
     // 197 - 199 = wepvstyp PACKED ARRAY[ 0..13] OF BOOLEAN
 
-    int wep2 = getLong (buffer, offset + 190);
-    int wep3 = getLong (buffer, offset + 194);
-    int wep1 = getShort (buffer, offset + 196);
+    wep2[0] = getShort (buffer, offset + 190);
+    wep2[1] = getShort (buffer, offset + 192);
+    wep3[0] = getShort (buffer, offset + 194);
+    wep3[1] = getShort (buffer, offset + 196);
+    wep1 = getShort (buffer, offset + 198);
 
+    wepVs2 = String.format ("%04X %04X", wep2[0], wep2[1]);       // protection
+    wepVs3 = String.format ("%04X %04X", wep3[0], wep3[1]);       // purposed
     wepVs1 = String.format ("%04X", wep1);
-    wepVs2 = String.format ("%08X", wep2);
-    wepVs3 = String.format ("%08X", wep3);
 
     lostXYL = new LostXYL (buffer, offset + 200);
     awards = getAwardString (buffer, offset + 206);
@@ -211,23 +216,32 @@ public class Character
 
     gold = 0;
 
-    unknown1 = getShort (buffer, 49);     // was saveVs (4 bytes)
-    unknown2 = getShort (buffer, 51);
-    unknown3 = getShort (buffer, 53);     // was gold (6 bytes)
-    unknown4 = getShort (buffer, 55);
-    unknown5 = getShort (buffer, 57);
+    //    unknown1 = getShort (buffer, 49);     // was saveVs (4 bytes)
+    //    unknown2 = getShort (buffer, 51);
+    //    unknown3 = getShort (buffer, 53);     // was gold (6 bytes)
+    //    unknown4 = getShort (buffer, 55);
+    //    unknown5 = getShort (buffer, 57);
+    wep2[0] = getShort (buffer, 49);
+    wep2[1] = getShort (buffer, 51);
+    wep3[0] = getShort (buffer, 53);
+    wep3[1] = getShort (buffer, 55);
+    wep1 = getShort (buffer, 57);
 
     possessionsCount = getShort (buffer, 59);
+
+    // what is in 61:66? could it be lostxyl?
+    //    System.out.println (Utility.getHexString (buffer, 61, 6));
 
     for (int i = 0; i < possessionsCount; i++)
     {
       int itemNo = getShort (buffer, 67 + i * 8);
       Possession p = new Possession (itemNo, false, false, true);
       possessions.add (p);
+      //      System.out.println (Utility.getHexString (buffer, 67 + i * 8, 8));
     }
 
-    experience = 0;                                       // not used
-    nextCharacterId = getShort (buffer, 125);
+    experience = 0;                                 // not used
+    nextCharacterId = getShort (buffer, 125);       // this is part of possessions[7]
 
     maxlevac = getShort (buffer, 131);
     charlev = getShort (buffer, 133);

@@ -90,14 +90,14 @@ public class Item
     classUseFlags = getShort (buffer, offset + 54);       // 8 flags
 
     healPts = getSignedShort (buffer, offset + 56);
-    wepvsty2Flags = getShort (buffer, offset + 58);       // 16 flags
-    wepvsty3Flags = getShort (buffer, offset + 60);       // 16 flags
+    wepvsty2Flags = getShort (buffer, offset + 58);       // 0..13 - protection
+    wepvsty3Flags = getShort (buffer, offset + 60);       // 0..6  - resistance
     armourClass = getSignedShort (buffer, offset + 62);
     wephitmd = getSignedShort (buffer, offset + 64);
-    wephpdam = new Dice (buffer, offset + 66);                    // Dice
+    wephpdam = new Dice (buffer, offset + 66);            // Dice
     xtraSwing = getShort (buffer, offset + 72);
     crithitm = getShort (buffer, offset + 74) == 1;       // boolean
-    wepvstyFlags = getShort (buffer, offset + 76);        // 14 flags
+    wepvstyFlags = getShort (buffer, offset + 76);        // 0..13 - purposed
   }
 
   // ---------------------------------------------------------------------------------//
