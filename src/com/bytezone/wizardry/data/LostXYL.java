@@ -19,6 +19,8 @@ public class LostXYL
   public String toString ()
   // ---------------------------------------------------------------------------------//
   {
+    if (value[0] == 0 && value[1] == 0 && value[2] == 0)
+      return "";
     return String.format ("%02d / %02d / %02d", value[0], value[1], value[2]);
   }
 }

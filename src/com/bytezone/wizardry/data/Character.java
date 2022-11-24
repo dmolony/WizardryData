@@ -178,8 +178,8 @@ public class Character
     wep1 = getShort (buffer, offset + 198);
 
     wepVs2 = String.format ("%04X %04X", wep2[0], wep2[1]);       // protection
-    wepVs3 = String.format ("%04X %04X", wep3[0], wep3[1]);       // purposed
-    wepVs1 = String.format ("%04X", wep1);
+    wepVs3 = String.format ("%04X %04X", wep3[0], wep3[1]);       // resistance
+    wepVs1 = String.format ("%04X", wep1);                        // purposed
 
     lostXYL = new LostXYL (buffer, offset + 200);
     awards = getAwardString (buffer, offset + 206);
@@ -221,11 +221,17 @@ public class Character
     //    unknown3 = getShort (buffer, 53);     // was gold (6 bytes)
     //    unknown4 = getShort (buffer, 55);
     //    unknown5 = getShort (buffer, 57);
+
+    // this is certainly wrong
     wep2[0] = getShort (buffer, 49);
     wep2[1] = getShort (buffer, 51);
     wep3[0] = getShort (buffer, 53);
     wep3[1] = getShort (buffer, 55);
     wep1 = getShort (buffer, 57);
+
+    wepVs2 = String.format ("%04X %04X", wep2[0], wep2[1]);       // protection
+    wepVs3 = String.format ("%04X %04X", wep3[0], wep3[1]);       // resistance
+    wepVs1 = String.format ("%04X", wep1);                        // purposed
 
     possessionsCount = getShort (buffer, 59);
 
@@ -259,10 +265,6 @@ public class Character
     hpdamrc = new Dice (buffer, 185);
 
     awards = "";        // buffer is too short
-
-    wepVs1 = "";
-    wepVs2 = "";
-    wepVs3 = "";
   }
 
   // ---------------------------------------------------------------------------------//
