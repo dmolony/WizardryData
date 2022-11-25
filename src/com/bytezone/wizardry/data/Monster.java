@@ -11,31 +11,31 @@ public class Monster
 // -----------------------------------------------------------------------------------//
 {
   public final int id;
-  public final String name;                                //   0
-  public final String namePlural;                          //  16
-  public final String genericName;                         //  32
-  public final String genericNamePlural;                   //  48
-  public final int image;                                  //  64
-  public final Dice groupSize;                             //  66  
-  public final Dice hitPoints;                             //  72 
-  public final int monsterClass;                           //  78
-  public final int armourClass;                            //  80          
-  public final int damageDiceSize;                         //  82  recsn
-  public final Dice[] damageDice = new Dice[7];            //  84  
-  public final long experiencePoints;                      // 126  wizlong
-  public final int drain;                                  // 132                    
-  public final int regen;                                  // 134  hit points healed per turn
-  public final int rewardWandering;                        // 136  reward index outside lair
-  public final int rewardLair;                             // 138  reward index inside lair
-  public final int partnerId;                              // 140  
-  public final int partnerOdds;                            // 142  partner %
-  public final int mageSpells;                             // 144  spell level?
-  public final int priestSpells;                           // 146  spell level?
-  public final int unique;                                 // 148
-  public final int breathe;                                // 150  index into breathValues
-  public final int unaffect;                               // 152
-  public final int resistance;                             // 154
-  public final int properties;                             // 156
+  public final String name;                         //   0
+  public final String namePlural;                   //  16
+  public final String genericName;                  //  32
+  public final String genericNamePlural;            //  48
+  public final int image;                           //  64
+  public final Dice groupSize;                      //  66  
+  public final Dice hitPoints;                      //  72 
+  public final int monsterClass;                    //  78
+  public final int armourClass;                     //  80          
+  public final int damageDiceSize;                  //  82  recsn
+  public final Dice[] damageDice = new Dice[7];     //  84  
+  public final long experiencePoints;               // 126  wizlong
+  public final int drain;                           // 132                    
+  public final int regen;                           // 134  hit points healed per turn
+  public final int rewardWandering;                 // 136  reward index outside lair
+  public final int rewardLair;                      // 138  reward index inside lair
+  public final int partnerId;                       // 140  
+  public final int partnerOdds;                     // 142  partner %
+  public final int mageSpells;                      // 144  spell level?
+  public final int priestSpells;                    // 146  spell level?
+  public final int unique;                          // 148
+  public final int breathe;                         // 150  index into breathValues
+  public final int unaffect;                        // 152
+  public final int resistance;                      // 154  wepvsty3
+  public final int properties;                      // 156  sppc
 
   public final String damageDiceText;
   private final String[] breathValues =
@@ -101,7 +101,7 @@ public class Monster
     breathe = getShort (buffer, 69);
     unaffect = getShort (buffer, 71);
 
-    resistance = getShort (buffer, 73);     // bit flags
+    resistance = getShort (buffer, 73);      // bit flags
     properties = getShort (buffer, 75);      // bit flags
   }
 
@@ -181,3 +181,33 @@ public class Monster
     return name;
   }
 }
+
+/*
+ *  TENEMY = RECORD
+        NAMEUNK  : STRING[ 15];
+        NAMEUNKS : STRING[ 15];
+        NAME     : STRING[ 15];
+        NAMES    : STRING[ 15];
+        PIC      : INTEGER;
+        CALC1    : TWIZLONG;      // this should be THPREC
+        HPREC    : THPREC;
+        CLASS    : INTEGER;
+        AC       : INTEGER;
+        RECSN    : INTEGER;
+        RECS     : ARRAY[ 1..7] OF THPREC;
+        EXPAMT   : TWIZLONG;
+        DRAINAMT : INTEGER;
+        HEALPTS  : INTEGER;
+        REWARD1  : INTEGER;
+        REWARD2  : INTEGER;
+        ENMYTEAM : INTEGER;
+        TEAMPERC : INTEGER;
+        MAGSPELS : INTEGER;
+        PRISPELS : INTEGER;
+        UNIQUE   : INTEGER;
+        BREATHE  : INTEGER;
+        UNAFFCT  : INTEGER;       // magic spells resistance %
+        WEPVSTY3 : PACKED ARRAY[ 0..15] OF BOOLEAN;
+        SPPC     : PACKED ARRAY[ 0..15] OF BOOLEAN;
+      END;
+ */

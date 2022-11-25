@@ -15,6 +15,7 @@ public class Item
   public final int id;
   public final String name;
   public final String nameGeneric;
+
   public final ObjectType type;
   public final Alignment alignment;
   public final boolean cursed;
@@ -24,17 +25,18 @@ public class Item
   public final long price;
   public final int boltac;
   public final int spellPwr;
+  public final int classUseFlags;
+
   public final int healPts;
+  public final int wepvsty2Flags;             // protection
+  public final int wepvsty3Flags;             // resistance
   public final int armourClass;
   public final int wephitmd;
   public final Dice wephpdam;
+
   public final int xtraSwing;
   public final boolean crithitm;
-
-  public final int classUseFlags;
-  public final int wepvsty2Flags;
-  public final int wepvsty3Flags;
-  public final int wepvstyFlags;
+  public final int wepvstyFlags;              // purposed
 
   // ---------------------------------------------------------------------------------//
   public Item (String[] names, byte[] buffer, int id)
@@ -56,15 +58,15 @@ public class Item
     classUseFlags = getShort (buffer, 23);       // 8 flags
 
     healPts = getSignedShort (buffer, 25);
-    wepvsty2Flags = getShort (buffer, 27);       // 16 flags
-    wepvsty3Flags = getShort (buffer, 29);       // 16 flags
+    wepvsty2Flags = getShort (buffer, 27);       // protection
+    wepvsty3Flags = getShort (buffer, 29);       // resistance
     armourClass = getSignedShort (buffer, 31);
     wephitmd = getSignedShort (buffer, 33);
     wephpdam = new Dice (buffer, 35);
 
     xtraSwing = getShort (buffer, 41);
     crithitm = getShort (buffer, 43) == 1;       // boolean
-    wepvstyFlags = getShort (buffer, 45);        // 14 flags
+    wepvstyFlags = getShort (buffer, 45);        // purposed
   }
 
   // ---------------------------------------------------------------------------------//
@@ -108,3 +110,29 @@ public class Item
     return name;
   }
 }
+
+/*
+ *  TOBJREC = RECORD
+        NAME     : STRING[ 15];
+        NAMEUNK  : STRING[ 15];
+        OBJTYPE  : TOBJTYPE;
+        ALIGN    : TALIGN;
+        CURSED   : BOOLEAN;
+        SPECIAL  : INTEGER;
+        CHANGETO : INTEGER;
+        CHGCHANC : INTEGER;
+        PRICE    : TWIZLONG;
+        BOLTACXX : INTEGER;
+        SPELLPWR : INTEGER;
+        CLASSUSE : PACKED ARRAY[ TCLASS] OF BOOLEAN;
+        HEALPTS  : INTEGER;
+        WEPVSTY2 : PACKED ARRAY[ 0..15] OF BOOLEAN;       // protection
+        WEPVSTY3 : PACKED ARRAY[ 0..15] OF BOOLEAN;       // resistance
+        ARMORMOD : INTEGER;
+        WEPHITMD : INTEGER;
+        WEPHPDAM : THPREC;
+        XTRASWNG : INTEGER;
+        CRITHITM : BOOLEAN;
+        WEPVSTYP : PACKED ARRAY[ 0..13] OF BOOLEAN;       // purposed
+      END;
+ */
