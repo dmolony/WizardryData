@@ -201,8 +201,11 @@ public class Special
 
       case PIT:
         Damage damage = new Damage (aux);
-        description.append (String.format ("Pit - %s (if agility < 1d25+%d)", damage,
-            locations.get (0).getLevel ()));
+        if (locations.isEmpty ())
+          description.append ("Never occurs");
+        else
+          description.append (String.format ("Pit - %s (if agility < 1d25+%d)", damage,
+              locations.get (0).getLevel ()));
         break;
 
       case CHUTE:
