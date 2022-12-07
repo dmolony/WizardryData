@@ -3,6 +3,7 @@ package com.bytezone.wizardry.data;
 import java.util.Random;
 
 import com.bytezone.wizardry.data.Walls.Wall;
+import com.bytezone.wizardry.data.WizardryData.Square;
 
 // -----------------------------------------------------------------------------------//
 public class MazeLevel
@@ -118,6 +119,25 @@ public class MazeLevel
       ++encounterType;
 
     return enemyOdds[encounterType].getRandomMonster ();
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public boolean isTeleport (Location location)
+  // ---------------------------------------------------------------------------------//
+  {
+    byte value = sqrextra[location.getColumn ()][location.getRow ()];
+
+    return specials[value].is (Square.TRANSFER);
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public Location getTeleportLocation (Location location)
+  // ---------------------------------------------------------------------------------//
+  {
+    byte value = sqrextra[location.getColumn ()][location.getRow ()];
+    Special special = specials[value];
+
+    return new Location (special.aux);
   }
 
   // ---------------------------------------------------------------------------------//
