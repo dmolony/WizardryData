@@ -79,6 +79,7 @@ public class Special
   {
     if (square == Square.NORMAL || locations.size () == 0)
       return "";
+
     return locations.get (0).toString ().substring (5);
   }
 

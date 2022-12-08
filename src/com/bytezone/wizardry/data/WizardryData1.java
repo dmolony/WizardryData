@@ -32,8 +32,13 @@ public class WizardryData1 extends WizardryData
       mazeLevels.add (mazeLevel);
 
       for (Special special : mazeLevel.getSpecials ())
+      {
         if (special.isMessage ())
           getMessage (special.aux[1]).addLocations (special.locations);
+
+        if (special.is (Square.TRANSFER))
+          addTeleportLocation (new Location (special.getAux ()));
+      }
     }
 
     // add characters
@@ -44,7 +49,10 @@ public class WizardryData1 extends WizardryData
     for (DataBlock dataBlock : sd.dataBlocks)
       try
       {
-        characters.add (new Character (id++, dataBlock, getScenarioId ()));
+        Character character = new Character (id++, dataBlock, getScenarioId ());
+        characters.add (character);
+        if (character.isLost ())
+          lostCharacterLocations.add (character.lostXYL);
       }
       catch (InvalidCharacterException e)
       {

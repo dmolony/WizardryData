@@ -1,5 +1,6 @@
 package com.bytezone.wizardry.data;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +51,8 @@ public abstract class WizardryData
   protected List<Reward> rewards;
   protected List<WizardryImage> images;
   protected List<Character> characters;
+  protected List<Location> teleportLocations = new ArrayList<> ();
+  protected List<Location> lostCharacterLocations = new ArrayList<> ();
 
   public enum Square
   {
@@ -312,6 +315,31 @@ public abstract class WizardryData
   // ---------------------------------------------------------------------------------//
   {
     return messages;
+  }
+
+  // ---------------------------------------------------------------------------------//
+  protected void addTeleportLocation (Location teleportLocation)
+  // ---------------------------------------------------------------------------------//
+  {
+    for (Location location : teleportLocations)
+      if (location.equals (teleportLocation))
+        return;
+
+    teleportLocations.add (teleportLocation);
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public List<Location> getTeleportLocations ()
+  // ---------------------------------------------------------------------------------//
+  {
+    return teleportLocations;
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public List<Location> getLostCharacterLocations ()
+  // ---------------------------------------------------------------------------------//
+  {
+    return lostCharacterLocations;
   }
 
   // ---------------------------------------------------------------------------------//

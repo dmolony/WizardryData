@@ -29,6 +29,20 @@ public class Location
   }
 
   // ---------------------------------------------------------------------------------//
+  public Location (byte[] buffer, int offset)     // used ONLY for LostXYL
+  // ---------------------------------------------------------------------------------//
+  {
+    int[] value = new int[3];
+
+    for (int i = 0; i < value.length; i++)
+      value[i] = Utility.getSignedShort (buffer, offset + i * 2);
+
+    column = value[0];
+    row = value[1];
+    level = value[2];
+  }
+
+  // ---------------------------------------------------------------------------------//
   public Location (int[] aux)
   // ---------------------------------------------------------------------------------//
   {
@@ -112,6 +126,14 @@ public class Location
           column = 19;
         break;
     }
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public boolean equals (Location location)
+  // ---------------------------------------------------------------------------------//
+  {
+    return this.level == location.level && this.row == location.row
+        && this.column == location.column;
   }
 
   // ---------------------------------------------------------------------------------//

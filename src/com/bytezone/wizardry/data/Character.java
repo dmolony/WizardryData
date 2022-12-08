@@ -72,7 +72,8 @@ public class Character
   public final String wepVs3;
   public final String wepVs1;
 
-  public LostXYL lostXYL;                           // +200      location
+  //  public LostXYL lostXYL;                           // +200      location
+  public Location lostXYL;                          // +200      location
 
   public final String awards;                       // +206
 
@@ -181,7 +182,8 @@ public class Character
     wepVs3 = String.format ("%04X %04X", wep3[0], wep3[1]);       // resistance
     wepVs1 = String.format ("%04X", wep1);                        // purposed
 
-    lostXYL = new LostXYL (buffer, offset + 200);
+    //    lostXYL = new LostXYL (buffer, offset + 200);
+    lostXYL = new Location (buffer, offset + 200);
     awards = getAwardString (buffer, offset + 206);
   }
 
@@ -343,6 +345,13 @@ public class Character
   // ---------------------------------------------------------------------------------//
   {
     return party;
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public boolean isLost ()
+  // ---------------------------------------------------------------------------------//
+  {
+    return lostXYL != null && lostXYL.getLevel () != 0;
   }
 
   // ---------------------------------------------------------------------------------//
