@@ -1,5 +1,13 @@
 package com.bytezone.wizardry.data;
 
+import static com.bytezone.wizardry.data.Walls.EAST;
+import static com.bytezone.wizardry.data.Walls.NORTH;
+import static com.bytezone.wizardry.data.Walls.SOUTH;
+import static com.bytezone.wizardry.data.Walls.WEST;
+
+import com.bytezone.wizardry.data.Walls.Wall;
+import com.bytezone.wizardry.data.WizardryData.Direction;
+
 // -----------------------------------------------------------------------------------//
 public class MazeCell
 // -----------------------------------------------------------------------------------//
@@ -54,6 +62,45 @@ public class MazeCell
   // ---------------------------------------------------------------------------------//
   {
     return location;
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public Wall getLeftWall (Direction direction)
+  // ---------------------------------------------------------------------------------//
+  {
+    return switch (direction)
+    {
+      case NORTH -> walls.wall (WEST);
+      case SOUTH -> walls.wall (EAST);
+      case EAST -> walls.wall (NORTH);
+      case WEST -> walls.wall (SOUTH);
+    };
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public Wall getRightWall (Direction direction)
+  // ---------------------------------------------------------------------------------//
+  {
+    return switch (direction)
+    {
+      case NORTH -> walls.wall (EAST);
+      case SOUTH -> walls.wall (WEST);
+      case EAST -> walls.wall (SOUTH);
+      case WEST -> walls.wall (NORTH);
+    };
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public Wall getCentreWall (Direction direction)
+  // ---------------------------------------------------------------------------------//
+  {
+    return switch (direction)
+    {
+      case NORTH -> walls.wall (NORTH);
+      case SOUTH -> walls.wall (SOUTH);
+      case EAST -> walls.wall (EAST);
+      case WEST -> walls.wall (WEST);
+    };
   }
 
   // ---------------------------------------------------------------------------------//
