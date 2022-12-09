@@ -130,6 +130,30 @@ public abstract class WizardryData
   }
 
   // ---------------------------------------------------------------------------------//
+  public boolean hasLostCharacter (Location checkLocation)
+  // ---------------------------------------------------------------------------------//
+  {
+    for (Location location : lostCharacterLocations)
+      if (location.equals (checkLocation))
+        return true;
+
+    return false;
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public List<Character> getLostCharacters (Location checkLocation)
+  // ---------------------------------------------------------------------------------//
+  {
+    List<Character> lostCharacters = new ArrayList<> ();
+
+    for (Character character : characters)
+      if (character.isLost () && character.lostXYL.equals (checkLocation))
+        lostCharacters.add (character);
+
+    return lostCharacters;
+  }
+
+  // ---------------------------------------------------------------------------------//
   protected void histogram (int level)
   // ---------------------------------------------------------------------------------//
   {
