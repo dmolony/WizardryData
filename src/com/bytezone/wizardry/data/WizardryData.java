@@ -353,7 +353,7 @@ public abstract class WizardryData
   }
 
   // ---------------------------------------------------------------------------------//
-  protected void addTeleportLocation (Location teleportLocation)
+  protected void addTeleportTargetLocation (Location teleportLocation)
   // ---------------------------------------------------------------------------------//
   {
     for (Location location : teleportLocations)
@@ -364,17 +364,14 @@ public abstract class WizardryData
   }
 
   // ---------------------------------------------------------------------------------//
-  public List<Location> getTeleportLocations ()
+  protected void addLostCharacterLocation (Location lostLocation)
   // ---------------------------------------------------------------------------------//
   {
-    return teleportLocations;
-  }
+    for (Location location : lostCharacterLocations)
+      if (location.equals (lostLocation))
+        return;
 
-  // ---------------------------------------------------------------------------------//
-  public List<Location> getLostCharacterLocations ()
-  // ---------------------------------------------------------------------------------//
-  {
-    return lostCharacterLocations;
+    lostCharacterLocations.add (lostLocation);
   }
 
   // ---------------------------------------------------------------------------------//

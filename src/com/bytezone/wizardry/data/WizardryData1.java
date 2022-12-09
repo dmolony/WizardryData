@@ -22,11 +22,11 @@ public class WizardryData1 extends WizardryData
     messages = new MessagesV1 (messageBuffer, getScenarioId ());
 
     // add maze levels
-    ScenarioData sd = header.get (MAZE_AREA);
-    mazeLevels = new ArrayList<> (sd.totalUnits);
+    ScenarioData scenarioData = header.get (MAZE_AREA);
+    mazeLevels = new ArrayList<> (scenarioData.totalUnits);
 
     int id = 0;
-    for (DataBlock dataBlock : sd.dataBlocks)
+    for (DataBlock dataBlock : scenarioData.dataBlocks)
     {
       MazeLevel mazeLevel = new MazeLevel (this, ++id, dataBlock);
       mazeLevels.add (mazeLevel);
@@ -36,23 +36,24 @@ public class WizardryData1 extends WizardryData
         if (special.isMessage ())
           getMessage (special.aux[1]).addLocations (special.locations);
 
-        if (special.is (Square.TRANSFER))
-          addTeleportLocation (new Location (special.getAux ()));
+        // add teleport targets only if the teleport is actually used
+        if (special.is (Square.TRANSFER) && special.locations.size () > 0)
+          addTeleportTargetLocation (new Location (special.getAux ()));
       }
     }
 
     // add characters
-    sd = header.get (CHARACTER_AREA);
-    characters = new ArrayList<> (sd.totalUnits);
+    scenarioData = header.get (CHARACTER_AREA);
+    characters = new ArrayList<> (scenarioData.totalUnits);
 
     id = 0;
-    for (DataBlock dataBlock : sd.dataBlocks)
+    for (DataBlock dataBlock : scenarioData.dataBlocks)
       try
       {
         Character character = new Character (id++, dataBlock, getScenarioId ());
         characters.add (character);
         if (character.isLost ())
-          lostCharacterLocations.add (character.lostXYL);
+          addLostCharacterLocation (character.lostXYL);
       }
       catch (InvalidCharacterException e)
       {
@@ -60,35 +61,35 @@ public class WizardryData1 extends WizardryData
       }
 
     // add monsters
-    sd = header.get (MONSTER_AREA);
-    monsters = new ArrayList<> (sd.totalUnits);
+    scenarioData = header.get (MONSTER_AREA);
+    monsters = new ArrayList<> (scenarioData.totalUnits);
 
     id = 0;
-    for (DataBlock dataBlock : sd.dataBlocks)
+    for (DataBlock dataBlock : scenarioData.dataBlocks)
       monsters.add (new Monster (id++, dataBlock));
 
     // add items
-    sd = header.get (ITEM_AREA);
+    scenarioData = header.get (ITEM_AREA);
     items = new TreeMap<> ();
 
     id = 0;
-    for (DataBlock dataBlock : sd.dataBlocks)
+    for (DataBlock dataBlock : scenarioData.dataBlocks)
       items.put (id, new Item (id++, dataBlock));
 
     // add rewards
-    sd = header.get (TREASURE_TABLE_AREA);
-    rewards = new ArrayList<> (sd.totalUnits);
+    scenarioData = header.get (TREASURE_TABLE_AREA);
+    rewards = new ArrayList<> (scenarioData.totalUnits);
 
     id = 0;
-    for (DataBlock dataBlock : sd.dataBlocks)
+    for (DataBlock dataBlock : scenarioData.dataBlocks)
       rewards.add (new Reward (id++, dataBlock, getScenarioId ()));
 
     // add images
-    sd = header.get (IMAGE_AREA);
-    images = new ArrayList<> (sd.totalUnits);
+    scenarioData = header.get (IMAGE_AREA);
+    images = new ArrayList<> (scenarioData.totalUnits);
 
     id = 0;
-    for (DataBlock dataBlock : sd.dataBlocks)
+    for (DataBlock dataBlock : scenarioData.dataBlocks)
       images.add (new WizardryImage (id++, dataBlock, getScenarioId ()));
 
     if (false)
