@@ -130,6 +130,17 @@ public abstract class WizardryData
   }
 
   // ---------------------------------------------------------------------------------//
+  public boolean isTeleportTarget (Location checkLocation)
+  // ---------------------------------------------------------------------------------//
+  {
+    for (Location location : teleportLocations)
+      if (location.equals (checkLocation))
+        return true;
+
+    return false;
+  }
+
+  // ---------------------------------------------------------------------------------//
   public boolean hasLostCharacter (Location checkLocation)
   // ---------------------------------------------------------------------------------//
   {
