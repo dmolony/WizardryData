@@ -141,6 +141,8 @@ public class Location
   public String toString ()
   // ---------------------------------------------------------------------------------//
   {
+    if (level == 0)
+      return "Castle";
     return String.format ("L:%02d  N:%02d  E:%02d", level, row, column);
   }
 }
