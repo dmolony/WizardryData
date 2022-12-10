@@ -165,38 +165,6 @@ public abstract class WizardryData
   }
 
   // ---------------------------------------------------------------------------------//
-  protected void histogram (int level)
-  // ---------------------------------------------------------------------------------//
-  {
-    System.out.println ("+--------------------------------------------+");
-    System.out.printf ("|                  Level %2d                  |%n", level + 1);
-    System.out.println ("+--------------------------------------------+");
-
-    int[] totals = new int[monsters.size ()];
-    MazeLevel mazeLevel = mazeLevels.get (level);
-
-    int tests = 1_000_000;
-    for (int i = 0; i < tests; i++)
-      totals[mazeLevel.getRandomMonster ()]++;
-
-    float percentTotal = 0;
-    int grandTotal = 0;
-
-    for (int i = 0; i < totals.length; i++)
-      if (totals[i] > 0)
-      {
-        float percent = totals[i] * 100 / (float) tests;
-        System.out.printf ("%3d  %-20s %6.2f%%   %,9d%n", i, monsters.get (i).name, percent,
-            totals[i]);
-        percentTotal += percent;
-        grandTotal += totals[i];
-      }
-
-    System.out.println ("                           ------   ---------");
-    System.out.printf ("                           %6.2f %,11d%n%n", percentTotal, grandTotal);
-  }
-
-  // ---------------------------------------------------------------------------------//
   public int getScenarioId ()
   // ---------------------------------------------------------------------------------//
   {

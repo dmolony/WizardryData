@@ -91,24 +91,5 @@ public class WizardryData1 extends WizardryData
     id = 0;
     for (DataBlock dataBlock : scenarioData.dataBlocks)
       images.add (new WizardryImage (id++, dataBlock, getScenarioId ()));
-
-    if (false)
-    {
-      int[] imageTotals = new int[images.size ()];
-      for (Monster monster : monsters)
-        imageTotals[monster.image]++;
-
-      for (int i = 0; i < imageTotals.length; i++)
-        System.out.printf ("%2d  %2d%n", i, imageTotals[i]);
-    }
-
-    if (false)
-      for (int i = 0; i < 10; i++)
-        histogram (i);
-
-    if (false)
-      for (int i = 0; i < mazeLevels.size (); i++)
-        mazeLevels.get (i).showOdds ();
-
   }
 }
