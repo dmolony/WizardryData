@@ -26,7 +26,7 @@ public class Character
 
   public final String name;
   public final String password;
-  public final boolean inMaze;
+  public final int inMaze;
   public final Race race;
   public final CharacterClass characterClass;
   public final int age;
@@ -105,7 +105,7 @@ public class Character
       throw new InvalidCharacterException ("Character is UNSET");
 
     password = getPascalString (buffer, offset + 16);
-    inMaze = getShort (buffer, offset + 32) != 0;
+    inMaze = getShort (buffer, offset + 32);
     race = WizardryData.Race.values ()[getShort (buffer, offset + 34)];
     characterClass = WizardryData.CharacterClass.values ()[getShort (buffer, offset + 36)];
     age = getShort (buffer, offset + 38);
@@ -197,7 +197,7 @@ public class Character
     password = "";
     partialSlogan = buffer[17] == 0 ? "" : HexFormatter.getPascalString (buffer, 17);
 
-    inMaze = getShort (buffer, 33) != 0;
+    inMaze = getShort (buffer, 33);
     race = WizardryData.Race.values ()[getShort (buffer, 35)];
     characterClass = WizardryData.CharacterClass.values ()[getShort (buffer, 37)];
     age = 0;

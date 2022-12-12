@@ -14,14 +14,14 @@ public class Location
   public Location (int level, int column, int row)
   // ---------------------------------------------------------------------------------//
   {
-    if (column > 19)
-      column = 19;
-    if (column < 0)
-      column = 0;
-    if (row > 19)
-      row = 19;
-    if (row < 0)
-      row = 0;
+    while (column > 19)
+      column -= 20;
+    while (column < 0)
+      column += 20;
+    while (row > 19)
+      row -= 20;
+    while (row < 0)
+      row += 20;
 
     this.level = level;
     this.row = row;
