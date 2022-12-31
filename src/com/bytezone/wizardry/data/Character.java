@@ -101,8 +101,6 @@ public class Character
       throw new InvalidCharacterException ("Name too long");
 
     name = getPascalString (buffer, offset);
-    if (name.isEmpty () || ("UNSET".equals (name) && buffer[offset + 40] == 0x07))   // 7 = LOST
-      throw new InvalidCharacterException ("Character is UNSET");
 
     password = getPascalString (buffer, offset + 16);
     inMaze = getShort (buffer, offset + 32);
@@ -110,8 +108,11 @@ public class Character
     characterClass = WizardryData.CharacterClass.values ()[getShort (buffer, offset + 36)];
     age = getShort (buffer, offset + 38);
 
-    status = WizardryData.CharacterStatus.values ()[getShort (buffer, offset + 40)];
+    status = CharacterStatus.values ()[getShort (buffer, offset + 40)];
     alignment = WizardryData.Alignment.values ()[getShort (buffer, offset + 42)];
+
+    if (name.isEmpty () || ("UNSET".equals (name) && status == CharacterStatus.LOST))
+      throw new InvalidCharacterException ("Character is UNSET");
 
     // basic attributes
     int attr1 = getShort (buffer, offset + 44);
