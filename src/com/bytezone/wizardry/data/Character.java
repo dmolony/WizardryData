@@ -72,7 +72,6 @@ public class Character
   public final String wepVs3;
   public final String wepVs1;
 
-  //  public LostXYL lostXYL;                           // +200      location
   public Location lostXYL;                          // +200      location
 
   public final String awards;                       // +206
@@ -183,7 +182,8 @@ public class Character
     wepVs3 = String.format ("%04X %04X", wep3[0], wep3[1]);       // resistance
     wepVs1 = String.format ("%04X", wep1);                        // purposed
 
-    //    lostXYL = new LostXYL (buffer, offset + 200);
+    //    System.out.printf ("%-15s %s %s %s%n", name, wepVs1, wepVs2, wepVs3);
+
     lostXYL = new Location (buffer, offset + 200);
     awards = getAwardString (buffer, offset + 206);
   }

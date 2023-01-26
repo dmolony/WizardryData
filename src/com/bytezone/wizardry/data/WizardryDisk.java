@@ -16,7 +16,7 @@ public class WizardryDisk
 // -----------------------------------------------------------------------------------//
 {
   private String fileName;
-  private FsPascal fs;
+  private FsPascal fsPascal;
 
   MessageBlock messageBlock;          // Wiz 4/5
   private Huffman huffman;
@@ -33,27 +33,22 @@ public class WizardryDisk
     if (!file.exists () || !file.isFile ())
       throw new FileNotFoundException ("File does not exist: " + fileName);
 
-    try
-    {
-      byte[] diskBuffer = Files.readAllBytes (file.toPath ());
-      AppleFileSystem fs = factory.getFileSystem ("Wizardry", diskBuffer);
-      if (fs instanceof FsPascal pascal)
-        this.fs = pascal;
-    }
-    catch (IOException e)
-    {
-      throw new DiskFormatException ("Error reading file: " + fileName, e);
-    }
+    //    try
+    //    {
+    //      byte[] diskBuffer = Files.readAllBytes (file.toPath ());
+    AppleFileSystem fs = factory.getFileSystem (file.toPath ());
 
-    if (fs == null)
-      throw new DiskFormatException ("Not a Pascal disk");
+    if (fs == null || !(fs instanceof FsPascal))
+      throw new DiskFormatException ("Not a Pascal disk: " + fileName);
+
+    this.fsPascal = (FsPascal) fs;
 
     if (findFile ("SCENARIO.DATA") == null)
       throw new DiskFormatException ("Not a Wizardry scenario: " + fileName);
 
     if (findFile ("ASCII.KRN") != null && checkWiz4 ())
     {
-      createNewDisk (file, fs);
+      createNewDisk (file, this.fsPascal);
       huffman = new Huffman (getFileData ("ASCII.HUFF"));
       messageBlock = new MessageBlock (getFileData ("ASCII.KRN"), huffman);
     }
@@ -77,8 +72,8 @@ public class WizardryDisk
     System.arraycopy (fs.getBuffer (), fs.getOffset (), buffer, 0, fs.getBuffer ().length);
 
     disks[1] = fs;           // will be used as a DataDisk
-    this.fs = new FsPascal ("Wiz4", buffer, fs.getBlockReader ());
-    disks[0] = this.fs;
+    this.fsPascal = new FsPascal (fs.getBlockReader ());
+    disks[0] = this.fsPascal;
 
     collectDataDisks (file.getAbsolutePath (), pos, disks);
 
@@ -106,7 +101,7 @@ public class WizardryDisk
       try
       {
         byte[] diskBuffer = Files.readAllBytes (f.toPath ());
-        disks[i] = new FsData ("WizData" + i, diskBuffer, disks[0].getBlockReader ());
+        disks[i] = new FsData (disks[0].getBlockReader ());
       }
       catch (IOException e)
       {
@@ -128,12 +123,12 @@ public class WizardryDisk
   {
     // Wizardry IV or V boot code
     byte[] header = { 0x00, (byte) 0xEA, (byte) 0xA9, 0x60, (byte) 0x8D, 0x01, 0x08 };
-    byte[] buffer = fs.readBlock (fs.getBlock (0));
+    byte[] buffer = fsPascal.readBlock (fsPascal.getBlock (0));
 
     if (!Utility.matches (buffer, 0, header))
       return false;
 
-    buffer = fs.readBlock (fs.getBlock (1));
+    buffer = fsPascal.readBlock (fsPascal.getBlock (1));
 
     return Utility.getShort (buffer, 510) == 1;
   }
@@ -149,8 +144,8 @@ public class WizardryDisk
   private AppleFile findFile (String fileName)
   // ---------------------------------------------------------------------------------//
   {
-    for (AppleFile appleFile : fs.getFiles ())
-      if (fileName.equals (appleFile.getName ()))
+    for (AppleFile appleFile : fsPascal.getFiles ())
+      if (fileName.equals (appleFile.getFileName ()))
         return appleFile;
 
     return null;
