@@ -69,7 +69,7 @@ public class WizardryDisk
     AppleFileSystem[] disks = new AppleFileSystem[requiredDisks];
 
     byte[] buffer = new byte[fs.getVolumeTotalBlocks () * fs.getBlockSize ()];
-    System.arraycopy (fs.getBuffer (), fs.getOffset (), buffer, 0, fs.getBuffer ().length);
+    System.arraycopy (fs.getDiskBuffer (), fs.getDiskOffset (), buffer, 0, buffer.length);
 
     disks[1] = fs;           // will be used as a DataDisk
     this.fsPascal = new FsPascal (fs.getBlockReader ());
