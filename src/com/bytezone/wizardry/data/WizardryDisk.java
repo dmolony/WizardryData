@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import com.bytezone.filesystem.AppleBlock.BlockType;
 import com.bytezone.filesystem.AppleFile;
 import com.bytezone.filesystem.AppleFileSystem;
 import com.bytezone.filesystem.FileSystemFactory;
@@ -123,12 +124,12 @@ public class WizardryDisk
   {
     // Wizardry IV or V boot code
     byte[] header = { 0x00, (byte) 0xEA, (byte) 0xA9, 0x60, (byte) 0x8D, 0x01, 0x08 };
-    byte[] buffer = fsPascal.readBlock (fsPascal.getBlock (0));
+    byte[] buffer = fsPascal.readBlock (fsPascal.getBlock (0, BlockType.OS_DATA));
 
     if (!Utility.matches (buffer, 0, header))
       return false;
 
-    buffer = fsPascal.readBlock (fsPascal.getBlock (1));
+    buffer = fsPascal.readBlock (fsPascal.getBlock (1, BlockType.OS_DATA));
 
     return Utility.getShort (buffer, 510) == 1;
   }

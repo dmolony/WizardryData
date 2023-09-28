@@ -3,6 +3,7 @@ package com.bytezone.wizardry.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.bytezone.filesystem.AppleBlock.BlockType;
 import com.bytezone.filesystem.AppleFileSystem;
 import com.bytezone.filesystem.FsPascal;
 
@@ -57,8 +58,9 @@ public class Relocator
       if (diskNo > 0)
       {
         AppleFileSystem disk = dataDisks[diskNo];
-        byte[] temp = disk.readBlock (disk.getBlock (diskOffsets[logicalBlock]));
-        master.writeBlock (master.getBlock (logicalBlock), temp);
+        byte[] temp =
+            disk.readBlock (disk.getBlock (diskOffsets[logicalBlock], BlockType.OS_DATA));
+        master.writeBlock (master.getBlock (logicalBlock, BlockType.OS_DATA), temp);
       }
     }
   }
@@ -92,8 +94,8 @@ public class Relocator
       {
         int size = i - first;
         if (lastDisk > 0)
-          lines.add (String.format ("%03X - %03X   %03X    %d   %03X - %03X", first, i - 1, size,
-              lastDisk, lastOffset, lastOffset + size - 1));
+          lines.add (String.format ("%03X - %03X   %03X    %d   %03X - %03X", first,
+              i - 1, size, lastDisk, lastOffset, lastOffset + size - 1));
         else
           lines.add (String.format ("%03X - %03X   %03X", first, i - 1, size));
 
@@ -107,8 +109,8 @@ public class Relocator
     {
       int max = diskBlocks.length;
       int size = max - first;
-      lines.add (String.format ("%03X - %03X   %03X    %d   %03X - %03X", first, max - 1, size,
-          lastDisk, lastOffset, lastOffset + size - 1));
+      lines.add (String.format ("%03X - %03X   %03X    %d   %03X - %03X", first, max - 1,
+          size, lastDisk, lastOffset, lastOffset + size - 1));
     }
 
     for (int i = lines.size () - 1; i >= 0; i--)
@@ -119,13 +121,14 @@ public class Relocator
       lines.remove (i);
     }
 
-    text.append (String.format ("   %s        %s%n   %s       %s%n", heading, heading, underline,
-        underline));
+    text.append (String.format ("   %s        %s%n   %s       %s%n", heading, heading,
+        underline, underline));
     int offset = (lines.size () + 1) / 2;
     int pairs = lines.size () / 2;
 
     for (int i = 0; i < pairs; i++)
-      text.append (String.format ("   %-35s    %s%n", lines.get (i), lines.get (i + offset)));
+      text.append (
+          String.format ("   %-35s    %s%n", lines.get (i), lines.get (i + offset)));
 
     if (offset != pairs)
       text.append (String.format ("   %s%n", lines.get (pairs)));
@@ -209,8 +212,8 @@ public class Relocator
     public String toString ()
     {
       return String.format (" %04X - %04X   %04X - %04X   %04X", physicalBlock,
-          (physicalBlock + segmentLength - 1), logicalBlock, (logicalBlock + segmentLength - 1),
-          segmentLength);
+          (physicalBlock + segmentLength - 1), logicalBlock,
+          (logicalBlock + segmentLength - 1), segmentLength);
     }
   }
 }
