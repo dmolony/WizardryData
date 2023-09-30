@@ -4,8 +4,8 @@
 
   <property name="srcDir" location="src" />
   <property name="binDir" location="bin" />
-  <property name="jarFolder" location="${user.home}/Dropbox/Java" />
-  <property name="jarFile" location="${jarFolder}/WizardryData.jar" />
+  <property name="jarDir" location="${user.home}/Dropbox/Java" />
+  <property name="jarFile" location="${jarDir}/WizardryData.jar" />
 
   <target name="version">
     <echo>WizardryData.jar</echo>
@@ -30,7 +30,7 @@
   <target name="jar" depends="compile">
     <jar destfile="${jarFile}">
       <fileset dir="${binDir}" />
-      <zipfileset src="${jarFolder}/AppleFileSystem.jar" />
+      <zipfileset src="${jarDir}/AppleFileSystem.jar" />
     </jar>
   </target>
 
