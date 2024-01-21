@@ -3,7 +3,6 @@ package com.bytezone.wizardry.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bytezone.filesystem.AppleBlock.BlockType;
 import com.bytezone.filesystem.AppleFileSystem;
 import com.bytezone.filesystem.FsPascal;
 
@@ -58,9 +57,8 @@ public class Relocator
       if (diskNo > 0)
       {
         AppleFileSystem disk = dataDisks[diskNo];
-        byte[] temp =
-            disk.readBlock (disk.getBlock (diskOffsets[logicalBlock], BlockType.OS_DATA));
-        master.writeBlock (master.getBlock (logicalBlock, BlockType.OS_DATA), temp);
+        byte[] temp = disk.readBlock (disk.getBlock (diskOffsets[logicalBlock]));
+        master.writeBlock (master.getBlock (logicalBlock), temp);
       }
     }
   }
