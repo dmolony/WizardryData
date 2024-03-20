@@ -39,8 +39,8 @@ class MessageDataBlock
       {
         int messageLength = buffer[ptr - j - 1] & 0xFF;
         totalMessageBytes += messageLength;
-        Message message =
-            new Message (currentMessageNo + j, totalMessageBytes - messageLength, messageLength);
+        Message message = new Message (currentMessageNo + j,
+            totalMessageBytes - messageLength, messageLength);
         messages.add (message);
       }
 

@@ -12,9 +12,9 @@ import com.bytezone.wizardry.data.WizardryData.Trade;;
 public class Special
 // -----------------------------------------------------------------------------------//
 {
-  public static final String[] auxTypes = { "", "", "TRYGET", "WHOWADE", "DOSEARCH", "ITM2PASS",
-      "CHKALIGN", "CHKAUX0", "BCK2SHOP", "LOOKOUT", "RIDDLES", "FEEIS", "", "PICTMESS", "ITMORTEL",
-      "SPCMONST(CE)", "SPCMONST(CG)" };
+  public static final String[] auxTypes = { "", "", "TRYGET", "WHOWADE", "DOSEARCH",
+      "ITM2PASS", "CHKALIGN", "CHKAUX0", "BCK2SHOP", "LOOKOUT", "RIDDLES", "FEEIS", "",
+      "PICTMESS", "ITMORTEL", "SPCMONST(CE)", "SPCMONST(CG)" };
   private final WizardryData wizardry;
 
   public final Square square;
@@ -127,8 +127,8 @@ public class Special
             else
             {
               Trade trade = wizardry.getItemTrade (aux[0]);
-              description.append ("Trade : " + wizardry.getItemName (trade.item1 ()) + " for "
-                  + wizardry.getItemName (trade.item2 ()));
+              description.append ("Trade : " + wizardry.getItemName (trade.item1 ())
+                  + " for " + wizardry.getItemName (trade.item2 ()));
             }
             break;
 
@@ -176,8 +176,8 @@ public class Special
             int east = aux[0] / 100;
             int north = aux[0] % 100;
             String item = wizardry.getItemName (aux[1]);
-            description
-                .append (String.format ("Required : %s else teleport N%d E%d", item, north, east));
+            description.append (
+                String.format ("Required : %s else teleport N%d E%d", item, north, east));
             break;
 
           case 15:                              // SPCMONST (CRYSEVIL)
@@ -267,6 +267,7 @@ public class Special
   // ---------------------------------------------------------------------------------//
   {
     String extra = locations.size () == 1 ? "" : "(" + locations.size () + ")";
-    return String.format ("%-8s  %5d  %4d  %4d  %s", square, aux[0], aux[1], aux[2], extra);
+    return String.format ("%-8s  %5d  %4d  %4d  %s", square, aux[0], aux[1], aux[2],
+        extra);
   }
 }

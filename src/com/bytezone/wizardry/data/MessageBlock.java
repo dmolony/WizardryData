@@ -26,8 +26,8 @@ class MessageBlock
       int firstMessageNo = Utility.getShort (buffer, ptr + i * 2);
       byte[] data = new byte[512];
       System.arraycopy (buffer, i * 512, data, 0, data.length);
-      MessageDataBlock messageDataBlock =
-          new MessageDataBlock (" Message " + firstMessageNo, data, firstMessageNo, huffman);
+      MessageDataBlock messageDataBlock = new MessageDataBlock (
+          " Message " + firstMessageNo, data, firstMessageNo, huffman);
       messageDataBlocks.add (messageDataBlock);
     }
   }

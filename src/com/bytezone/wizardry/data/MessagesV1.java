@@ -21,7 +21,7 @@ public class MessagesV1 extends Messages
     {
       for (int i = 0; i < 504; i += 42)
       {
-        String line = scenarioId == 1 ?                       //
+        String line = scenarioId <= 1 ?                       //
             Utility.getPascalString (buffer, offset + i) :    //
             getCodedLine (buffer, offset + i);
         messageLines.add (new MessageLine (line, buffer[offset + i + 40] == 1));

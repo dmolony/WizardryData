@@ -9,7 +9,8 @@ public class WizardryData1 extends WizardryData
 // -----------------------------------------------------------------------------------//
 {
   // ---------------------------------------------------------------------------------//
-  public WizardryData1 (WizardryDisk disk) throws FileNotFoundException, DiskFormatException
+  public WizardryData1 (WizardryDisk disk)
+      throws FileNotFoundException, DiskFormatException
   // ---------------------------------------------------------------------------------//
   {
     super (disk);
