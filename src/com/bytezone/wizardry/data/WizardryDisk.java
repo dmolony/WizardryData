@@ -2,12 +2,12 @@ package com.bytezone.wizardry.data;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
 
 import com.bytezone.filesystem.AppleFile;
 import com.bytezone.filesystem.AppleFileSystem;
 import com.bytezone.filesystem.AppleFileSystem.FileSystemType;
+import com.bytezone.filesystem.BlockReader;
+import com.bytezone.filesystem.BlockReader.AddressType;
 import com.bytezone.filesystem.FileSystemFactory;
 import com.bytezone.filesystem.FsData;
 import com.bytezone.filesystem.FsPascal;
@@ -34,20 +34,29 @@ public class WizardryDisk
     if (!file.exists () || !file.isFile ())
       throw new FileNotFoundException ("File does not exist: " + fileName);
 
-    //    try
-    //    {
-    //      byte[] diskBuffer = Files.readAllBytes (file.toPath ());
     AppleFileSystem fs = factory.getFileSystem (file.toPath ());
 
-    if (fs == null || fs.getFileSystemType () != FileSystemType.PASCAL)
+    if (fs.getFileSystemType () != FileSystemType.PASCAL)
       throw new DiskFormatException ("Not a Pascal disk: " + fileName);
 
     this.fsPascal = (FsPascal) fs;
 
-    if (findFile ("SCENARIO.DATA") == null)
-      throw new DiskFormatException ("Not a Wizardry scenario: " + fileName);
+    // check for wizardry 4/5 boot disk
+    if (fsPascal.getVolumeName ().equals ("WIZBOOT") && fs.getTotalBlocks () == 280)
+      if (fsPascal.getVolumeTotalBlocks () == 2048)
+      {
+        System.out.println ("*** Wizardry 4 boot disk ***");
+        if (findFile ("SCENARIO.DATA") == null)
+          throw new DiskFormatException ("Not a Wizardry scenario: " + fileName);
+      }
+      else if (fsPascal.getVolumeTotalBlocks () == 1600)
+      {
+        System.out.println ("*** Wizardry 5 boot disk ***");
+        if (findFile ("DRAGON.DATA") == null)
+          throw new DiskFormatException ("Not a Wizardry scenario: " + fileName);
+      }
 
-    if (findFile ("ASCII.KRN") != null && checkWiz4 ())
+    if (findFile ("SYSTEM.RELOC") != null && checkWiz4 (fs))
     {
       createNewDisk (file, this.fsPascal);
       huffman = new Huffman (getFileData ("ASCII.HUFF"));
@@ -67,19 +76,29 @@ public class WizardryDisk
     if (requiredDisks == 0)
       return;
 
-    AppleFileSystem[] disks = new AppleFileSystem[requiredDisks];
+    AppleFileSystem[] disks = new AppleFileSystem[requiredDisks + 1];
 
     byte[] buffer = new byte[fs.getVolumeTotalBlocks () * fs.getBlockSize ()];
-    System.arraycopy (fs.getDiskBuffer (), fs.getDiskOffset (), buffer, 0, buffer.length);
+    System.arraycopy (fs.getDiskBuffer (), fs.getDiskOffset (), buffer, 0,
+        fs.getDiskLength ());
 
-    disks[1] = fs;           // will be used as a DataDisk
-    this.fsPascal = new FsPascal (fs.getBlockReader ());
-    disks[0] = this.fsPascal;
+    BlockReader reader = new BlockReader ("COLLATED DISK", buffer);
+    reader.setParameters (512, AddressType.BLOCK, 1, 8);
+    this.fsPascal = new FsPascal (reader);
+
+    disks[0] = this.fsPascal;     // the new logical disk
+    disks[1] = fs;                // will be used as a DataDisk
 
     collectDataDisks (file.getAbsolutePath (), pos, disks);
 
     Relocator relocator = new Relocator (getFileData ("SYSTEM.RELOC"));
     relocator.createNewBuffer (disks);        // copies disks 1-6 or 1-10 into disk 0
+
+    //    for (AppleFileSystem afs : disks)
+    //    {
+    //      System.out.println (afs);
+    //      System.out.println ();
+    //    }
   }
 
   // ---------------------------------------------------------------------------------//
@@ -99,15 +118,10 @@ public class WizardryDisk
       if (!f.exists () || !f.isFile ())
         throw new DiskFormatException ("Couldn't collect extra disks required");
 
-      try
-      {
-        byte[] diskBuffer = Files.readAllBytes (f.toPath ());
-        disks[i] = new FsData (disks[0].getBlockReader ());
-      }
-      catch (IOException e)
-      {
-        throw new DiskFormatException (e.getMessage ());
-      }
+      BlockReader reader = new BlockReader (f.toPath ());
+      reader.setParameters (512, AddressType.BLOCK, 1, 8);
+
+      disks[i] = new FsData (reader);
     }
   }
 
@@ -119,17 +133,21 @@ public class WizardryDisk
   }
 
   // ---------------------------------------------------------------------------------//
-  boolean checkWiz4 ()
+  boolean checkWiz4 (AppleFileSystem fs)
   // ---------------------------------------------------------------------------------//
   {
     // Wizardry IV or V boot code
     byte[] header = { 0x00, (byte) 0xEA, (byte) 0xA9, 0x60, (byte) 0x8D, 0x01, 0x08 };
-    byte[] buffer = fsPascal.readBlock (fsPascal.getBlock (0));
+    //    byte[] buffer = fsPascal.readBlock (fsPascal.getBlock (0));
+    byte[] buffer = fs.getDiskBuffer ();
 
     if (!Utility.matches (buffer, 0, header))
       return false;
 
-    buffer = fsPascal.readBlock (fsPascal.getBlock (1));
+    BlockReader pascalReader = fs.getBlockReader ();
+    pascalReader.setParameters (512, AddressType.BLOCK, 1, 8);
+
+    buffer = fs.readBlock (fs.getBlock (1));
 
     return Utility.getShort (buffer, 510) == 1;
   }

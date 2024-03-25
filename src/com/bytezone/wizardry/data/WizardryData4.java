@@ -12,7 +12,8 @@ public class WizardryData4 extends WizardryData
   private List<CharacterParty> parties = new ArrayList<> ();
 
   // ---------------------------------------------------------------------------------//
-  public WizardryData4 (WizardryDisk disk) throws FileNotFoundException, DiskFormatException
+  public WizardryData4 (WizardryDisk disk)
+      throws FileNotFoundException, DiskFormatException
   // ---------------------------------------------------------------------------------//
   {
     super (disk);
