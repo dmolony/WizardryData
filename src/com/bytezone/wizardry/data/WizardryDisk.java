@@ -147,14 +147,14 @@ public class WizardryDisk
   }
 
   // ---------------------------------------------------------------------------------//
-  boolean isWizardryIVorV ()
+  private boolean isWizardryIVorV ()
   // ---------------------------------------------------------------------------------//
   {
     return (messageBlock != null);
   }
 
   // ---------------------------------------------------------------------------------//
-  boolean checkWiz4or5 (AppleFileSystem fs)
+  private boolean checkWiz4or5 (AppleFileSystem fs)
   // ---------------------------------------------------------------------------------//
   {
     // Wizardry IV or V boot code
@@ -191,7 +191,7 @@ public class WizardryDisk
   }
 
   // ---------------------------------------------------------------------------------//
-  public byte[] getFileData (String fileName) throws DiskFormatException
+  byte[] getFileData (String fileName) throws DiskFormatException
   // ---------------------------------------------------------------------------------//
   {
     AppleFile appleFile = findFile (fileName);
@@ -202,7 +202,7 @@ public class WizardryDisk
   }
 
   // ---------------------------------------------------------------------------------//
-  public String getFileName ()
+  String getFileName ()
   // ---------------------------------------------------------------------------------//
   {
     return fileName;
