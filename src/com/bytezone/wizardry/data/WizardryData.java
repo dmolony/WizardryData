@@ -10,27 +10,29 @@ import java.util.Map;
 public abstract class WizardryData
 // -----------------------------------------------------------------------------------//
 {
-  public static final String[] monsterClass = { "Fighter", "Mage", "Priest", "Thief", "Midget",
-      "Giant", "Mythical", "Dragon", "Animal", "Were", "Undead", "Demon", "Insect", "Enchanted" };
+  public static final String[] monsterClass =
+      { "Fighter", "Mage", "Priest", "Thief", "Midget", "Giant", "Mythical", "Dragon",
+          "Animal", "Were", "Undead", "Demon", "Insect", "Enchanted" };
   public static final String[] resistance =
       { "No elements", "Fire", "Cold", "Poison", "Level drain", "Stoning", "Magic" };
   public static final String[] characterClass =
       { "Fighter", "Mage", "Priest", "Thief", "Bishop", "Samurai", "Lord", "Ninja" };
   public static final String[] property =
       { "Stone", "Poison", "Paralyze", "Auto Kill", "Be slept", "Run", "Call for help" };
-  public static String[] trapType = { "Trapless chest", "Poison needle", "Gas bomb", "Bolt",
-      "Teleporter", "Anti-mage", "Anti-priest", "Alarm" };
+  public static String[] trapType = { "Trapless chest", "Poison needle", "Gas bomb",
+      "Bolt", "Teleporter", "Anti-mage", "Anti-priest", "Alarm" };
   public static String[] trapType3 =
       { "Crossbow bolt", "Exploding box", "Splinters", "Blades", "Stunner" };
 
-  public static final String[] spells = { "Halito", "Mogref", "Katino", "Dumapic", "Dilto", "Sopic",
-      "Mahalito", "Molito", "Morlis", "Dalto", "Lahalito", "Mamorlis", "Makanito", "Madalto",
-      "Lakanito", "Zilwan", "Masopic", "Haman", "Malor", "Mahaman", "Tiltowait",
+  public static final String[] spells =
+      { "Halito", "Mogref", "Katino", "Dumapic", "Dilto", "Sopic", "Mahalito", "Molito",
+          "Morlis", "Dalto", "Lahalito", "Mamorlis", "Makanito", "Madalto", "Lakanito",
+          "Zilwan", "Masopic", "Haman", "Malor", "Mahaman", "Tiltowait",
 
-      "Kalki", "Dios", "Badios", "Milwa", "Porfic", "Matu", "Calfo", "Manifo", "Montino", "Lomilwa",
-      "Dialko", "Latumapic", "Bamatu", "Dial", "Badial", "Latumofis", "Maporfic", "Dialma",
-      "Badialma", "Litokan", "Kandi", "Di", "Badi", "Lorto", "Madi", "Mabadi", "Loktofeit",
-      "Malikto", "Kadorto" };
+          "Kalki", "Dios", "Badios", "Milwa", "Porfic", "Matu", "Calfo", "Manifo",
+          "Montino", "Lomilwa", "Dialko", "Latumapic", "Bamatu", "Dial", "Badial",
+          "Latumofis", "Maporfic", "Dialma", "Badialma", "Litokan", "Kandi", "Di", "Badi",
+          "Lorto", "Madi", "Mabadi", "Loktofeit", "Malikto", "Kadorto" };
 
   static final int HEADER_AREA = 0;
   static final int MAZE_AREA = 1;
@@ -56,8 +58,8 @@ public abstract class WizardryData
 
   public enum Square
   {
-    NORMAL, STAIRS, PIT, CHUTE, SPINNER, DARK, TRANSFER, OUCHY, BUTTONZ, ROCKWATE, FIZZLE, SCNMSG,
-    ENCOUNTE
+    NORMAL, STAIRS, PIT, CHUTE, SPINNER, DARK, TRANSFER, OUCHY, BUTTONZ, ROCKWATE, FIZZLE,
+    SCNMSG, ENCOUNTE
   }
 
   public enum Direction
