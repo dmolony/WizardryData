@@ -41,27 +41,48 @@ public class WizardryDisk
 
     this.fsPascal = (FsPascal) fs;
 
-    // check for wizardry 4/5 boot disk
-    if (fsPascal.getVolumeName ().equals ("WIZBOOT") && fs.getTotalBlocks () == 280)
+    if (fsPascal.getVolumeName ().equals ("WIZBOOT")      // wiz4 or wiz5
+        && checkWiz4or5 (fs))                             // check boot block
+    {
+      checkDiskSize ();
+
+      if (findFile ("SYSTEM.RELOC") != null)
+      {
+        createNewDisk (file, this.fsPascal);
+        huffman = new Huffman (getFileData ("ASCII.HUFF"));
+        messageBlock = new MessageBlock (getFileData ("ASCII.KRN"), huffman);
+      }
+      else
+        throw new DiskFormatException ("SYSTEM.RELOC not found: " + fileName);
+    }
+  }
+
+  // ---------------------------------------------------------------------------------//
+  public WizardryData getWizardryData () throws FileNotFoundException, DiskFormatException
+  // ---------------------------------------------------------------------------------//
+  {
+    return isWizardryIVorV () ? new WizardryData4 (this) : new WizardryData1 (this);
+  }
+
+  // ---------------------------------------------------------------------------------//
+  private void checkDiskSize () throws DiskFormatException
+  // ---------------------------------------------------------------------------------//
+  {
+    if (fsPascal.getTotalBlocks () == 280)
       if (fsPascal.getVolumeTotalBlocks () == 2048)
       {
-        System.out.println ("*** Wizardry 4 boot disk ***");
+        //        System.out.println ("*** Wizardry 4 scenario disk ***");
         if (findFile ("SCENARIO.DATA") == null)
-          throw new DiskFormatException ("Not a Wizardry scenario: " + fileName);
+          throw new DiskFormatException ("SCENARIO.DATA not found: " + fileName);
       }
       else if (fsPascal.getVolumeTotalBlocks () == 1600)
       {
-        System.out.println ("*** Wizardry 5 boot disk ***");
+        //        System.out.println ("*** Wizardry 5 scenario disk ***");
         if (findFile ("DRAGON.DATA") == null)
-          throw new DiskFormatException ("Not a Wizardry scenario: " + fileName);
+          throw new DiskFormatException ("DRAGON.DATA not found: " + fileName);
       }
-
-    if (findFile ("SYSTEM.RELOC") != null && checkWiz4 (fs))
-    {
-      createNewDisk (file, this.fsPascal);
-      huffman = new Huffman (getFileData ("ASCII.HUFF"));
-      messageBlock = new MessageBlock (getFileData ("ASCII.KRN"), huffman);
-    }
+      else
+        throw new DiskFormatException ("Unexpected disk size: " + fileName);
   }
 
   // ---------------------------------------------------------------------------------//
@@ -133,12 +154,11 @@ public class WizardryDisk
   }
 
   // ---------------------------------------------------------------------------------//
-  boolean checkWiz4 (AppleFileSystem fs)
+  boolean checkWiz4or5 (AppleFileSystem fs)
   // ---------------------------------------------------------------------------------//
   {
     // Wizardry IV or V boot code
     byte[] header = { 0x00, (byte) 0xEA, (byte) 0xA9, 0x60, (byte) 0x8D, 0x01, 0x08 };
-    //    byte[] buffer = fsPascal.readBlock (fsPascal.getBlock (0));
     byte[] buffer = fs.getDiskBuffer ();
 
     if (!Utility.matches (buffer, 0, header))
