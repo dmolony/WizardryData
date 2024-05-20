@@ -133,11 +133,11 @@ public class Monster
       damageDice[i] = new Dice (buffer, offset + 84 + i * 6);
       dd.append (damageDice[i].toString () + ", ");
     }
+
     trimComma (dd);
     damageDiceText = dd.toString ();
 
     long exp = getWizLong (buffer, offset + 126);
-    experiencePoints = exp == 0 ? experience[id] : exp;
 
     drain = getShort (buffer, offset + 132);
     regen = getShort (buffer, offset + 134);
@@ -157,6 +157,8 @@ public class Monster
 
     resistance = getShort (buffer, offset + 154);         // flags
     properties = getShort (buffer, offset + 156);         // flags
+
+    experiencePoints = exp == 0 ? getExperienceTotal () : exp;
   }
 
   // ---------------------------------------------------------------------------------//
@@ -171,6 +173,48 @@ public class Monster
   // ---------------------------------------------------------------------------------//
   {
     return mazeLevel.validateGroupSize (groupSize.roll ());
+  }
+
+  // ---------------------------------------------------------------------------------//
+  private long getExperienceTotal ()
+  // ---------------------------------------------------------------------------------//
+  {
+    int expHitPoints = hitPoints.faces * hitPoints.level * (breathe == 0 ? 20 : 40);
+    int expAc = 40 * (11 - armourClass);
+    int expMage = getBonus (35, mageSpells);
+    int expPriest = getBonus (35, priestSpells);
+    int expDrain = getBonus (200, drain);
+    int expHeal = getBonus (90, regen);
+    int expDamage = damageDiceSize <= 1 ? 0 : getBonus (30, damageDiceSize);
+    int expUnaffect = unaffect == 0 ? 0 : getBonus (40, (unaffect / 10 + 1));
+
+    int expFlags1 = getBonus (35, Integer.bitCount (resistance & 0x7E));      // 6 bits
+    int expFlags2 = getBonus (40, Integer.bitCount (properties & 0x7F));      // 7 bits
+
+    return expHitPoints + expAc + expMage + expPriest + expDrain + expHeal + expDamage
+        + expUnaffect + expFlags1 + expFlags2;
+  }
+
+  // ---------------------------------------------------------------------------------//
+  private int getBonus (int base, int multiplier)
+  // ---------------------------------------------------------------------------------//
+  {
+    if (multiplier == 0)
+      return 0;
+
+    int total = base;
+    while (multiplier > 1)
+    {
+      int part = total % 10000;   // get the last 4 digits
+
+      multiplier--;
+      total += total;             // double the value
+
+      if (part >= 5000)           // mimics the wizardry bug
+        total += 10000;           // yay, free points
+    }
+
+    return total;
   }
 
   // ---------------------------------------------------------------------------------//
