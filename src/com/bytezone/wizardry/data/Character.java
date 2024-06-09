@@ -87,7 +87,8 @@ public class Character
   String partialSlogan;
 
   // ---------------------------------------------------------------------------------//
-  public Character (int id, DataBlock dataBlock, int scenarioId) throws InvalidCharacterException
+  public Character (int id, DataBlock dataBlock, int scenarioId)
+      throws InvalidCharacterException
   // ---------------------------------------------------------------------------------//
   {
     this.id = id;
@@ -104,7 +105,8 @@ public class Character
     password = getPascalString (buffer, offset + 16);
     inMaze = getShort (buffer, offset + 32);
     race = WizardryData.Race.values ()[getShort (buffer, offset + 34)];
-    characterClass = WizardryData.CharacterClass.values ()[getShort (buffer, offset + 36)];
+    characterClass =
+        WizardryData.CharacterClass.values ()[getShort (buffer, offset + 36)];
     age = getShort (buffer, offset + 38);
 
     status = CharacterStatus.values ()[getShort (buffer, offset + 40)];
@@ -139,9 +141,9 @@ public class Character
 
     for (int i = 0; i < possessionsCount; i++)
     {
-      boolean equipped = getShort (buffer, offset + 60 + i * 8) == 1;
-      boolean cursed = getShort (buffer, offset + 62 + i * 8) == 1;
-      boolean identified = getShort (buffer, offset + 64 + i * 8) == 1;
+      boolean equipped = getShort (buffer, offset + 60 + i * 8) != 0;
+      boolean cursed = getShort (buffer, offset + 62 + i * 8) != 0;
+      boolean identified = getShort (buffer, offset + 64 + i * 8) != 0;
       int itemId = getShort (buffer, offset + 66 + i * 8);
 
       if (scenarioId == 3 && itemId >= 1000)
@@ -164,7 +166,7 @@ public class Character
     armourClass = getSignedShort (buffer, offset + 176);
     healPts = getShort (buffer, offset + 178);
 
-    crithitm = getShort (buffer, offset + 180) == 1;
+    crithitm = getShort (buffer, offset + 180) != 0;
     swingCount = getShort (buffer, offset + 182);
     hpdamrc = new Dice (buffer, offset + 184);
 
@@ -246,7 +248,6 @@ public class Character
       int itemNo = getShort (buffer, 67 + i * 8);
       Possession p = new Possession (itemNo, false, false, true);
       possessions.add (p);
-      //      System.out.println (Utility.getHexString (buffer, 67 + i * 8, 8));
     }
 
     experience = 0;                                 // not used
