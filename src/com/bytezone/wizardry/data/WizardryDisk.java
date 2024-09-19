@@ -198,7 +198,7 @@ public class WizardryDisk
     if (appleFile == null)
       throw new DiskFormatException (fileName + " not found");
 
-    return appleFile.read ();
+    return appleFile.getDataRecord ().data ();
   }
 
   // ---------------------------------------------------------------------------------//
