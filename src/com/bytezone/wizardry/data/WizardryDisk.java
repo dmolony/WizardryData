@@ -8,6 +8,7 @@ import com.bytezone.filesystem.AppleFileSystem;
 import com.bytezone.filesystem.AppleFileSystem.FileSystemType;
 import com.bytezone.filesystem.BlockReader;
 import com.bytezone.filesystem.BlockReader.AddressType;
+import com.bytezone.filesystem.DataRecord;
 import com.bytezone.filesystem.FileSystemFactory;
 import com.bytezone.filesystem.FsData;
 import com.bytezone.filesystem.FsPascal;
@@ -100,8 +101,9 @@ public class WizardryDisk
     AppleFileSystem[] disks = new AppleFileSystem[requiredDisks + 1];
 
     byte[] buffer = new byte[fs.getVolumeTotalBlocks () * fs.getBlockSize ()];
-    System.arraycopy (fs.getDiskBuffer (), fs.getDiskOffset (), buffer, 0,
-        fs.getDiskLength ());
+    DataRecord dataRecord = fs.getDataRecord ();
+    System.arraycopy (dataRecord.data (), dataRecord.offset (), buffer, 0,
+        dataRecord.length ());
 
     BlockReader reader = new BlockReader ("COLLATED DISK", buffer);
     reader.setParameters (512, AddressType.BLOCK, 1, 8);
@@ -159,15 +161,15 @@ public class WizardryDisk
   {
     // Wizardry IV or V boot code
     byte[] header = { 0x00, (byte) 0xEA, (byte) 0xA9, 0x60, (byte) 0x8D, 0x01, 0x08 };
-    byte[] buffer = fs.getDiskBuffer ();
+    DataRecord dataRecord = fs.getDataRecord ();
 
-    if (!Utility.matches (buffer, 0, header))
+    if (!Utility.matches (dataRecord.data (), 0, header))
       return false;
 
     BlockReader pascalReader = fs.getBlockReader ();
     pascalReader.setParameters (512, AddressType.BLOCK, 1, 8);
 
-    buffer = fs.readBlock (fs.getBlock (1));
+    byte[] buffer = fs.readBlock (fs.getBlock (1));
 
     return Utility.getShort (buffer, 510) == 1;
   }
