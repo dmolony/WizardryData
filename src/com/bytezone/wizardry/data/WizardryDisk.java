@@ -8,7 +8,7 @@ import com.bytezone.filesystem.AppleFileSystem;
 import com.bytezone.filesystem.AppleFileSystem.FileSystemType;
 import com.bytezone.filesystem.BlockReader;
 import com.bytezone.filesystem.BlockReader.AddressType;
-import com.bytezone.filesystem.DataRecord;
+import com.bytezone.filesystem.Buffer;
 import com.bytezone.filesystem.FileSystemFactory;
 import com.bytezone.filesystem.FsData;
 import com.bytezone.filesystem.FsPascal;
@@ -101,7 +101,7 @@ public class WizardryDisk
     AppleFileSystem[] disks = new AppleFileSystem[requiredDisks + 1];
 
     byte[] buffer = new byte[fs.getVolumeTotalBlocks () * fs.getBlockSize ()];
-    DataRecord dataRecord = fs.getDataRecord ();
+    Buffer dataRecord = fs.getDiskBuffer ();
     System.arraycopy (dataRecord.data (), dataRecord.offset (), buffer, 0,
         dataRecord.length ());
 
@@ -161,7 +161,7 @@ public class WizardryDisk
   {
     // Wizardry IV or V boot code
     byte[] header = { 0x00, (byte) 0xEA, (byte) 0xA9, 0x60, (byte) 0x8D, 0x01, 0x08 };
-    DataRecord dataRecord = fs.getDataRecord ();
+    Buffer dataRecord = fs.getDiskBuffer ();
 
     if (!Utility.matches (dataRecord.data (), 0, header))
       return false;
@@ -200,7 +200,7 @@ public class WizardryDisk
     if (appleFile == null)
       throw new DiskFormatException (fileName + " not found");
 
-    return appleFile.getDataRecord ().data ();
+    return appleFile.getFileBuffer ().data ();
   }
 
   // ---------------------------------------------------------------------------------//

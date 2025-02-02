@@ -3,6 +3,7 @@ package com.bytezone.wizardry.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.bytezone.filesystem.AppleBlock;
 import com.bytezone.filesystem.AppleFileSystem;
 import com.bytezone.filesystem.FsPascal;
 
@@ -49,7 +50,7 @@ public class Relocator
   public void createNewBuffer (AppleFileSystem[] dataDisks)
   // ---------------------------------------------------------------------------------//
   {
-    FsPascal master = (FsPascal) dataDisks[0];
+    FsPascal masterFs = (FsPascal) dataDisks[0];
 
     for (int logicalBlock = 0; logicalBlock < diskBlocks.length; logicalBlock++)
     {
@@ -58,7 +59,10 @@ public class Relocator
       {
         AppleFileSystem disk = dataDisks[diskNo];
         byte[] temp = disk.readBlock (disk.getBlock (diskOffsets[logicalBlock]));
-        master.writeBlock (master.getBlock (logicalBlock), temp);
+
+        AppleBlock masterBlock = masterFs.getBlock (logicalBlock);
+        masterBlock.setBuffer (temp);
+        masterFs.writeBlock (masterBlock);
       }
     }
   }
