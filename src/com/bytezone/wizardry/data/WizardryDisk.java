@@ -7,7 +7,6 @@ import com.bytezone.filesystem.AppleFile;
 import com.bytezone.filesystem.AppleFileSystem;
 import com.bytezone.filesystem.AppleFileSystem.FileSystemType;
 import com.bytezone.filesystem.BlockReader;
-import com.bytezone.filesystem.BlockReader.AddressType;
 import com.bytezone.filesystem.Buffer;
 import com.bytezone.filesystem.FileSystemFactory;
 import com.bytezone.filesystem.FsData;
@@ -106,7 +105,8 @@ public class WizardryDisk
         dataRecord.length ());
 
     BlockReader reader = new BlockReader ("COLLATED DISK", buffer);
-    reader.setParameters (512, AddressType.BLOCK, 1, 8);
+    //    reader.setParameters (512, AddressType.BLOCK, 1, 8);
+    reader.setParameters (FileSystemFactory.prodos2);
     this.fsPascal = new FsPascal (reader);
 
     disks[0] = this.fsPascal;     // the new logical disk
@@ -142,7 +142,8 @@ public class WizardryDisk
         throw new DiskFormatException ("Couldn't collect extra disks required");
 
       BlockReader reader = new BlockReader (f.toPath ());
-      reader.setParameters (512, AddressType.BLOCK, 1, 8);
+      //      reader.setParameters (512, AddressType.BLOCK, 1, 8);
+      reader.setParameters (FileSystemFactory.prodos2);
 
       disks[i] = new FsData (reader);
     }
@@ -167,7 +168,8 @@ public class WizardryDisk
       return false;
 
     BlockReader pascalReader = fs.getBlockReader ();
-    pascalReader.setParameters (512, AddressType.BLOCK, 1, 8);
+    //    pascalReader.setParameters (512, AddressType.BLOCK, 1, 8);
+    pascalReader.setParameters (FileSystemFactory.prodos2);
 
     byte[] buffer = fs.readBlock (fs.getBlock (1));
 
